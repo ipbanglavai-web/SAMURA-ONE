@@ -1,0 +1,49 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --samura-primary: #0E5A4F;
+    --samura-sidebar: #073F37;
+    --samura-sidebar-dark: #06352F;
+    --samura-active-nav: #0E5A4F;
+    --samura-bg: #F6F8F7;
+    --samura-card: #FFFFFF;
+    --samura-border: #E5EAE8;
+    --samura-success: #22A06B;
+    --samura-warning: #D9A441;
+    --samura-danger: #D9534F;
+    --samura-text-primary: #18211F;
+    --samura-text-secondary: #71807B;
+  }
+
+  body {
+    background-color: #F6F8F7;
+    color: #18211F;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+/* Custom crisp scrollbars for enterprise tables and panels */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #94A3B8;
+}
+
+/* Smooth transitions */
+.transition-smooth {
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}

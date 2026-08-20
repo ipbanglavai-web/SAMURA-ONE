@@ -1,0 +1,6 @@
+{
+  "name": "SAMURA ONE",
+  "description": "AL SAMURA Group Command Platform - Enterprise ERP & Executive Management System",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
