@@ -21,6 +21,66 @@ export interface UserProfile {
   role: string;
   avatarInitials: string;
   title: string;
+  userType?: 'admin' | 'manager';
+  businessId?: string;
+  businessName?: string;
+  phone?: string;
+  nid?: string;
+}
+
+export type ManagerNavTab = 'overview' | 'sales-due' | 'products' | 'customers';
+
+export interface ManagerCustomer {
+  id: string;
+  businessId: string;
+  name: string;
+  phone: string;
+  address: string;
+  reference: string; // Reference / Customer of
+  dueAmount: number; // Current Running Due
+  totalSales?: number;
+  totalPaid?: number;
+  lastTransactionDate?: string;
+  notes?: string;
+  status?: 'Active' | 'Defaulter' | 'Clear';
+  createdAt?: string;
+}
+
+export interface UnitProduct {
+  id: string;
+  businessId: string;
+  name: string;
+  unit: string; // e.g. 'Kg', 'Carton', 'Piece', 'Box', 'Ton', 'Liter', 'Bag'
+  unitPrice: number;
+  category?: string;
+  stock?: number;
+  notes?: string;
+  createdAt?: string;
+}
+
+export interface SaleDueRecord {
+  id: string;
+  businessId: string;
+  invoiceNo: string;
+  date: string;
+  customerName: string; // Name
+  address: string; // Address (area+Contact)
+  customerOf: string; // Customer of
+  exDue: number; // Ex-Due
+  productId: string;
+  productName: string; // Sold products ( product Search & Selection )
+  productUnit: string;
+  unitPrice: number;
+  quantity: number; // Product quantity
+  amount: number; // Amount (quantity * unitPrice or custom sale total)
+  paid: number; // Paid
+  sacrifice: number; // Sacrifice
+  payableDue: number; // Payable due = (Ex-Due + Amount - Sacrifice)
+  runningDue: number; // Running Due = (Payable due - Paid)
+  duePaymentDate: string; // Due Payment Date
+  notes?: string;
+  status: 'Full Paid' | 'Partial Due' | 'Overdue' | 'Unpaid';
+  createdAt: string;
 }
 
 export interface KpiItem {

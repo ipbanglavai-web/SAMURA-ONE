@@ -18,6 +18,7 @@ import { HospitalSummaryPage } from './pages/HospitalSummary/HospitalSummaryPage
 import { ApprovalsPage } from './pages/Approvals/ApprovalsPage';
 import { AskSamuraPage } from './pages/AskSamura/AskSamuraPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
+import { ManagerDashboardPage } from './pages/Manager/ManagerDashboardPage';
 import { ApprovalDetailModal } from './components/modals/ApprovalDetailModal';
 import { AlertDetailModal } from './components/modals/AlertDetailModal';
 import { calculateDerivedBusinessData } from './utils/businessCalculations';
@@ -302,6 +303,11 @@ const MainApp: React.FC = () => {
   // Unauthenticated user -> show dedicated login page
   if (!isAuthenticated) {
     return <LoginPage onLoginSuccess={() => handleNavigate('/dashboard')} />;
+  }
+
+  // Manager Role -> Render the dedicated Manager Portal Dashboard for their assigned unit
+  if (user?.userType === 'manager') {
+    return <ManagerDashboardPage businesses={businesses} />;
   }
 
   const pendingApprovalsCount = approvals.filter(a => a.status === 'pending').length;

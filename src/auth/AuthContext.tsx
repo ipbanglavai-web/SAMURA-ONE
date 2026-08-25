@@ -16,7 +16,8 @@ const DEFAULT_USER: UserProfile = {
   email: 'admin@admin.com',
   role: 'Founder & Group Managing Director',
   avatarInitials: 'S',
-  title: 'Founder View'
+  title: 'Founder View',
+  userType: 'admin'
 };
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -83,9 +84,14 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           id: foundMgr.id,
           name: foundMgr.name,
           email: foundMgr.email,
-          role: `Manager — ${foundMgr.businessName}`,
+          role: `Business Unit Manager`,
           avatarInitials: initials,
-          title: `${foundMgr.businessName} View`
+          title: `${foundMgr.businessName} · Manager Command`,
+          userType: 'manager',
+          businessId: foundMgr.businessId,
+          businessName: foundMgr.businessName,
+          phone: foundMgr.phone,
+          nid: foundMgr.nid
         };
         setUser(mgrUser);
         return { success: true };

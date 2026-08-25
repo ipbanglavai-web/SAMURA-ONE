@@ -1,0 +1,302 @@
+import React, { useState, useRef, useEffect } from 'react';
+import { useAuth } from '../../auth/AuthContext';
+import { ManagerTab } from './ManagerSidebar';
+import {
+  Menu,
+  Building,
+  LogOut,
+  Shield,
+  Check,
+  Bell,
+  Building2,
+  Calendar,
+  ChevronDown,
+  Clock,
+  CalendarDays
+} from 'lucide-react';
+
+interface ManagerHeaderProps {
+  activeTab: ManagerTab;
+  onOpenMobileMenu: () => void;
+  businessName: string;
+  selectedDate: string;
+  onSelectDate: (date: string) => void;
+}
+
+export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
+  activeTab,
+  onOpenMobileMenu,
+  businessName,
+  selectedDate,
+  onSelectDate
+}) => {
+  const { user, logout } = useAuth();
+  const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [customDateInput, setCustomDateInput] = useState('');
+  const [showCustomPicker, setShowCustomPicker] = useState(false);
+
+  const dateRef = useRef<HTMLDivElement>(null);
+  const userRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdowns on outside click
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dateRef.current && !dateRef.current.contains(event.target as Node)) {
+        setDateDropdownOpen(false);
+        setShowCustomPicker(false);
+      }
+      if (userRef.current && !userRef.current.contains(event.target as Node)) {
+        setUserDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
+
+  const getPageInfo = (tab: ManagerTab) => {
+    switch (tab) {
+      case 'overview':
+        return {
+          title: `${businessName} · Unit Overview`,
+          subtitle: 'Real-time sales, collections, due summaries & today metrics'
+        };
+      case 'sales_due':
+        return {
+          title: `${businessName} · Sales & Due Ledger`,
+          subtitle: 'Daily customer invoices, collection status, dues & voucher receipts'
+        };
+      case 'customers':
+        return {
+          title: `${businessName} · Customer Directory & Dues`,
+          subtitle: 'Customer profiles, contact details, references & running due balances'
+        };
+      case 'products':
+        return {
+          title: `${businessName} · Products & Pricing`,
+          subtitle: 'Unit item catalog, stock availability & per-unit sales rates'
+        };
+      default:
+        return {
+          title: `${businessName} · Manager Portal`,
+          subtitle: 'AL SAMURA Group Subsidiary Operations'
+        };
+    }
+  };
+
+  const pageInfo = getPageInfo(activeTab);
+
+  const datePresets = [
+    { label: 'All Records', bangla: 'সব রেকর্ড', value: 'All Records' },
+    { label: 'Today', bangla: 'আজকে', value: 'Today' },
+    { label: 'Yesterday', bangla: 'গতকাল', value: 'Yesterday' },
+    { label: 'Last 7 Days', bangla: 'গত ৭ দিন', value: 'Last 7 Days' },
+    { label: 'This Month', bangla: 'চলতি মাস', value: 'This Month' }
+  ];
+
+  const handleApplyCustomDate = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (customDateInput) {
+      onSelectDate(customDateInput);
+      setDateDropdownOpen(false);
+      setShowCustomPicker(false);
+    }
+  };
+
+  const getInitials = (name?: string) => {
+    if (!name) return 'MG';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.slice(0, 2).toUpperCase();
+  };
+
+  return (
+    <header className="h-14 bg-white border-b border-[#E5EAE8] flex items-center justify-between px-4 sm:px-6 flex-shrink-0 sticky top-0 z-30 transition-colors">
+      {/* Left: Mobile Toggle & Page Info */}
+      <div className="flex items-center gap-3 min-w-0">
+        <button
+          onClick={onOpenMobileMenu}
+          className="p-1.5 -ml-1 text-[#4B5563] hover:text-[#111827] hover:bg-[#F6F8F7] rounded-md lg:hidden cursor-pointer"
+          aria-label="Open navigation menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="min-w-0">
+          <h1 className="text-base sm:text-lg font-bold text-[#111827] tracking-tight leading-snug truncate">
+            {pageInfo.title}
+          </h1>
+          <p className="text-[10px] sm:text-xs text-[#4B5563] font-medium leading-none truncate">
+            {pageInfo.subtitle}
+          </p>
+        </div>
+      </div>
+
+      {/* Right Controls */}
+      <div className="flex items-center space-x-3 shrink-0">
+        {/* Date Selector Dropdown */}
+        <div className="relative" ref={dateRef}>
+          <button
+            id="manager-header-date-selector"
+            onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
+            className="text-xs font-bold px-3 py-1.5 border border-[#0E5A4F]/40 hover:border-[#0E5A4F] rounded-lg flex items-center bg-[#F6F8F7] hover:bg-[#E6F4ED] shadow-2xs transition-all cursor-pointer text-[#0A4A41] active:scale-98"
+            title="তারিখ ফিল্টার পরিবর্তন করুন"
+          >
+            <Calendar className="w-3.5 h-3.5 mr-1.5 text-[#0E5A4F]" />
+            <span className="font-semibold text-[#111827]">
+              {selectedDate === 'Today'
+                ? 'আজকে (Today)'
+                : selectedDate === 'Yesterday'
+                ? 'গতকাল (Yesterday)'
+                : selectedDate === 'All Records'
+                ? 'সব রেকর্ড'
+                : selectedDate}
+            </span>
+            <ChevronDown className={`ml-1.5 w-3.5 h-3.5 text-[#0E5A4F] transition-transform duration-200 ${dateDropdownOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {dateDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-56 bg-white border border-[#E5EAE8] rounded-xl shadow-xl py-1.5 z-50 text-xs font-medium animate-fade-in">
+              <div className="px-3 py-1.5 text-[10px] font-bold text-[#71807B] uppercase tracking-wider border-b border-[#E5EAE8]">
+                তারিখের ব্যপ্তি নির্বাচন
+              </div>
+
+              {datePresets.map((preset) => (
+                <button
+                  key={preset.value}
+                  onClick={() => {
+                    onSelectDate(preset.value);
+                    setDateDropdownOpen(false);
+                    setShowCustomPicker(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 flex items-center justify-between hover:bg-[#F6F8F7] cursor-pointer transition-colors ${
+                    selectedDate === preset.value
+                      ? 'text-[#0E5A4F] font-bold bg-[#E6F4ED]'
+                      : 'text-[#111827]'
+                  }`}
+                >
+                  <div className="flex items-center gap-2">
+                    <Clock className="w-3.5 h-3.5 text-[#71807B]" />
+                    <div>
+                      <span className="block font-medium">{preset.label}</span>
+                      <span className="text-[10px] text-[#71807B]">{preset.bangla}</span>
+                    </div>
+                  </div>
+                  {selectedDate === preset.value && (
+                    <Check className="w-4 h-4 text-[#0E5A4F] stroke-[2.5]" />
+                  )}
+                </button>
+              ))}
+
+              <div className="border-t border-[#E5EAE8] mt-1 pt-1 px-3 py-1">
+                {!showCustomPicker ? (
+                  <button
+                    onClick={() => setShowCustomPicker(true)}
+                    className="w-full text-left py-1.5 text-xs text-[#0E5A4F] font-bold hover:underline flex items-center gap-1.5 cursor-pointer"
+                  >
+                    <CalendarDays className="w-3.5 h-3.5" />
+                    <span>+ নির্দিষ্ট তারিখ নির্বাচন করুন</span>
+                  </button>
+                ) : (
+                  <form onSubmit={handleApplyCustomDate} className="space-y-2 py-1">
+                    <label className="text-[10px] font-bold text-[#4B5563] block">
+                      ক্যালেন্ডার থেকে তারিখ বাছুন:
+                    </label>
+                    <input
+                      type="date"
+                      value={customDateInput}
+                      onChange={(e) => setCustomDateInput(e.target.value)}
+                      className="w-full text-xs p-1.5 rounded-lg border border-[#E5EAE8] bg-[#F6F8F7] text-[#111827] focus:outline-none focus:border-[#0E5A4F]"
+                      required
+                    />
+                    <div className="flex items-center gap-1.5 pt-1">
+                      <button
+                        type="submit"
+                        className="flex-1 py-1 rounded-lg bg-[#0E5A4F] text-white text-xs font-bold hover:bg-[#073F37] cursor-pointer"
+                      >
+                        প্রয়োগ করুন
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setShowCustomPicker(false)}
+                        className="py-1 px-2 rounded-lg border border-[#E5EAE8] text-xs text-[#4B5563] hover:bg-[#F6F8F7] cursor-pointer"
+                      >
+                        বাতিল
+                      </button>
+                    </div>
+                  </form>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Assigned Business Unit Badge */}
+        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#E6F4ED] border border-[#22A06B]/30 rounded-md text-xs font-bold text-[#0E5A4F]">
+          <Building2 className="w-3.5 h-3.5 text-[#22A06B]" />
+          <span className="truncate max-w-[140px]">{businessName}</span>
+        </div>
+
+        {/* Notification Bell */}
+        <div className="w-8 h-8 rounded-full bg-[#F6F8F7] flex items-center justify-center text-xs text-[#4B5563] border border-[#E5EAE8] cursor-pointer hover:text-[#111827] hover:bg-[#E5EAE8] transition-colors relative">
+          <Bell className="w-4 h-4" />
+          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#22A06B] rounded-full"></span>
+        </div>
+
+        {/* User Profile Avatar with Dropdown */}
+        <div className="relative" ref={userRef}>
+          <button
+            id="manager-header-avatar-btn"
+            onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+            className="w-8 h-8 rounded-full bg-[#0E5A4F] text-white flex items-center justify-center text-[10px] font-bold shadow-xs hover:bg-[#073F37] transition-colors cursor-pointer border border-[#22A06B]/30"
+            aria-label="User profile menu"
+          >
+            {getInitials(user?.name)}
+          </button>
+
+          {userDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-64 bg-white border border-[#E5EAE8] rounded-xl shadow-xl py-2 z-50 text-xs">
+              {/* User info */}
+              <div className="px-4 py-2 border-b border-[#E5EAE8]">
+                <p className="font-semibold text-sm text-[#111827]">{user?.name || 'Unit Manager'}</p>
+                <div className="flex items-center gap-1.5 mt-0.5">
+                  <span className="text-[11px] text-[#0E5A4F] font-bold">{businessName}</span>
+                  <span className="text-[10px] text-[#4B5563]">· In-Charge</span>
+                </div>
+                <p className="text-[11px] text-[#4B5563] font-mono mt-0.5">{user?.email}</p>
+              </div>
+
+              <div className="py-1">
+                <div className="px-4 py-1.5 flex items-center gap-2 text-[#4B5563]">
+                  <Shield className="w-3.5 h-3.5 text-[#22A06B]" />
+                  <span>Role: Business Unit Manager</span>
+                </div>
+                <div className="px-4 py-1.5 flex items-center gap-2 text-[#4B5563]">
+                  <Building className="w-3.5 h-3.5 text-[#0E5A4F]" />
+                  <span>Enterprise: {businessName}</span>
+                </div>
+              </div>
+
+              <div className="border-t border-[#E5EAE8] pt-1 mt-1">
+                <button
+                  id="manager-header-logout-btn"
+                  onClick={() => {
+                    setUserDropdownOpen(false);
+                    logout();
+                  }}
+                  className="w-full text-left px-4 py-2 text-[#D9534F] hover:bg-[#FEF2F2] flex items-center gap-2 font-medium transition-colors cursor-pointer"
+                >
+                  <LogOut className="w-4 h-4" />
+                  <span>Sign Out (লগআউট)</span>
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    </header>
+  );
+};
+

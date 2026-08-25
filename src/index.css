@@ -47,3 +47,55 @@
 .transition-smooth {
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Enterprise Print Media Styles */
+@media print {
+  @page {
+    size: auto;
+    margin: 10mm 15mm;
+  }
+
+  body {
+    background-color: #ffffff !important;
+    color: #000000 !important;
+    font-size: 11pt !important;
+  }
+
+  /* Hide navigation, sidebars, background overlays, action buttons during print */
+  aside,
+  nav,
+  header,
+  button,
+  .no-print,
+  [role="dialog"] > div:first-child:not([class*="bg-white"]) {
+    display: none !important;
+  }
+
+  /* Reset layout constraints for print */
+  main, div#root, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* High contrast table borders and clean backgrounds */
+  table {
+    width: 100% !important;
+    border-collapse: collapse !important;
+  }
+
+  th, td {
+    border: 1px solid #d1d5db !important;
+    color: #000000 !important;
+    padding: 6px 8px !important;
+  }
+
+  th {
+    background-color: #0E5A4F !important;
+    color: #ffffff !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+}

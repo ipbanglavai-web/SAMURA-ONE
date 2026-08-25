@@ -7,7 +7,10 @@ import {
   PendingApproval,
   BankAccount,
   ColdStorageChamber,
-  ImportShipment
+  ImportShipment,
+  UnitProduct,
+  SaleDueRecord,
+  ManagerCustomer
 } from '../types';
 
 export const KPI_DATA: KpiItem[] = [
@@ -369,3 +372,833 @@ export const INITIAL_MANAGERS_DATA: import('../types').BusinessManager[] = [
     createdAt: '2026-03-20'
   }
 ];
+
+export const INITIAL_PRODUCTS_DATA: UnitProduct[] = [
+  // --- Dates (খেজুর) Collection ---
+  {
+    id: 'prd-khejur-1',
+    businessId: 'bh-1',
+    name: 'Ajoa',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 5800,
+    category: 'Dates (খেজুর)',
+    stock: 240,
+    notes: 'Ajwa Al-Madinah VIP premium grade original Saudi date'
+  },
+  {
+    id: 'prd-khejur-2',
+    businessId: 'bh-1',
+    name: 'Mabrum VIP',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 5200,
+    category: 'Dates (খেজুর)',
+    stock: 190,
+    notes: 'Long slender VIP Mabroom dates directly imported'
+  },
+  {
+    id: 'prd-khejur-3',
+    businessId: 'bh-1',
+    name: 'Morioum',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 4500,
+    category: 'Dates (খেজুর)',
+    stock: 310,
+    notes: 'Soft Maryam date batch, high customer demand'
+  },
+  {
+    id: 'prd-khejur-4',
+    businessId: 'bh-1',
+    name: 'Mashruk',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 2400,
+    category: 'Dates (খেজুর)',
+    stock: 280,
+    notes: 'Popular commercial Mashrook variety'
+  },
+  {
+    id: 'prd-khejur-5',
+    businessId: 'bh-1',
+    name: 'Dal Khejur',
+    unit: 'Box (5 Kg)',
+    unitPrice: 2100,
+    category: 'Dates (খেজুর)',
+    stock: 350,
+    notes: 'Natural stem branch fresh dates'
+  },
+  {
+    id: 'prd-khejur-6',
+    businessId: 'bh-1',
+    name: 'Teunishia',
+    unit: 'Box (5 Kg)',
+    unitPrice: 2650,
+    category: 'Dates (খেজুর)',
+    stock: 420,
+    notes: 'Tunisian Deglet Nour branch dates'
+  },
+  {
+    id: 'prd-khejur-7',
+    businessId: 'bh-1',
+    name: 'Khalash packet',
+    unit: 'Packet (1 Kg)',
+    unitPrice: 350,
+    category: 'Dates (খেজুর)',
+    stock: 850,
+    notes: 'Vacuum packed Khalas dates'
+  },
+  {
+    id: 'prd-khejur-8',
+    businessId: 'bh-1',
+    name: 'Khalash dala',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 2900,
+    category: 'Dates (খেজুর)',
+    stock: 220,
+    notes: 'Bulk open dala Khalas dates'
+  },
+  {
+    id: 'prd-khejur-9',
+    businessId: 'bh-1',
+    name: 'Dapash Date Crown',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 3200,
+    category: 'Dates (খেজুর)',
+    stock: 180,
+    notes: 'Original UAE Date Crown Dabbas pack'
+  },
+  {
+    id: 'prd-khejur-10',
+    businessId: 'bh-1',
+    name: 'Dapash Chips',
+    unit: 'Box (5 Kg)',
+    unitPrice: 1750,
+    category: 'Dates (খেজুর)',
+    stock: 150,
+    notes: 'Crispy sweet Dabbas chips cut date'
+  },
+  {
+    id: 'prd-khejur-11',
+    businessId: 'bh-1',
+    name: 'Dapash',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 2800,
+    category: 'Dates (খেজুর)',
+    stock: 260,
+    notes: 'Standard grade Dabbas wholesale carton'
+  },
+  {
+    id: 'prd-khejur-12',
+    businessId: 'bh-1',
+    name: 'Kalmi',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 3600,
+    category: 'Dates (খেজুর)',
+    stock: 310,
+    notes: 'Sweet chewy Kalmi/Safawi dates'
+  },
+  {
+    id: 'prd-khejur-13',
+    businessId: 'bh-1',
+    name: 'Barhi',
+    unit: 'Box (5 Kg)',
+    unitPrice: 2400,
+    category: 'Dates (খেজুর)',
+    stock: 190,
+    notes: 'Rich caramel flavored Barhi dates'
+  },
+  {
+    id: 'prd-khejur-14',
+    businessId: 'bh-1',
+    name: 'Barhi (Rabeya)',
+    unit: 'Box (5 Kg)',
+    unitPrice: 2750,
+    category: 'Dates (খেজুর)',
+    stock: 140,
+    notes: 'Special Rabeya selection Barhi batch'
+  },
+  {
+    id: 'prd-khejur-15',
+    businessId: 'bh-1',
+    name: 'Barni',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 2300,
+    category: 'Dates (খেজুর)',
+    stock: 160,
+    notes: 'Traditional Madinah Barni dates'
+  },
+  {
+    id: 'prd-khejur-16',
+    businessId: 'bh-1',
+    name: 'Jahidi',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 2200,
+    category: 'Dates (খেজুর)',
+    stock: 480,
+    notes: 'Semi-dry golden Iraqi Zahidi dates'
+  },
+  {
+    id: 'prd-khejur-17',
+    businessId: 'bh-1',
+    name: 'Sayer',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 2100,
+    category: 'Dates (খেজুর)',
+    stock: 390,
+    notes: 'Iranian Sayer pitted/unpitted bulk'
+  },
+  {
+    id: 'prd-khejur-18',
+    businessId: 'bh-1',
+    name: 'Nagal',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 2600,
+    category: 'Dates (খেজুর)',
+    stock: 210,
+    notes: 'Omani Naghal fresh season dates'
+  },
+  {
+    id: 'prd-khejur-19',
+    businessId: 'bh-1',
+    name: 'Nagal Dates crown',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 3100,
+    category: 'Dates (খেজুর)',
+    stock: 175,
+    notes: 'Date Crown branded Nagal pack'
+  },
+  {
+    id: 'prd-khejur-20',
+    businessId: 'bh-1',
+    name: 'Lulu',
+    unit: 'Carton (10 Kg)',
+    unitPrice: 2700,
+    category: 'Dates (খেজুর)',
+    stock: 230,
+    notes: 'Small round dark sweet Lulu dates'
+  },
+  {
+    id: 'prd-khejur-21',
+    businessId: 'bh-1',
+    name: 'Khurma',
+    unit: 'Kg',
+    unitPrice: 380,
+    category: 'Dates (খেজুর)',
+    stock: 950,
+    notes: 'Standard dry khurma for wholesale'
+  },
+  {
+    id: 'prd-khejur-22',
+    businessId: 'bh-1',
+    name: 'Bosta Khejur',
+    unit: 'Bosta (50 Kg)',
+    unitPrice: 9500,
+    category: 'Dates (খেজুর)',
+    stock: 85,
+    notes: 'Wholesale 50kg bulk sack dates'
+  },
+  {
+    id: 'prd-khejur-23',
+    businessId: 'bh-1',
+    name: 'Khurma Bosta',
+    unit: 'Bosta (50 Kg)',
+    unitPrice: 14500,
+    category: 'Dates (খেজুর)',
+    stock: 60,
+    notes: 'Wholesale 50kg sack dry khurma'
+  },
+
+  // --- Apples (আপেল) Collection ---
+  {
+    id: 'prd-apple-1',
+    businessId: 'bh-1',
+    name: 'Apple (fuji)',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 3950,
+    category: 'Apple (আপেল)',
+    stock: 320,
+    notes: 'Crispy sweet South African/Chinese Fuji'
+  },
+  {
+    id: 'prd-apple-2',
+    businessId: 'bh-1',
+    name: 'Hani + Crown apple',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 4200,
+    category: 'Apple (আপেল)',
+    stock: 210,
+    notes: 'Premium Honey Crown sweet export quality'
+  },
+  {
+    id: 'prd-apple-3',
+    businessId: 'bh-1',
+    name: 'Royal Gala',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 4100,
+    category: 'Apple (আপেল)',
+    stock: 275,
+    notes: 'New Zealand / Chilean Royal Gala'
+  },
+  {
+    id: 'prd-apple-4',
+    businessId: 'bh-1',
+    name: 'KaliDebi',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 3850,
+    category: 'Apple (আপেল)',
+    stock: 190,
+    notes: 'Famous KaliDebi fresh apple variety'
+  },
+  {
+    id: 'prd-apple-5',
+    businessId: 'bh-1',
+    name: 'Hani',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 4050,
+    category: 'Apple (আপেল)',
+    stock: 240,
+    notes: 'Honey crisp high brix juicy apple'
+  },
+  {
+    id: 'prd-apple-6',
+    businessId: 'bh-1',
+    name: 'Ast Apple',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 3900,
+    category: 'Apple (আপেল)',
+    stock: 180,
+    notes: 'Ast brand premium grade apple'
+  },
+  {
+    id: 'prd-apple-7',
+    businessId: 'bh-1',
+    name: 'GuGu Apple',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 3750,
+    category: 'Apple (আপেল)',
+    stock: 160,
+    notes: 'GuGu commercial red fresh apple'
+  },
+
+  // --- Citrus & Orange (কমলা ও মাল্টা) Collection ---
+  {
+    id: 'prd-citrus-1',
+    businessId: 'bh-1',
+    name: 'Juri komola',
+    unit: 'Juri (15 Kg)',
+    unitPrice: 2600,
+    category: 'Citrus & Orange',
+    stock: 290,
+    notes: 'Fresh cane basket mandarin orange'
+  },
+  {
+    id: 'prd-citrus-2',
+    businessId: 'bh-1',
+    name: 'shosha komola',
+    unit: 'Carton (15 Kg)',
+    unitPrice: 2850,
+    category: 'Citrus & Orange',
+    stock: 230,
+    notes: 'Special elongated sweet shosha orange'
+  },
+  {
+    id: 'prd-citrus-3',
+    businessId: 'bh-1',
+    name: 'Vitor Komola',
+    unit: 'Carton (15 Kg)',
+    unitPrice: 2950,
+    category: 'Citrus & Orange',
+    stock: 210,
+    notes: 'Deep orange pulp seedless mandarin'
+  },
+  {
+    id: 'prd-citrus-4',
+    businessId: 'bh-1',
+    name: 'Kenu',
+    unit: 'Carton (12 Kg)',
+    unitPrice: 2200,
+    category: 'Citrus & Orange',
+    stock: 380,
+    notes: 'Pakistani high-juice Kinnow mandarin'
+  },
+  {
+    id: 'prd-citrus-5',
+    businessId: 'bh-1',
+    name: 'Vhutan Komola',
+    unit: 'Carton (14 Kg)',
+    unitPrice: 2700,
+    category: 'Citrus & Orange',
+    stock: 190,
+    notes: 'Organic sweet mountain Bhutan orange'
+  },
+  {
+    id: 'prd-citrus-6',
+    businessId: 'bh-1',
+    name: 'Dhala Komola',
+    unit: 'Dala (15 Kg)',
+    unitPrice: 2500,
+    category: 'Citrus & Orange',
+    stock: 270,
+    notes: 'Fresh arrival open dala mandarin'
+  },
+  {
+    id: 'prd-citrus-7',
+    businessId: 'bh-1',
+    name: 'Malta',
+    unit: 'Carton (15 Kg)',
+    unitPrice: 2900,
+    category: 'Citrus & Orange',
+    stock: 450,
+    notes: 'Egyptian Valencia & South African Malta'
+  },
+
+  // --- Grapes & Pomegranate (আঙুর ও আনার) ---
+  {
+    id: 'prd-grapes-1',
+    businessId: 'bh-1',
+    name: 'LaL Angur',
+    unit: 'Carton (8 Kg)',
+    unitPrice: 2600,
+    category: 'Grapes & Pomegranate',
+    stock: 310,
+    notes: 'Sweet crispy Red Globe export grapes'
+  },
+  {
+    id: 'prd-grapes-2',
+    businessId: 'bh-1',
+    name: 'Sada Angur',
+    unit: 'Carton (8 Kg)',
+    unitPrice: 2400,
+    category: 'Grapes & Pomegranate',
+    stock: 290,
+    notes: 'Thompson Green seedless grapes'
+  },
+  {
+    id: 'prd-grapes-3',
+    businessId: 'bh-1',
+    name: 'Kala Angur',
+    unit: 'Carton (8 Kg)',
+    unitPrice: 2900,
+    category: 'Grapes & Pomegranate',
+    stock: 180,
+    notes: 'Black midnight sweet seedless grapes'
+  },
+  {
+    id: 'prd-grapes-4',
+    businessId: 'bh-1',
+    name: 'Anar',
+    unit: 'Box (10 Kg)',
+    unitPrice: 3400,
+    category: 'Grapes & Pomegranate',
+    stock: 220,
+    notes: 'Bhagwa Indian fresh red seed pomegranate'
+  },
+
+  // --- Nuts, Dry Fruits, Oils & Specialty ---
+  {
+    id: 'prd-dry-1',
+    businessId: 'bh-1',
+    name: 'Honey mixed',
+    unit: 'Jar (500g)',
+    unitPrice: 750,
+    category: 'Nuts & Specialty',
+    stock: 340,
+    notes: 'Premium natural honey with assorted nuts'
+  },
+  {
+    id: 'prd-dry-2',
+    businessId: 'bh-1',
+    name: 'Mixed Fruits',
+    unit: 'Box (1 Kg)',
+    unitPrice: 950,
+    category: 'Nuts & Specialty',
+    stock: 290,
+    notes: 'Assorted dried kiwi, pineapple, berries & fruits'
+  },
+  {
+    id: 'prd-dry-3',
+    businessId: 'bh-1',
+    name: 'kathbadam',
+    unit: 'Kg',
+    unitPrice: 850,
+    category: 'Nuts & Specialty',
+    stock: 620,
+    notes: 'California whole kernel almond'
+  },
+  {
+    id: 'prd-dry-4',
+    businessId: 'bh-1',
+    name: 'Tetul',
+    unit: 'Box (500g)',
+    unitPrice: 320,
+    category: 'Nuts & Specialty',
+    stock: 410,
+    notes: 'Thai sweet seedless tamarind'
+  },
+  {
+    id: 'prd-dry-5',
+    businessId: 'bh-1',
+    name: 'Cheri fol',
+    unit: 'Box (1 Kg)',
+    unitPrice: 1250,
+    category: 'Nuts & Specialty',
+    stock: 180,
+    notes: 'Sweetened dried red cherry fruit'
+  },
+  {
+    id: 'prd-dry-6',
+    businessId: 'bh-1',
+    name: 'kismis',
+    unit: 'Kg',
+    unitPrice: 550,
+    category: 'Nuts & Specialty',
+    stock: 750,
+    notes: 'Golden Afghan/Indian raisin'
+  },
+  {
+    id: 'prd-dry-7',
+    businessId: 'bh-1',
+    name: 'Kaju Badam',
+    unit: 'Kg',
+    unitPrice: 1150,
+    category: 'Nuts & Specialty',
+    stock: 480,
+    notes: 'Whole white W320 cashew nuts'
+  },
+  {
+    id: 'prd-dry-8',
+    businessId: 'bh-1',
+    name: 'Kaju Badam Vaja',
+    unit: 'Kg',
+    unitPrice: 1350,
+    category: 'Nuts & Specialty',
+    stock: 360,
+    notes: 'Oven roasted salted cashew nuts'
+  },
+  {
+    id: 'prd-dry-9',
+    businessId: 'bh-1',
+    name: 'Joitun Oil',
+    unit: 'Bottle (1 Liter)',
+    unitPrice: 1450,
+    category: 'Nuts & Specialty',
+    stock: 290,
+    notes: 'Extra virgin cold pressed olive oil'
+  },
+  {
+    id: 'prd-dry-10',
+    businessId: 'bh-1',
+    name: 'Joitun Fruits',
+    unit: 'Jar (1 Kg)',
+    unitPrice: 680,
+    category: 'Nuts & Specialty',
+    stock: 220,
+    notes: 'Natural whole Mediterranean olives'
+  },
+
+  // --- Mourin Fruits (bh-2) items ---
+  {
+    id: 'prd-mf-1',
+    businessId: 'bh-2',
+    name: 'Apple (fuji)',
+    unit: 'Carton (18 Kg)',
+    unitPrice: 3950,
+    category: 'Apple (আপেল)',
+    stock: 280,
+    notes: 'Fresh refrigerated batch'
+  },
+  {
+    id: 'prd-mf-2',
+    businessId: 'bh-2',
+    name: 'Ajoa',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 5800,
+    category: 'Dates (খেজুর)',
+    stock: 160,
+    notes: 'Ajwa Madinah VIP dates'
+  },
+  {
+    id: 'prd-mf-3',
+    businessId: 'bh-2',
+    name: 'Mabrum VIP',
+    unit: 'Carton (5 Kg)',
+    unitPrice: 5200,
+    category: 'Dates (খেজুর)',
+    stock: 140,
+    notes: 'Imported Mabroom'
+  },
+  {
+    id: 'prd-mf-4',
+    businessId: 'bh-2',
+    name: 'Malta',
+    unit: 'Carton (15 Kg)',
+    unitPrice: 2900,
+    category: 'Citrus & Orange',
+    stock: 320,
+    notes: 'Valencia sweet malta'
+  },
+  {
+    id: 'prd-mf-5',
+    businessId: 'bh-2',
+    name: 'kathbadam',
+    unit: 'Kg',
+    unitPrice: 850,
+    category: 'Nuts & Specialty',
+    stock: 450,
+    notes: 'Almonds'
+  }
+];
+
+export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
+  // Elenga Fruits (bh-1)
+  {
+    id: 'sd-ef-1',
+    businessId: 'bh-1',
+    invoiceNo: 'INV-EF-2026-0801',
+    date: '2026-08-21',
+    customerName: 'Haji Mokbul Traders',
+    address: 'Kawran Bazar, Dhaka · 01712-445566',
+    customerOf: 'Kawran Bazar Wholesale Cluster',
+    exDue: 45000,
+    productId: 'prd-citrus-7',
+    productName: 'Malta',
+    productUnit: 'Carton (15 Kg)',
+    unitPrice: 2900,
+    quantity: 50,
+    amount: 145000, // 50 * 2900
+    paid: 120000,
+    sacrifice: 2500,
+    payableDue: 187500, // 45000 + 145000 - 2500 = 187500
+    runningDue: 67500, // 187500 - 120000 = 67500
+    duePaymentDate: '2026-08-28',
+    notes: 'Regular wholesale party. Promise to clear next Friday.',
+    status: 'Partial Due',
+    createdAt: '2026-08-21'
+  },
+  {
+    id: 'sd-ef-2',
+    businessId: 'bh-1',
+    invoiceNo: 'INV-EF-2026-0802',
+    date: '2026-08-21',
+    customerName: 'Bismillah Fruit Agency',
+    address: 'Badamtoli, Sadarghat · 01819-332211',
+    customerOf: 'Badamtoli Fruit Market',
+    exDue: 80000,
+    productId: 'prd-apple-1',
+    productName: 'Apple (fuji)',
+    productUnit: 'Carton (18 Kg)',
+    unitPrice: 3950,
+    quantity: 40,
+    amount: 158000, // 40 * 3950
+    paid: 200000,
+    sacrifice: 3000,
+    payableDue: 235000, // 80000 + 158000 - 3000 = 235000
+    runningDue: 35000, // 235000 - 200000 = 35000
+    duePaymentDate: '2026-08-26',
+    notes: 'Payment received via City Bank transfer.',
+    status: 'Partial Due',
+    createdAt: '2026-08-21'
+  },
+  {
+    id: 'sd-ef-3',
+    businessId: 'bh-1',
+    invoiceNo: 'INV-EF-2026-0803',
+    date: '2026-08-22',
+    customerName: 'Al-Madina Fruit Corner',
+    address: 'Mirpur-10, Dhaka · 01911-889900',
+    customerOf: 'Mirpur Retail Syndicate',
+    exDue: 0,
+    productId: 'prd-grapes-4',
+    productName: 'Anar',
+    productUnit: 'Box (10 Kg)',
+    unitPrice: 3400,
+    quantity: 25,
+    amount: 85000, // 25 * 3400
+    paid: 85000,
+    sacrifice: 0,
+    payableDue: 85000, // 0 + 85000 - 0 = 85000
+    runningDue: 0, // 85000 - 85000 = 0
+    duePaymentDate: '2026-08-22',
+    notes: 'Spot cash transaction on loading.',
+    status: 'Full Paid',
+    createdAt: '2026-08-22'
+  },
+  {
+    id: 'sd-ef-4',
+    businessId: 'bh-1',
+    invoiceNo: 'INV-EF-2026-0804',
+    date: '2026-08-20',
+    customerName: 'Chowdhury Fruit Depot',
+    address: 'Tangail Sadar · 01715-667788',
+    customerOf: 'District Distribution Agent',
+    exDue: 120000,
+    productId: 'prd-khejur-1',
+    productName: 'Ajoa',
+    productUnit: 'Carton (5 Kg)',
+    unitPrice: 5800,
+    quantity: 20,
+    amount: 116000, // 20 * 5800
+    paid: 80000,
+    sacrifice: 2000,
+    payableDue: 234000, // 120000 + 116000 - 2000 = 234000
+    runningDue: 154000, // 234000 - 80000 = 154000
+    duePaymentDate: '2026-08-25',
+    notes: 'Heavy credit balance; follow-up scheduled.',
+    status: 'Partial Due',
+    createdAt: '2026-08-20'
+  },
+  // Mourin Fruits (bh-2)
+  {
+    id: 'sd-mf-1',
+    businessId: 'bh-2',
+    invoiceNo: 'INV-MF-2026-0801',
+    date: '2026-08-21',
+    customerName: 'Khan Brothers Fruits',
+    address: 'Jatrabari Arat, Dhaka · 01815-112233',
+    customerOf: 'Jatrabari Wholesale',
+    exDue: 60000,
+    productId: 'prd-mf-1',
+    productName: 'Apple (fuji)',
+    productUnit: 'Carton (18 Kg)',
+    unitPrice: 3950,
+    quantity: 30,
+    amount: 118500,
+    paid: 100000,
+    sacrifice: 1500,
+    payableDue: 177000,
+    runningDue: 77000,
+    duePaymentDate: '2026-08-27',
+    notes: 'Advance booking delivery',
+    status: 'Partial Due',
+    createdAt: '2026-08-21'
+  }
+];
+
+export const INITIAL_CUSTOMERS_DATA: ManagerCustomer[] = [
+  {
+    id: 'cust-1',
+    businessId: 'bh-1',
+    name: 'Haji Mokbul Traders',
+    phone: '01712-445566',
+    address: 'Kawran Bazar, Block-B, Dhaka',
+    reference: 'Kawran Bazar Wholesale Cluster',
+    dueAmount: 67500,
+    totalSales: 145000,
+    totalPaid: 120000,
+    lastTransactionDate: '2026-08-21',
+    status: 'Active',
+    notes: 'Regular wholesale party. Promise to clear next Friday.'
+  },
+  {
+    id: 'cust-2',
+    businessId: 'bh-1',
+    name: 'Bismillah Fruit Agency',
+    phone: '01819-332211',
+    address: 'Badamtoli Ghat-4, Sadarghat, Dhaka',
+    reference: 'Badamtoli Fruit Market',
+    dueAmount: 35000,
+    totalSales: 158000,
+    totalPaid: 200000,
+    lastTransactionDate: '2026-08-21',
+    status: 'Active',
+    notes: 'Payment received via City Bank transfer.'
+  },
+  {
+    id: 'cust-3',
+    businessId: 'bh-1',
+    name: 'Al-Madina Fruit Corner',
+    phone: '01911-889900',
+    address: 'Mirpur-10 Main Roundabout, Dhaka',
+    reference: 'Mirpur Retail Syndicate',
+    dueAmount: 0,
+    totalSales: 85000,
+    totalPaid: 85000,
+    lastTransactionDate: '2026-08-22',
+    status: 'Clear',
+    notes: 'Spot cash transaction on loading.'
+  },
+  {
+    id: 'cust-4',
+    businessId: 'bh-1',
+    name: 'Chowdhury Fruit Depot',
+    phone: '01715-667788',
+    address: 'Station Road, Tangail Sadar, Tangail',
+    reference: 'District Distribution Agent',
+    dueAmount: 154000,
+    totalSales: 116000,
+    totalPaid: 80000,
+    lastTransactionDate: '2026-08-20',
+    status: 'Defaulter',
+    notes: 'Heavy credit balance; follow-up scheduled.'
+  },
+  {
+    id: 'cust-5',
+    businessId: 'bh-1',
+    name: 'Rahman & Sons Enterprise',
+    phone: '01720-998877',
+    address: 'Chawkbazar Arat, Chattogram',
+    reference: 'Chattogram Division Wholesale Association',
+    dueAmount: 82000,
+    totalSales: 210000,
+    totalPaid: 150000,
+    lastTransactionDate: '2026-08-19',
+    status: 'Active',
+    notes: 'Bi-weekly date & apple supply taker.'
+  },
+  {
+    id: 'cust-6',
+    businessId: 'bh-1',
+    name: 'Sonar Bangla Fruit Centre',
+    phone: '01688-443322',
+    address: 'Shibbari More, Gazipur Chowrasta',
+    reference: 'Gazipur Local Retail Chain',
+    dueAmount: 48000,
+    totalSales: 95000,
+    totalPaid: 50000,
+    lastTransactionDate: '2026-08-18',
+    status: 'Active',
+    notes: 'Weekly orange & malta delivery point.'
+  },
+  {
+    id: 'cust-7',
+    businessId: 'bh-1',
+    name: 'Shah Amanat Fruit Store',
+    phone: '01844-556677',
+    address: 'Khatungonj Commercial Area, Chattogram',
+    reference: 'Khatungonj Merchants Guild',
+    dueAmount: 0,
+    totalSales: 320000,
+    totalPaid: 320000,
+    lastTransactionDate: '2026-08-17',
+    status: 'Clear',
+    notes: 'Ajoa & Mabrum bulk buyer. Always 100% advance or spot clear.'
+  },
+  {
+    id: 'cust-8',
+    businessId: 'bh-1',
+    name: 'Mayer Doa Banijjaloy',
+    phone: '01923-114455',
+    address: 'Shaheb Bazar, Rajshahi',
+    reference: 'Rajshahi Fruit Federation',
+    dueAmount: 96000,
+    totalSales: 180000,
+    totalPaid: 90000,
+    lastTransactionDate: '2026-08-16',
+    status: 'Active',
+    notes: 'Regular credit line approved by Regional In-charge.'
+  },
+  // Mourin Fruits (bh-2)
+  {
+    id: 'cust-mf-1',
+    businessId: 'bh-2',
+    name: 'Khan Brothers Fruits',
+    phone: '01815-112233',
+    address: 'Jatrabari Arat, Dhaka',
+    reference: 'Jatrabari Wholesale',
+    dueAmount: 77000,
+    totalSales: 118500,
+    totalPaid: 100000,
+    lastTransactionDate: '2026-08-21',
+    status: 'Active',
+    notes: 'Advance booking delivery'
+  }
+];
+
