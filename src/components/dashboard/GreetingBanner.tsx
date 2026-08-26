@@ -1,5 +1,4 @@
 import React from 'react';
-import { ArrowRight, AlertTriangle } from 'lucide-react';
 
 interface GreetingBannerProps {
   userName?: string;

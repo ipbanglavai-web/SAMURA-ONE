@@ -3,7 +3,7 @@ import { SaleDueRecord, UnitProduct, BusinessHealthItem } from '../../../types';
 import {
   TrendingUp,
   CreditCard,
-  AlertTriangle,
+  Coins,
   CheckCircle2,
   Package,
   ArrowUpRight,
@@ -142,7 +142,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">বর্তমান অবশিষ্ট বকেয়া (Running Due)</span>
             <div className="w-8 h-8 rounded-lg bg-red-50 text-[#D9534F] flex items-center justify-center">
-              <AlertTriangle className="w-4 h-4" />
+              <Coins className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">
@@ -150,7 +150,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               ৳ {totalRunningDue.toLocaleString()}
             </h3>
             <span className="text-xs text-[#D9534F] font-semibold mt-1 block">
-              {overdueRecords.length > 0 ? `⚠️ ${overdueRecords.length} টি মেয়াদোত্তীর্ণ পার্টি` : 'কোনো মেয়াদোত্তীর্ণ বকেয়া নেই'}
+              {overdueRecords.length > 0 ? `${overdueRecords.length} টি মেয়াদোত্তীর্ণ পার্টি` : 'কোনো মেয়াদোত্তীর্ণ বকেয়া নেই'}
             </span>
           </div>
         </div>
@@ -324,54 +324,62 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">
-              <thead className="bg-[#F6F8F7] border-b border-[#E5EAE8] text-[10px] uppercase font-bold text-[#71807B]">
+              <thead className="bg-[#F8FAFA] border-b border-[#E5EAE8] text-[11px] uppercase font-bold text-[#556963] tracking-wider">
                 <tr>
-                  <th className="p-3">তারিখ / ভাউচার</th>
-                  <th className="p-3">কাস্টমার ও এলাকা</th>
-                  <th className="p-3">পণ্য ও পরিমাণ</th>
-                  <th className="p-3 text-right">বিক্রয় মূল্য</th>
-                  <th className="p-3 text-right">নগদ আদায়</th>
-                  <th className="p-3 text-right">অবশিষ্ট বকেয়া</th>
-                  <th className="p-3 text-center">স্ট্যাটাস</th>
+                  <th className="py-3.5 px-4">তারিখ ও ভাউচার</th>
+                  <th className="py-3.5 px-4">কাস্টমার ও এলাকা</th>
+                  <th className="py-3.5 px-4">পণ্য ও পরিমাণ</th>
+                  <th className="py-3.5 px-4 text-right">মোট মূল্য</th>
+                  <th className="py-3.5 px-4 text-right">নগদ জমা</th>
+                  <th className="py-3.5 px-4 text-right">অবশিষ্ট বকেয়া</th>
+                  <th className="py-3.5 px-4 text-center">স্ট্যাটাস</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5EAE8]">
+              <tbody className="divide-y divide-[#EBF0EE]">
                 {recentRecords.map((r) => (
-                  <tr key={r.id} className="hover:bg-[#F6F8F7]/60 transition-colors">
-                    <td className="p-3 font-mono">
-                      <span className="font-bold text-[#18211F] block">{r.invoiceNo}</span>
-                      <span className="text-[10px] text-[#71807B]">{r.date}</span>
+                  <tr key={r.id} className="hover:bg-[#F6F8F7] transition-all group">
+                    <td className="py-3.5 px-4 align-middle">
+                      <span className="font-mono font-bold text-[#18211F] text-xs block group-hover:text-[#0E5A4F] transition-colors">
+                        {r.invoiceNo}
+                      </span>
+                      <span className="text-[11px] text-[#71807B] mt-0.5 block">{r.date}</span>
                     </td>
-                    <td className="p-3">
-                      <span className="font-bold text-[#18211F] block">{r.customerName}</span>
-                      <span className="text-[10px] text-[#71807B]">{r.customerOf}</span>
+                    <td className="py-3.5 px-4 align-middle">
+                      <span className="font-bold text-[#18211F] text-xs block">{r.customerName}</span>
+                      <span className="text-[11px] text-[#71807B] mt-0.5 block">{r.customerOf || 'সাধারণ কাস্টমার'}</span>
                     </td>
-                    <td className="p-3">
-                      <span className="font-semibold text-[#18211F] block">{r.productName}</span>
-                      <span className="text-[10px] text-[#0E5A4F] font-bold">
+                    <td className="py-3.5 px-4 align-middle">
+                      <span className="font-semibold text-[#2C3E3A] text-xs block">{r.productName}</span>
+                      <span className="text-[10px] font-bold text-[#0E5A4F] bg-[#0E5A4F]/10 px-1.5 py-0.5 rounded-sm inline-block mt-0.5">
                         {r.quantity} {r.productUnit}
                       </span>
                     </td>
-                    <td className="p-3 text-right font-mono font-bold text-[#0E5A4F]">
-                      ৳ {r.amount.toLocaleString()}
+                    <td className="py-3.5 px-4 text-right align-middle">
+                      <span className="font-mono font-bold text-[#18211F] text-xs">
+                        ৳ {r.amount.toLocaleString()}
+                      </span>
                     </td>
-                    <td className="p-3 text-right font-mono font-bold text-[#22A06B]">
-                      ৳ {r.paid.toLocaleString()}
+                    <td className="py-3.5 px-4 text-right align-middle">
+                      <span className="font-mono font-bold text-[#168051] text-xs">
+                        ৳ {r.paid.toLocaleString()}
+                      </span>
                     </td>
-                    <td className="p-3 text-right font-mono font-bold text-[#D9534F]">
-                      ৳ {r.runningDue.toLocaleString()}
+                    <td className="py-3.5 px-4 text-right align-middle">
+                      <span className={`font-mono font-bold text-xs ${r.runningDue > 0 ? 'text-[#C93B37]' : 'text-[#71807B]'}`}>
+                        ৳ {r.runningDue.toLocaleString()}
+                      </span>
                     </td>
-                    <td className="p-3 text-center">
+                    <td className="py-3.5 px-4 text-center align-middle">
                       <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${
+                        className={`inline-flex items-center px-2.5 py-1 rounded-full text-[11px] font-bold ${
                           r.status === 'Full Paid'
-                            ? 'bg-[#E6F4ED] text-[#22A06B]'
+                            ? 'bg-[#E6F4ED] text-[#168051] border border-[#22A06B]/20'
                             : r.status === 'Overdue'
-                            ? 'bg-red-50 text-[#D9534F]'
-                            : 'bg-[#FEF6E7] text-[#D9A441]'
+                            ? 'bg-red-50 text-[#C93B37] border border-red-200'
+                            : 'bg-amber-50 text-[#B45309] border border-amber-200'
                         }`}
                       >
-                        {r.status}
+                        {r.status === 'Full Paid' ? 'পরিশোধিত' : r.status === 'Overdue' ? 'মেয়াদোত্তীর্ণ' : 'বকেয়া আছে'}
                       </span>
                     </td>
                   </tr>

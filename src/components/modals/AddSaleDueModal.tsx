@@ -275,94 +275,94 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
         </div>
 
         {/* Content Form */}
-        <form onSubmit={handleSubmit} className="p-5 sm:p-6 overflow-y-auto space-y-4 flex-1">
+        <form onSubmit={handleSubmit} className="p-6 overflow-y-auto space-y-6 flex-1 custom-scrollbar">
           {error && (
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg flex items-start gap-2 text-xs text-[#D9534F]">
-              <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+            <div className="p-3 bg-red-50 border border-red-200/80 rounded-xl flex items-center gap-2 text-xs text-[#C93B37] font-medium">
+              <AlertCircle className="w-4 h-4 shrink-0" />
               <span>{error}</span>
             </div>
           )}
 
-          {/* Section 1: Customer Profile with Existing Customer Selector */}
-          <div className="bg-[#F6F8F7] p-4 rounded-xl border border-[#E5EAE8] space-y-3">
+          {/* Section 1: Customer Details */}
+          <div className="space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#E5EAE8] pb-2.5">
-              <div className="text-[11px] uppercase tracking-wider font-bold text-[#0E5A4F] flex items-center gap-1.5">
-                <User className="w-3.5 h-3.5" />
-                <span>১. কাস্টমার ও ক্লাস্টার পরিচিতি (Customer Details)</span>
+              <div className="text-xs font-bold text-[#18211F] flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-[#0E5A4F]/10 text-[#0E5A4F] text-[11px] flex items-center justify-center font-mono">1</span>
+                <span>কাস্টমার ও পার্টি বিবরণ (Customer Details)</span>
               </div>
 
               {/* Mode Toggle: Existing vs New */}
-              <div className="flex items-center gap-1 bg-white p-0.5 rounded-lg border border-[#E5EAE8] text-[11px] self-start sm:self-auto">
+              <div className="flex items-center bg-[#F6F8F7] p-1 rounded-lg border border-[#E5EAE8] text-xs">
                 <button
                   type="button"
                   onClick={handleSwitchToExistingCustomer}
-                  className={`px-2.5 py-1 rounded-md font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  className={`px-3 py-1 rounded-md font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                     customerMode === 'existing'
-                      ? 'bg-[#0E5A4F] text-white shadow-2xs'
+                      ? 'bg-white text-[#0E5A4F] shadow-xs font-bold'
                       : 'text-[#71807B] hover:text-[#18211F]'
                   }`}
                 >
                   <UserCheck className="w-3.5 h-3.5" />
-                  <span>বিদ্যমান কাস্টমার ({customers.length})</span>
+                  <span>বিদ্যমান পার্টি ({customers.length})</span>
                 </button>
                 <button
                   type="button"
                   onClick={handleSwitchToNewCustomer}
-                  className={`px-2.5 py-1 rounded-md font-bold transition-all cursor-pointer flex items-center gap-1 ${
+                  className={`px-3 py-1 rounded-md font-semibold transition-all cursor-pointer flex items-center gap-1.5 ${
                     customerMode === 'new'
-                      ? 'bg-[#0E5A4F] text-white shadow-2xs'
+                      ? 'bg-white text-[#0E5A4F] shadow-xs font-bold'
                       : 'text-[#71807B] hover:text-[#18211F]'
                   }`}
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>নতুন কাস্টমার</span>
+                  <span>নতুন পার্টি</span>
                 </button>
               </div>
             </div>
 
             {/* Existing Customer Combobox / Dropdown */}
             {customerMode === 'existing' && customers.length > 0 && (
-              <div className="bg-white p-3 rounded-xl border border-[#0E5A4F]/30 shadow-2xs space-y-2">
-                <label className="block text-xs font-bold text-[#0E5A4F]">
-                  কাস্টমার সিলেক্ট করুন (Select Existing Customer) <span className="text-red-500">*</span>
+              <div className="p-3.5 rounded-xl border border-[#0E5A4F]/20 bg-[#F6F8F7]/50 space-y-2">
+                <label className="block text-xs font-bold text-[#18211F]">
+                  কাস্টমার বেছে নিন <span className="text-red-500">*</span>
                 </label>
 
                 <div className="relative">
                   <div
                     onClick={() => setIsCustomerDropdownOpen(!isCustomerDropdownOpen)}
-                    className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-[#F6F8F7] hover:bg-white text-xs flex items-center justify-between cursor-pointer transition-colors"
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white hover:border-[#0E5A4F] text-xs flex items-center justify-between cursor-pointer transition-colors shadow-2xs"
                   >
-                    <div className="flex items-center gap-2 truncate">
-                      <Users className="w-3.5 h-3.5 text-[#0E5A4F] shrink-0" />
-                      <span className="font-bold text-[#18211F] truncate">
+                    <div className="flex items-center gap-2.5 truncate">
+                      <Users className="w-4 h-4 text-[#0E5A4F] shrink-0" />
+                      <span className="font-semibold text-[#18211F] truncate">
                         {customerName ? (
                           <>
-                            {customerName} · <span className="text-[#D9534F] font-mono">বর্তমান ডিউ: ৳{numExDue.toLocaleString()}</span>
+                            {customerName} <span className="text-[#71807B] font-normal">({customerOf || 'সাধারণ'})</span>
                           </>
                         ) : (
-                          '-- তালিকা থেকে কাস্টমার বেছে নিন --'
+                          <span className="text-[#71807B]">তালিকা থেকে কাস্টমার বেছে নিন</span>
                         )}
                       </span>
                     </div>
-                    <span className="text-[10px] text-[#71807B] font-semibold shrink-0 ml-2">পরিবর্তন করুন ▾</span>
+                    <span className="text-[11px] text-[#0E5A4F] font-semibold shrink-0 ml-2">খুঁজুন ▾</span>
                   </div>
 
                   {isCustomerDropdownOpen && (
-                    <div className="absolute z-20 left-0 right-0 mt-1 bg-white border border-[#E5EAE8] rounded-xl shadow-xl max-h-56 overflow-y-auto p-1.5">
+                    <div className="absolute z-20 left-0 right-0 mt-1.5 bg-white border border-[#E5EAE8] rounded-xl shadow-xl max-h-56 overflow-y-auto p-2">
                       <div className="p-1 sticky top-0 bg-white border-b border-[#E5EAE8]">
                         <input
                           type="text"
-                          placeholder="নাম, ফোন বা ঠিকানা দিয়ে খুঁজুন..."
+                          placeholder="নাম, ফোন বা এলাকা দিয়ে খুঁজুন..."
                           value={customerSearchTerm}
                           onChange={(e) => setCustomerSearchTerm(e.target.value)}
-                          className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5EAE8] text-xs focus:outline-none focus:border-[#0E5A4F]"
+                          className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] text-xs focus:outline-none focus:border-[#0E5A4F]"
                           autoFocus
                         />
                       </div>
 
-                      <div className="divide-y divide-[#E5EAE8]/60 mt-1">
+                      <div className="divide-y divide-[#EBF0EE] mt-1">
                         {filteredCustomers.length === 0 ? (
-                          <div className="p-3 text-center text-xs text-[#71807B]">
+                          <div className="p-4 text-center text-xs text-[#71807B]">
                             কোনো কাস্টমার পাওয়া যায়নি
                           </div>
                         ) : (
@@ -370,28 +370,28 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                             <div
                               key={c.id}
                               onClick={() => handleSelectCustomer(c)}
-                              className={`p-2 hover:bg-[#E6F4ED] rounded-lg cursor-pointer transition-colors flex items-center justify-between text-xs ${
-                                selectedCustomerId === c.id ? 'bg-[#E6F4ED] font-bold' : ''
+                              className={`p-2.5 hover:bg-[#F6F8F7] rounded-lg cursor-pointer transition-colors flex items-center justify-between text-xs ${
+                                selectedCustomerId === c.id ? 'bg-[#E6F4ED] text-[#0E5A4F]' : ''
                               }`}
                             >
                               <div>
                                 <div className="font-bold text-[#18211F] flex items-center gap-1.5">
                                   <span>{c.name}</span>
                                   {c.reference && (
-                                    <span className="text-[10px] bg-[#F6F8F7] text-[#0E5A4F] px-1.5 py-0.2 rounded font-normal">
+                                    <span className="text-[10px] bg-[#F0F4F2] text-[#0E5A4F] px-1.5 py-0.5 rounded font-normal">
                                       {c.reference}
                                     </span>
                                   )}
                                 </div>
-                                <div className="text-[10px] text-[#71807B]">
-                                  {c.phone} · {c.address}
+                                <div className="text-[11px] text-[#71807B] mt-0.5">
+                                  {c.phone} {c.address ? `· ${c.address}` : ''}
                                 </div>
                               </div>
                               <div className="text-right shrink-0">
-                                <span className={`text-[11px] font-mono font-bold ${
-                                  c.dueAmount > 0 ? 'text-[#D9534F]' : 'text-[#22A06B]'
+                                <span className={`text-xs font-mono font-bold ${
+                                  c.dueAmount > 0 ? 'text-[#C93B37]' : 'text-[#168051]'
                                 }`}>
-                                  {c.dueAmount > 0 ? `ডিউ: ৳${c.dueAmount.toLocaleString()}` : 'ক্লিয়ার (৳0)'}
+                                  {c.dueAmount > 0 ? `বকেয়া: ৳${c.dueAmount.toLocaleString()}` : 'ক্লিয়ার (৳০)'}
                                 </span>
                               </div>
                             </div>
@@ -402,28 +402,21 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   )}
                 </div>
 
-                {/* Ex Due Alert Banner */}
-                {selectedCustomer && (
-                  <div className="p-2.5 rounded-lg bg-amber-50 border border-amber-200 text-amber-900 text-xs flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-amber-600 shrink-0" />
-                      <span>
-                        <strong>{customerName}</strong> এর পূর্বের বকেয়া (Ex-Due):
-                      </span>
-                    </div>
-                    <span className="font-mono font-bold text-amber-700 text-sm">
-                      ৳ {numExDue.toLocaleString()}
-                    </span>
+                {/* Ex Due Preview */}
+                {selectedCustomer && numExDue > 0 && (
+                  <div className="px-3 py-2 rounded-lg bg-amber-50/80 border border-amber-200/70 text-xs flex items-center justify-between">
+                    <span className="text-[#854D0E] font-medium">পূর্বের বকেয়া হিসাব (Previous Due):</span>
+                    <span className="font-mono font-bold text-[#854D0E]">৳ {numExDue.toLocaleString()}</span>
                   </div>
                 )}
               </div>
             )}
 
             {/* Customer Inputs */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Name (কাস্টমারের নাম) <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  কাস্টমারের নাম (Customer Name) <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-customer-name"
@@ -431,14 +424,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   required
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="e.g. Raj Alamin / Haji Traders"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
+                  placeholder="যেমন: রাজ আলামিন / হাজী ট্রেডার্স"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Customer of (মার্কেট / পার্টি / এলাকা) <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  মার্কেট / পার্টি / রেফারেন্স <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-customer-of"
@@ -446,16 +439,16 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   required
                   value={customerOf}
                   onChange={(e) => setCustomerOf(e.target.value)}
-                  placeholder="e.g. Kawran Bazar Wholesale / Badamtoli"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
+                  placeholder="যেমন: কাওরান বাজার আড়ত / বাদামতলী"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Address (area+Contact) <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  ঠিকানা ও মোবাইল নম্বর <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-address"
@@ -463,14 +456,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="e.g. Kawran Bazar, Dhaka · 01712-445566"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
+                  placeholder="যেমন: দোকান নং-১২, কাওরান বাজার · ০১৭১২-৩৪৫৬৭৮"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Ex-Due (পূর্বের বকেয়া ৳)
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  পূর্বের বকেয়া (Ex-Due ৳)
                 </label>
                 <input
                   id="sale-ex-due"
@@ -479,72 +472,72 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   value={exDue}
                   onChange={(e) => setExDue(e.target.value)}
                   placeholder="0"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs font-bold text-[#D9534F] focus:border-[#0E5A4F] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-mono font-bold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
             </div>
           </div>
 
-          {/* Section 2: Product Selection & Pricing */}
-          <div className="bg-[#F6F8F7] p-3.5 rounded-xl border border-[#E5EAE8] space-y-3">
-            <div className="flex items-center justify-between">
-              <div className="text-[11px] uppercase tracking-wider font-bold text-[#0E5A4F] flex items-center gap-1.5">
-                <Package className="w-3.5 h-3.5" />
-                <span>২. বিক্রয়কৃত পণ্য ও পরিমাণ (Sold Product & Quantity)</span>
+          {/* Section 2: Product & Pricing */}
+          <div className="space-y-4 pt-2">
+            <div className="flex items-center justify-between border-b border-[#E5EAE8] pb-2.5">
+              <div className="text-xs font-bold text-[#18211F] flex items-center gap-2">
+                <span className="w-5 h-5 rounded-full bg-[#0E5A4F]/10 text-[#0E5A4F] text-[11px] flex items-center justify-center font-mono">2</span>
+                <span>বিক্রয়কৃত পণ্য ও পরিমাণ (Product & Pricing)</span>
               </div>
               {onOpenAddProductModal && (
                 <button
                   type="button"
                   onClick={onOpenAddProductModal}
-                  className="text-[11px] text-[#0E5A4F] font-bold hover:underline flex items-center gap-1 cursor-pointer"
+                  className="text-xs text-[#0E5A4F] font-bold hover:underline flex items-center gap-1 cursor-pointer"
                 >
-                  <Plus className="w-3 h-3" />
-                  <span>+ নতুন প্রোডাক্ট যোগ</span>
+                  <Plus className="w-3.5 h-3.5" />
+                  <span>নতুন পণ্য</span>
                 </button>
               )}
             </div>
 
             {/* Product Search & Dropdown */}
             <div className="relative">
-              <label className="block text-xs font-bold text-[#18211F] mb-1">
-                Sold products ( product Search & Selection ) <span className="text-red-500">*</span>
+              <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                পণ্য নির্বাচন করুন <span className="text-red-500">*</span>
               </label>
 
               <div
                 onClick={() => setIsProductDropdownOpen(!isProductDropdownOpen)}
-                className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs flex items-center justify-between cursor-pointer hover:border-[#0E5A4F]"
+                className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs flex items-center justify-between cursor-pointer hover:border-[#0E5A4F] transition-colors shadow-2xs"
               >
-                <div className="flex items-center gap-2 truncate">
-                  <Package className="w-3.5 h-3.5 text-[#0E5A4F]" />
+                <div className="flex items-center gap-2.5 truncate">
+                  <Package className="w-4 h-4 text-[#0E5A4F] shrink-0" />
                   <span className="font-semibold text-[#18211F] truncate">
                     {selectedProduct ? (
                       <>
-                        {selectedProduct.name} ({selectedProduct.unit}) · ৳{selectedProduct.unitPrice.toLocaleString()}/{selectedProduct.unit}
+                        {selectedProduct.name} <span className="text-[#71807B] font-normal">({selectedProduct.unit}) · ৳{selectedProduct.unitPrice.toLocaleString()} / {selectedProduct.unit}</span>
                       </>
                     ) : (
-                      '-- প্রোডাক্ট সিলেক্ট করুন --'
+                      <span className="text-[#71807B]">পণ্য বেছে নিন</span>
                     )}
                   </span>
                 </div>
-                <span className="text-[10px] text-[#71807B]">খুঁজুন ▾</span>
+                <span className="text-[11px] text-[#0E5A4F] font-semibold shrink-0">বাছাই করুন ▾</span>
               </div>
 
               {isProductDropdownOpen && (
-                <div className="absolute z-20 left-0 right-0 mt-1 bg-white border border-[#E5EAE8] rounded-xl shadow-xl max-h-56 overflow-y-auto p-1.5">
+                <div className="absolute z-20 left-0 right-0 mt-1.5 bg-white border border-[#E5EAE8] rounded-xl shadow-xl max-h-56 overflow-y-auto p-2">
                   <div className="p-1 sticky top-0 bg-white border-b border-[#E5EAE8]">
                     <input
                       type="text"
-                      placeholder="পণ্য বা ক্যাটাগরির নাম লিখে খুঁজুন..."
+                      placeholder="পণ্যের নাম লিখে সার্চ করুন..."
                       value={productSearchTerm}
                       onChange={(e) => setProductSearchTerm(e.target.value)}
-                      className="w-full px-2.5 py-1.5 rounded-lg border border-[#E5EAE8] text-xs focus:outline-none focus:border-[#0E5A4F]"
+                      className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] text-xs focus:outline-none focus:border-[#0E5A4F]"
                       autoFocus
                     />
                   </div>
 
-                  <div className="divide-y divide-[#E5EAE8]/60 mt-1">
+                  <div className="divide-y divide-[#EBF0EE] mt-1">
                     {filteredProducts.length === 0 ? (
-                      <div className="p-3 text-center text-xs text-[#71807B]">
+                      <div className="p-4 text-center text-xs text-[#71807B]">
                         কোনো পণ্য পাওয়া যায়নি
                       </div>
                     ) : (
@@ -552,14 +545,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                         <div
                           key={p.id}
                           onClick={() => handleSelectProduct(p)}
-                          className={`p-2 hover:bg-[#E6F4ED] rounded-lg cursor-pointer transition-colors flex items-center justify-between text-xs ${
-                            selectedProductId === p.id ? 'bg-[#E6F4ED] font-bold text-[#0E5A4F]' : ''
+                          className={`p-2.5 hover:bg-[#F6F8F7] rounded-lg cursor-pointer transition-colors flex items-center justify-between text-xs ${
+                            selectedProductId === p.id ? 'bg-[#E6F4ED] text-[#0E5A4F] font-bold' : ''
                           }`}
                         >
                           <div>
                             <span className="font-semibold text-[#18211F]">{p.name}</span>
                             {p.category && (
-                              <span className="text-[10px] text-[#71807B] ml-2">({p.category})</span>
+                              <span className="text-[11px] text-[#71807B] ml-2">({p.category})</span>
                             )}
                           </div>
                           <span className="font-mono text-xs font-bold text-[#0E5A4F]">
@@ -574,10 +567,10 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             </div>
 
             {/* Quantity & Unit Price */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Product quantity (পরিমাণ) <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  পরিমাণ (Quantity) <span className="text-red-500">*</span>
                 </label>
                 <div className="flex items-center">
                   <input
@@ -588,16 +581,16 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                     required
                     value={productQuantity}
                     onChange={(e) => setProductQuantity(e.target.value)}
-                    className="w-full px-3 py-2 rounded-l-lg border border-[#E5EAE8] bg-white text-xs font-mono font-bold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
+                    className="w-full px-3.5 py-2.5 rounded-l-xl border border-[#E5EAE8] bg-white text-xs font-mono font-bold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                   />
-                  <span className="px-2.5 py-2 bg-[#E5EAE8] border border-l-0 border-[#E5EAE8] rounded-r-lg text-xs font-bold text-[#71807B]">
+                  <span className="px-3 py-2.5 bg-[#F6F8F7] border border-l-0 border-[#E5EAE8] rounded-r-xl text-xs font-semibold text-[#556963]">
                     {selectedProduct?.unit || 'Unit'}
                   </span>
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
                   দর (Unit Price ৳)
                 </label>
                 <input
@@ -608,13 +601,13 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   value={customUnitPrice}
                   onChange={(e) => setCustomUnitPrice(e.target.value)}
                   placeholder="রেট"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs font-mono font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-mono font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Amount (মোট বিক্রয় মূল্য ৳) <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  মোট মূল্য (Amount ৳) <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-amount"
@@ -624,23 +617,23 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   value={saleAmount}
                   onChange={(e) => setSaleAmount(e.target.value)}
                   placeholder="0"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs font-mono font-bold text-[#0E5A4F] focus:border-[#0E5A4F] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-mono font-bold text-[#0E5A4F] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
             </div>
           </div>
 
-          {/* Section 3: Financial Settlement & Due Calculation */}
-          <div className="bg-[#F6F8F7] p-3.5 rounded-xl border border-[#E5EAE8] space-y-3">
-            <div className="text-[11px] uppercase tracking-wider font-bold text-[#0E5A4F] flex items-center gap-1.5">
-              <Calculator className="w-3.5 h-3.5" />
-              <span>৩. আর্থিক হিসাব ও বকেয়া নিষ্পত্তি (Due & Payment Settlement)</span>
+          {/* Section 3: Financial Settlement */}
+          <div className="space-y-4 pt-2">
+            <div className="text-xs font-bold text-[#18211F] flex items-center gap-2 border-b border-[#E5EAE8] pb-2.5">
+              <span className="w-5 h-5 rounded-full bg-[#0E5A4F]/10 text-[#0E5A4F] text-[11px] flex items-center justify-center font-mono">3</span>
+              <span>আর্থিক জমা ও বকেয়া নিষ্পত্তি (Payment & Settlement)</span>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Sacrifice (ছাড় বা ডিসকাউন্ট ৳)
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  ছাড় বা ডিসকাউন্ট (Sacrifice ৳)
                 </label>
                 <input
                   id="sale-sacrifice"
@@ -649,13 +642,13 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   value={sacrifice}
                   onChange={(e) => setSacrifice(e.target.value)}
                   placeholder="0"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs font-bold text-[#D9A441] focus:border-[#0E5A4F] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-mono font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Paid (নগদ আদায় ৳) <span className="text-red-500">*</span>
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  নগদ জমা (Paid ৳) <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-paid"
@@ -664,87 +657,85 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   value={paid}
                   onChange={(e) => setPaid(e.target.value)}
                   placeholder="0"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs font-mono font-bold text-[#22A06B] focus:border-[#0E5A4F] focus:outline-none"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-mono font-bold text-[#168051] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
             </div>
 
-            {/* Live Calculation Preview Banner */}
-            <div className="bg-[#073F37] text-white p-3.5 rounded-xl border border-[#0E5A4F] grid grid-cols-2 sm:grid-cols-4 gap-2 text-center">
+            {/* Live Calculation Banner */}
+            <div className="bg-[#F8FAFA] p-4 rounded-xl border border-[#E5EAE8] grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
               <div>
-                <span className="text-[10px] text-[#A3B8B0] uppercase block">মোট পণ্য বিল</span>
-                <span className="text-xs sm:text-sm font-bold font-mono text-white">৳ {numAmount.toLocaleString()}</span>
+                <span className="text-[11px] text-[#71807B] block">পণ্য মূল্য</span>
+                <span className="text-sm font-bold font-mono text-[#18211F] mt-0.5 block">৳ {numAmount.toLocaleString()}</span>
               </div>
 
               <div>
-                <span className="text-[10px] text-[#A3B8B0] uppercase block">Payable Due</span>
-                <span className="text-xs sm:text-sm font-bold font-mono text-[#D9A441]">৳ {payableDue.toLocaleString()}</span>
+                <span className="text-[11px] text-[#71807B] block">মোট প্রদেয় (Payable)</span>
+                <span className="text-sm font-bold font-mono text-[#18211F] mt-0.5 block">৳ {payableDue.toLocaleString()}</span>
               </div>
 
               <div>
-                <span className="text-[10px] text-[#A3B8B0] uppercase block">নগদ আদায় (Paid)</span>
-                <span className="text-xs sm:text-sm font-bold font-mono text-[#22A06B]">৳ {numPaid.toLocaleString()}</span>
+                <span className="text-[11px] text-[#71807B] block">নগদ জমা (Paid)</span>
+                <span className="text-sm font-bold font-mono text-[#168051] mt-0.5 block">৳ {numPaid.toLocaleString()}</span>
               </div>
 
-              <div className="border-l border-white/20 pl-2">
-                <span className="text-[10px] text-[#A3B8B0] uppercase block font-bold">Running Due (বকেয়া)</span>
-                <span className={`text-xs sm:text-sm font-bold font-mono ${
-                  runningDue === 0 ? 'text-[#22A06B]' : 'text-[#D9534F]'
+              <div className="border-l border-[#E5EAE8] pl-2">
+                <span className="text-[11px] text-[#71807B] block font-bold">অবশিষ্ট বকেয়া (Due)</span>
+                <span className={`text-sm font-bold font-mono mt-0.5 block ${
+                  runningDue === 0 ? 'text-[#168051]' : 'text-[#C93B37]'
                 }`}>
                   ৳ {runningDue.toLocaleString()}
                 </span>
               </div>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  Due Payment Date (পরিশোধের সম্ভাব্য তারিখ)
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  বকেয়া পরিশোধের তারিখ
                 </label>
-                <div className="relative">
-                  <input
-                    id="sale-due-date"
-                    type="date"
-                    value={duePaymentDate}
-                    onChange={(e) => setDuePaymentDate(e.target.value)}
-                    className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
-                  />
-                </div>
+                <input
+                  id="sale-due-date"
+                  type="date"
+                  value={duePaymentDate}
+                  onChange={(e) => setDuePaymentDate(e.target.value)}
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs text-[#18211F] focus:border-[#0E5A4F] focus:outline-none transition-colors"
+                />
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  মন্তব্য / নোট (Notes)
+                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
+                  মন্তব্য / বিবরণ
                 </label>
                 <input
                   id="sale-notes"
                   type="text"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="e.g. বাকির প্রতিশ্রুতি, চালান বিবরণী"
-                  className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-white text-xs text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
+                  placeholder="যেমন: বাকির প্রতিশ্রুতি বা শর্ত"
+                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
             </div>
           </div>
 
           {/* Action Buttons */}
-          <div className="pt-2 flex items-center justify-end gap-3">
+          <div className="pt-3 flex items-center justify-end gap-3 border-t border-[#E5EAE8]">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2.5 rounded-xl border border-[#E5EAE8] text-xs font-bold text-[#71807B] hover:bg-[#F6F8F7] transition-colors cursor-pointer"
+              className="px-5 py-2.5 rounded-xl border border-[#E5EAE8] text-xs font-bold text-[#71807B] hover:bg-[#F6F8F7] transition-colors cursor-pointer"
             >
-              বাতিল (Cancel)
+              বাতিল
             </button>
 
             <button
               id="submit-sale-record-btn"
               type="submit"
-              className="px-6 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
+              className="px-6 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-98"
             >
               <Check className="w-4 h-4" />
-              <span>চালান ও বকেয়া সেভ করুন (Save Record)</span>
+              <span>চালান ও বকেয়া সেভ করুন</span>
             </button>
           </div>
         </form>

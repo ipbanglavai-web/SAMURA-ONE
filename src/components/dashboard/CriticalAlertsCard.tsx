@@ -1,6 +1,5 @@
 import React from 'react';
 import { CriticalAlert } from '../../types';
-import { AlertTriangle } from 'lucide-react';
 
 interface CriticalAlertsCardProps {
   alerts: CriticalAlert[];
@@ -24,7 +23,6 @@ export const CriticalAlertsCard: React.FC<CriticalAlertsCardProps> = ({ alerts, 
       {/* Header */}
       <div className="font-bold text-sm mb-3 flex items-center justify-between text-[#18211F]">
         <div className="flex items-center gap-1.5">
-          <AlertTriangle className="w-4 h-4 text-[#D9A441]" />
           <span>Critical Alerts</span>
         </div>
         <span className="text-[10px] text-[#71807B] font-semibold">

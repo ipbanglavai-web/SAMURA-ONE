@@ -1,13 +1,5 @@
 import React from 'react';
 import { KpiItem } from '../../types';
-import {
-  ArrowUpRight,
-  TrendingUp,
-  CircleDot,
-  Landmark,
-  AlertCircle,
-  Boxes
-} from 'lucide-react';
 
 interface KpiCardsProps {
   kpis: KpiItem[];
@@ -15,21 +7,6 @@ interface KpiCardsProps {
 }
 
 export const KpiCards: React.FC<KpiCardsProps> = ({ kpis, onCardClick }) => {
-  const getIcon = (name: KpiItem['iconName']) => {
-    switch (name) {
-      case 'sales':
-        return <TrendingUp className="w-3.5 h-3.5 text-[#0E5A4F]" />;
-      case 'collection':
-        return <CircleDot className="w-3.5 h-3.5 text-[#0E5A4F]" />;
-      case 'bank':
-        return <Landmark className="w-3.5 h-3.5 text-[#0E5A4F]" />;
-      case 'receivable':
-        return <AlertCircle className="w-3.5 h-3.5 text-[#D9534F]" />;
-      case 'inventory':
-        return <Boxes className="w-3.5 h-3.5 text-[#D9A441]" />;
-    }
-  };
-
   const getBadge = (kpi: KpiItem) => {
     switch (kpi.id) {
       case 'kpi-sales':
@@ -56,17 +33,14 @@ export const KpiCards: React.FC<KpiCardsProps> = ({ kpis, onCardClick }) => {
           onClick={() => onCardClick && onCardClick(kpi.id)}
           className="bg-white p-3.5 sm:p-4 rounded-xl border border-[#E5EAE8] shadow-2xs hover:border-[#0E5A4F] hover:shadow-xs transition-all cursor-pointer flex flex-col justify-between"
         >
-          {/* Top Row: Icon + Badge */}
-          <div className="flex justify-between items-start">
-            <div className="p-1.5 bg-[#F6F8F7] rounded-lg text-xs border border-[#E5EAE8]/60">
-              {getIcon(kpi.iconName)}
-            </div>
+          {/* Top Row: Badge */}
+          <div className="flex justify-end items-start min-h-[22px]">
             {getBadge(kpi)}
           </div>
 
           {/* Metric Details */}
           <div>
-            <div className="text-[11px] text-[#71807B] font-bold uppercase mt-2.5 tracking-tight truncate">
+            <div className="text-[11px] text-[#71807B] font-bold uppercase mt-2 tracking-tight truncate">
               {kpi.title}
             </div>
             <div className="text-xl sm:text-2xl font-bold mt-0.5 text-[#18211F] tracking-tight">

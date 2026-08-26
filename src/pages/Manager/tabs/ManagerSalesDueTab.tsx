@@ -216,7 +216,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
           <div className="flex items-center justify-between text-[#71807B]">
             <span className="text-[11px] font-semibold text-[#71807B]">মেয়াদোত্তীর্ণ (Overdue Due)</span>
             <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
-              <AlertTriangle className="w-3.5 h-3.5" />
+              <Clock className="w-3.5 h-3.5" />
             </div>
           </div>
           <div className="text-xl sm:text-2xl font-bold text-amber-600 font-mono mt-2">
@@ -392,27 +392,27 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
 
                   return (
                     <React.Fragment key={r.id}>
-                      <tr className="hover:bg-[#F6F8F7]/60 transition-colors group">
+                      <tr className="hover:bg-[#F6F8F7] transition-all group">
                         {/* 1. Memo & Date */}
-                        <td className="py-3.5 px-4">
+                        <td className="py-3.5 px-4 align-middle">
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => toggleExpandRow(r.id)}
-                              className="text-[#374151] hover:text-[#0E5A4F] p-0.5 rounded cursor-pointer transition-colors"
+                              className="text-[#71807B] hover:text-[#0E5A4F] p-0.5 rounded cursor-pointer transition-colors"
                               title="বিস্তারিত দেখতে ক্লিক করুন"
                             >
                               {isExpanded ? (
                                 <ChevronUp className="w-3.5 h-3.5 text-[#0E5A4F]" />
                               ) : (
-                                <ChevronDown className="w-3.5 h-3.5 text-[#374151]" />
+                                <ChevronDown className="w-3.5 h-3.5 text-[#71807B]" />
                               )}
                             </button>
                             <div>
-                              <span className="font-mono font-bold text-[#0E5A4F] text-xs block">
+                              <span className="font-mono font-bold text-[#18211F] text-xs block group-hover:text-[#0E5A4F] transition-colors">
                                 {r.invoiceNo}
                               </span>
-                              <span className="text-[11px] font-medium text-[#4B5563] flex items-center gap-1 mt-0.5">
-                                <Clock className="w-3 h-3 text-[#374151]" />
+                              <span className="text-[11px] text-[#71807B] flex items-center gap-1 mt-0.5">
+                                <Clock className="w-3 h-3 text-[#71807B]" />
                                 {r.date}
                               </span>
                             </div>
@@ -420,68 +420,66 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                         </td>
 
                         {/* 2. Customer & Area */}
-                        <td className="py-3.5 px-4 max-w-[200px]">
-                          <div className="font-bold text-[#111827] text-xs truncate">
+                        <td className="py-3.5 px-4 max-w-[200px] align-middle">
+                          <div className="font-bold text-[#18211F] text-xs truncate">
                             {r.customerName}
                           </div>
                           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                            <span className="text-[10px] bg-[#E6F4ED] text-[#0A4A41] px-1.5 py-0.2 rounded font-bold truncate max-w-[120px]">
-                              {r.customerOf}
+                            <span className="text-[10px] bg-[#0E5A4F]/10 text-[#0E5A4F] px-1.5 py-0.2 rounded font-bold truncate max-w-[120px]">
+                              {r.customerOf || 'সাধারণ'}
                             </span>
-                            <span className="text-[11px] font-medium text-[#4B5563] truncate max-w-[130px]" title={r.address}>
+                            <span className="text-[11px] text-[#71807B] truncate max-w-[130px]" title={r.address}>
                               {r.address}
                             </span>
                           </div>
                         </td>
 
                         {/* 3. Product & Quantity */}
-                        <td className="py-3.5 px-4">
-                          <div className="font-bold text-[#111827] text-xs">
+                        <td className="py-3.5 px-4 align-middle">
+                          <div className="font-semibold text-[#18211F] text-xs">
                             {r.productName}
                           </div>
-                          <div className="text-[11px] text-[#374151] mt-0.5 font-medium">
-                            <span className="font-bold text-[#0E5A4F]">{r.quantity} {r.productUnit}</span>
-                            <span className="text-[11px] ml-1.5 font-mono text-[#4B5563]">(@ ৳{r.unitPrice.toLocaleString()})</span>
+                          <div className="text-[11px] text-[#71807B] mt-0.5">
+                            <span className="font-bold text-[#0E5A4F] bg-[#0E5A4F]/10 px-1.5 py-0.2 rounded text-[10px]">{r.quantity} {r.productUnit}</span>
+                            <span className="text-[10px] ml-1.5 font-mono text-[#71807B]">(@ ৳{r.unitPrice.toLocaleString()})</span>
                           </div>
                         </td>
 
                         {/* 4. Sale Bill & Breakdown */}
-                        <td className="py-3.5 px-4 text-right font-mono">
-                          <div className="font-bold text-sm text-[#111827]">
+                        <td className="py-3.5 px-4 text-right font-mono align-middle">
+                          <div className="font-bold text-xs text-[#18211F]">
                             ৳ {r.amount.toLocaleString()}
                           </div>
-                          <div className="text-[10px] text-[#4B5563] mt-0.5 space-x-1.5">
-                            {r.exDue > 0 && (
-                              <span className="text-amber-800 font-bold">
-                                পূর্বের: ৳{r.exDue.toLocaleString()}
-                              </span>
-                            )}
-                            {r.sacrifice > 0 && (
-                              <span className="text-amber-700 font-bold">
-                                ছাড়: -৳{r.sacrifice.toLocaleString()}
-                              </span>
-                            )}
-                          </div>
+                          {(r.exDue > 0 || r.sacrifice > 0) && (
+                            <div className="text-[10px] text-[#71807B] mt-0.5 space-x-1">
+                              {r.exDue > 0 && (
+                                <span>পূর্বের: +৳{r.exDue.toLocaleString()}</span>
+                              )}
+                              {r.sacrifice > 0 && (
+                                <span className="text-amber-600">ছাড়: -৳{r.sacrifice.toLocaleString()}</span>
+                              )}
+                            </div>
+                          )}
                         </td>
 
                         {/* 5. Paid */}
-                        <td className="py-3.5 px-4 text-right font-mono">
-                          <div className="font-bold text-sm text-[#1B7F54]">
+                        <td className="py-3.5 px-4 text-right font-mono align-middle">
+                          <div className="font-bold text-xs text-[#168051]">
                             ৳ {r.paid.toLocaleString()}
                           </div>
-                          <div className="text-[10px] font-medium text-[#4B5563] mt-0.5">
+                          <div className="text-[10px] text-[#71807B] mt-0.5">
                             {r.paid >= r.payableDue ? 'পূর্ণ পরিশোধ' : r.paid > 0 ? 'আংশিক জমা' : '০ জমা'}
                           </div>
                         </td>
 
                         {/* 6. Running Due */}
-                        <td className="py-3.5 px-4 text-right font-mono">
+                        <td className="py-3.5 px-4 text-right font-mono align-middle">
                           {r.runningDue > 0 ? (
-                            <span className="inline-block px-2.5 py-1 rounded-lg bg-red-50 text-[#D9534F] font-bold text-sm border border-red-100">
+                            <span className="inline-block font-bold text-xs text-[#C93B37]">
                               ৳ {r.runningDue.toLocaleString()}
                             </span>
                           ) : (
-                            <span className="inline-flex items-center gap-1 text-[#22A06B] font-bold text-xs bg-[#E6F4ED] px-2 py-0.5 rounded-full">
+                            <span className="inline-flex items-center gap-1 text-[#168051] font-bold text-[11px] bg-[#E6F4ED] px-2 py-0.5 rounded-full">
                               <CheckCircle2 className="w-3 h-3" />
                               <span>পরিশোধিত</span>
                             </span>
@@ -489,21 +487,21 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                         </td>
 
                         {/* 7. Due Date & Status */}
-                        <td className="py-3.5 px-4 text-center">
-                          <div className="flex flex-col items-center gap-1">
+                        <td className="py-3.5 px-4 text-center align-middle">
+                          <div className="flex flex-col items-center gap-0.5">
                             <span
-                              className={`text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider ${
+                              className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
                                 r.runningDue === 0
-                                  ? 'bg-[#E6F4ED] text-[#22A06B]'
+                                  ? 'bg-[#E6F4ED] text-[#168051] border border-[#22A06B]/20'
                                   : isOverdue
-                                  ? 'bg-red-100 text-[#D9534F]'
-                                  : 'bg-[#FEF6E7] text-[#D9A441]'
+                                  ? 'bg-red-50 text-[#C93B37] border border-red-200'
+                                  : 'bg-amber-50 text-[#B45309] border border-amber-200'
                               }`}
                             >
-                              {r.runningDue === 0 ? 'Full Paid' : isOverdue ? 'Overdue' : 'Due'}
+                              {r.runningDue === 0 ? 'পরিশোধিত' : isOverdue ? 'মেয়াদোত্তীর্ণ' : 'বকেয়া আছে'}
                             </span>
                             {r.duePaymentDate && r.runningDue > 0 && (
-                              <span className="text-[10px] text-[#71807B] flex items-center gap-1 font-mono">
+                              <span className="text-[10px] text-[#71807B] flex items-center gap-1 font-mono mt-0.5">
                                 <Calendar className="w-2.5 h-2.5" />
                                 {r.duePaymentDate}
                               </span>
