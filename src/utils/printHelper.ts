@@ -12,13 +12,13 @@ function triggerPrintOnHtml(title: string, bodyContent: string) {
   
   const htmlContent = `
     <!DOCTYPE html>
-    <html lang="bn">
+    <html lang="en">
     <head>
       <meta charset="UTF-8">
       <title>${title}</title>
       <link rel="preconnect" href="https://fonts.googleapis.com">
       <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+Bengali:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
       <style>
         @page {
           size: A4;
@@ -32,7 +32,7 @@ function triggerPrintOnHtml(title: string, bodyContent: string) {
           print-color-adjust: exact !important;
         }
         body {
-          font-family: 'Inter', 'Noto Sans Bengali', -apple-system, sans-serif;
+          font-family: 'Inter', -apple-system, sans-serif;
           color: #111827;
           background: #ffffff;
           font-size: 12px;
@@ -220,7 +220,7 @@ function triggerPrintOnHtml(title: string, bodyContent: string) {
     <body>
       ${bodyContent}
       <div class="footer">
-        মুদ্রণ সময়: ${new Date().toLocaleString('bn-BD')} · AL SAMURA ERP SOFTWARE · সিস্টেম জেনারেটেড রিপোর্ট
+        Printed at: ${new Date().toLocaleString('en-US')} · AL SAMURA GROUP ERP · System Generated Report
       </div>
       <script>
         window.onload = function() {
@@ -272,25 +272,25 @@ export function printSaleVoucher(record: SaleDueRecord, businessName: string) {
     <div class="header">
       <div class="enterprise-title">AL SAMURA GROUP OF COMPANIES</div>
       <div class="business-title">${businessName}</div>
-      <div class="sub-title">বিক্রয় চালান ও বকেয়া রসিদ (Sales Invoice & Money Receipt)</div>
+      <div class="sub-title">Sales Invoice & Money Receipt Voucher</div>
       <div class="info-bar">
-        <span><strong>ইনভয়েস নং:</strong> <span class="mono">${record.invoiceNo}</span></span>
-        <span><strong>তারিখ:</strong> ${record.date}</span>
-        <span><strong>স্ট্যাটাস:</strong> ${record.status || (record.runningDue === 0 ? 'Full Paid' : 'Due')}</span>
+        <span><strong>Invoice No:</strong> <span class="mono">${record.invoiceNo}</span></span>
+        <span><strong>Date:</strong> ${record.date}</span>
+        <span><strong>Status:</strong> ${record.status || (record.runningDue === 0 ? 'Full Paid' : 'Due')}</span>
       </div>
     </div>
 
     <div class="grid-2">
       <div class="card">
-        <div style="font-size: 10px; color: #6B7280; font-weight: 700; text-transform: uppercase;">গ্রাহক বিবরণী (Customer)</div>
+        <div style="font-size: 10px; color: #6B7280; font-weight: 700; text-transform: uppercase;">Customer Information</div>
         <div style="font-size: 14px; font-weight: 700; margin-top: 2px;">${record.customerName}</div>
         <div style="color: #4B5563; font-size: 11px; margin-top: 2px;">${record.address}</div>
       </div>
       <div class="card" style="text-align: right;">
-        <div style="font-size: 10px; color: #6B7280; font-weight: 700; text-transform: uppercase;">ক্লাস্টার / বাজার (Customer Of)</div>
+        <div style="font-size: 10px; color: #6B7280; font-weight: 700; text-transform: uppercase;">Market / Cluster (Customer Of)</div>
         <div style="font-size: 13px; font-weight: 700; color: #0E5A4F; margin-top: 2px;">${record.customerOf}</div>
         <div style="color: #4B5563; font-size: 11px; margin-top: 2px;">
-          সম্ভাব্য পরিশোধ: <strong>${record.duePaymentDate || 'N/A'}</strong>
+          Due Commitment: <strong>${record.duePaymentDate || 'N/A'}</strong>
         </div>
       </div>
     </div>
@@ -298,11 +298,11 @@ export function printSaleVoucher(record: SaleDueRecord, businessName: string) {
     <table>
       <thead>
         <tr>
-          <th>পণ্য বিবরণ (Product Description)</th>
-          <th class="text-center">একক (Unit)</th>
-          <th class="text-center">পরিমাণ (Qty)</th>
-          <th class="text-right">দর (Rate)</th>
-          <th class="text-right">মোট মূল্য (Amount)</th>
+          <th>Product Description</th>
+          <th class="text-center">Unit</th>
+          <th class="text-center">Quantity</th>
+          <th class="text-right">Unit Rate</th>
+          <th class="text-right">Total Amount</th>
         </tr>
       </thead>
       <tbody>
@@ -318,31 +318,31 @@ export function printSaleVoucher(record: SaleDueRecord, businessName: string) {
 
     <div class="calc-box">
       <div class="calc-row">
-        <span>১. পূর্বের বকেয়া (Previous Ex-Due):</span>
+        <span>1. Previous Due (Ex-Due):</span>
         <span class="mono">৳ ${record.exDue.toLocaleString()}</span>
       </div>
       <div class="calc-row">
-        <span>২. বর্তমান বিক্রয় মূল্য (Current Sale Bill):</span>
+        <span>2. Current Sale Amount:</span>
         <span class="mono">৳ ${record.amount.toLocaleString()}</span>
       </div>
       ${
         record.sacrifice > 0
           ? `<div class="calc-row" style="color: #D97706;">
-              <span>৩. ছাড় / ডিসকাউন্ট (Sacrifice):</span>
+              <span>3. Sacrifice / Discount:</span>
               <span class="mono">- ৳ ${record.sacrifice.toLocaleString()}</span>
             </div>`
           : ''
       }
       <div class="calc-row total">
-        <span>মোট প্রদেয় টাকা (Total Payable Due):</span>
+        <span>Total Payable Due:</span>
         <span class="mono">৳ ${record.payableDue.toLocaleString()}</span>
       </div>
       <div class="calc-row" style="color: #15803D; font-weight: 700;">
-        <span>পরিশোধিত নগদ জমা (Cash Paid):</span>
+        <span>Cash Paid Amount:</span>
         <span class="mono">- ৳ ${record.paid.toLocaleString()}</span>
       </div>
       <div class="calc-row due">
-        <span>অবশিষ্ট মোট বকেয়া (Running Due Balance):</span>
+        <span>Remaining Due Balance:</span>
         <span class="mono">৳ ${record.runningDue.toLocaleString()}</span>
       </div>
     </div>
@@ -350,20 +350,20 @@ export function printSaleVoucher(record: SaleDueRecord, businessName: string) {
     ${
       record.notes
         ? `<div class="card" style="margin-bottom: 16px; font-size: 11px;">
-            <strong>মন্তব্য / নোট:</strong> ${record.notes}
+            <strong>Notes:</strong> ${record.notes}
           </div>`
         : ''
     }
 
     <div class="signatures">
       <div>
-        <div class="sign-line">গ্রাহকের স্বাক্ষর</div>
+        <div class="sign-line">Customer Signature</div>
       </div>
       <div>
-        <div class="sign-line">হিসাবরক্ষক</div>
+        <div class="sign-line">Accountant</div>
       </div>
       <div>
-        <div class="sign-line">ম্যানেজার / ইন-চার্জ</div>
+        <div class="sign-line">Manager / In-Charge</div>
       </div>
     </div>
   `;
@@ -414,77 +414,77 @@ export function printCustomerStatement(
     <div class="header">
       <div class="enterprise-title">AL SAMURA GROUP OF COMPANIES</div>
       <div class="business-title">${businessName}</div>
-      <div class="sub-title">কাস্টমার খতিয়ান ও হিসাব বিবরণী (Customer Ledger Statement)</div>
+      <div class="sub-title">Customer Ledger & Account Statement</div>
       <div class="info-bar">
-        <span><strong>তারিখ:</strong> ${new Date().toISOString().split('T')[0]}</span>
-        <span><strong>শাখা:</strong> ${businessName}</span>
+        <span><strong>Statement Date:</strong> ${new Date().toISOString().split('T')[0]}</span>
+        <span><strong>Branch / Unit:</strong> ${businessName}</span>
       </div>
     </div>
 
     <div class="grid-2">
       <div class="card">
-        <div style="font-size: 10px; color: #6B7280; font-weight: 700; text-transform: uppercase;">কাস্টমার পরিচিতি</div>
+        <div style="font-size: 10px; color: #6B7280; font-weight: 700; text-transform: uppercase;">Customer Profile</div>
         <div style="font-size: 16px; font-weight: 700; margin-top: 2px;">${customer.name}</div>
         <div style="font-size: 11px; color: #4B5563; margin-top: 2px;">
-          মোবাইল: <span class="mono">${customer.phone}</span> · ঠিকানা: ${customer.address}
+          Phone: <span class="mono">${customer.phone}</span> · Address: ${customer.address}
         </div>
         <div style="font-size: 11px; color: #4B5563;">
-          রেফারেন্স: <strong>${customer.reference || 'N/A'}</strong>
+          Reference: <strong>${customer.reference || 'N/A'}</strong>
         </div>
       </div>
 
       <div class="card" style="text-align: right; background: #FEF2F2; border-color: #FECACA;">
-        <div style="font-size: 10px; color: #991B1B; font-weight: 700; text-transform: uppercase;">বর্তমান মোট বকেয়া (Current Due)</div>
+        <div style="font-size: 10px; color: #991B1B; font-weight: 700; text-transform: uppercase;">Current Due Balance</div>
         <div class="mono" style="font-size: 22px; font-weight: 800; color: #B91C1C; margin-top: 2px;">
           ৳ ${runningDue.toLocaleString()}
         </div>
         <div style="font-size: 10px; color: #991B1B;">
-          ${runningDue > 0 ? 'অবশিষ্ট পাওনা বকেয়া' : 'সম্পূর্ণ পরিশোধিত'}
+          ${runningDue > 0 ? 'Outstanding Unpaid Balance' : 'Fully Settled / Clear'}
         </div>
       </div>
     </div>
 
     <div class="grid-3">
       <div class="card-stat">
-        <div class="label">মোট বিক্রয় (Total Billed)</div>
+        <div class="label">Total Billed</div>
         <div class="value mono">৳ ${totalBilled.toLocaleString()}</div>
       </div>
       <div class="card-stat">
-        <div class="label">মোট জমা (Total Paid)</div>
+        <div class="label">Total Paid</div>
         <div class="value mono" style="color: #15803D;">৳ ${totalPaid.toLocaleString()}</div>
       </div>
       <div class="card-stat">
-        <div class="label">অবশিষ্ট পাওনা (Due)</div>
+        <div class="label">Outstanding Due</div>
         <div class="value mono" style="color: #B91C1C;">৳ ${runningDue.toLocaleString()}</div>
       </div>
     </div>
 
-    <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">লেনদেন ও চালানের বিস্তারিত তালিকা</div>
+    <div style="font-size: 12px; font-weight: 700; margin-bottom: 6px;">Invoice & Transaction History</div>
     <table>
       <thead>
         <tr>
-          <th>তারিখ ও চালান নং</th>
-          <th>পণ্য ও দর</th>
-          <th class="text-right">বিক্রয় মূল্য</th>
-          <th class="text-right">নগদ জমা</th>
-          <th class="text-right">অবশিষ্ট বকেয়া</th>
-          <th class="text-center">স্ট্যাটাস</th>
+          <th>Date & Invoice</th>
+          <th>Product & Rate</th>
+          <th class="text-right">Sale Amount</th>
+          <th class="text-right">Paid Amount</th>
+          <th class="text-right">Remaining Due</th>
+          <th class="text-center">Status</th>
         </tr>
       </thead>
       <tbody>
-        ${rows || '<tr><td colspan="6" class="text-center">কোনো লেনদেন রেকর্ড নেই</td></tr>'}
+        ${rows || '<tr><td colspan="6" class="text-center">No transaction records found</td></tr>'}
       </tbody>
     </table>
 
     <div class="signatures" style="margin-top: 50px;">
       <div>
-        <div class="sign-line">গ্রাহকের স্বাক্ষর</div>
+        <div class="sign-line">Customer Signature</div>
       </div>
       <div>
-        <div class="sign-line">হিসাবরক্ষক</div>
+        <div class="sign-line">Accountant</div>
       </div>
       <div>
-        <div class="sign-line">ম্যানেজার অনুমোদন</div>
+        <div class="sign-line">Manager Approval</div>
       </div>
     </div>
   `;
@@ -536,29 +536,29 @@ export function printSalesDueLedger(
     <div class="header">
       <div class="enterprise-title">AL SAMURA GROUP OF COMPANIES</div>
       <div class="business-title">${businessName}</div>
-      <div class="sub-title">বিক্রয় ও বকেয়া সার্বিক খতিয়ান (Sales & Due Comprehensive Ledger)</div>
+      <div class="sub-title">Sales & Due Comprehensive Audit Ledger</div>
       <div class="info-bar">
-        <span><strong>রিপোর্ট সময়কাল:</strong> ${filterInfo}</span>
-        <span><strong>মোট চালান সংখ্যা:</strong> ${records.length} টি</span>
-        <span><strong>প্রিন্ট তারিখ:</strong> ${new Date().toISOString().split('T')[0]}</span>
+        <span><strong>Report Period:</strong> ${filterInfo}</span>
+        <span><strong>Total Records:</strong> ${records.length} Invoices</span>
+        <span><strong>Print Date:</strong> ${new Date().toISOString().split('T')[0]}</span>
       </div>
     </div>
 
     <div class="grid-4">
       <div class="card-stat">
-        <div class="label">মোট বিক্রয় (Sales)</div>
+        <div class="label">Total Sales</div>
         <div class="value mono">৳ ${totalSales.toLocaleString()}</div>
       </div>
       <div class="card-stat">
-        <div class="label">নগদ আদায় (Collected)</div>
+        <div class="label">Total Collected</div>
         <div class="value mono" style="color: #15803D;">৳ ${totalPaid.toLocaleString()}</div>
       </div>
       <div class="card-stat">
-        <div class="label">মোট বকেয়া (Due)</div>
+        <div class="label">Total Outstanding Due</div>
         <div class="value mono" style="color: #B91C1C;">৳ ${totalDue.toLocaleString()}</div>
       </div>
       <div class="card-stat">
-        <div class="label">ছাড় (Discount)</div>
+        <div class="label">Total Discount</div>
         <div class="value mono" style="color: #D97706;">৳ ${totalSacrifice.toLocaleString()}</div>
       </div>
     </div>
@@ -567,14 +567,14 @@ export function printSalesDueLedger(
       <thead>
         <tr>
           <th class="text-center" style="width: 30px;">#</th>
-          <th>তারিখ ও চালান</th>
-          <th>কাস্টমার ও এলাকা</th>
-          <th>পণ্য ও দর</th>
-          <th class="text-right">বিক্রয় মূল্য</th>
-          <th class="text-right">মোট পাওনা</th>
-          <th class="text-right">নগদ আদায়</th>
-          <th class="text-right">অবশিষ্ট বকেয়া</th>
-          <th class="text-center">স্ট্যাটাস</th>
+          <th>Date & Invoice</th>
+          <th>Customer & Market</th>
+          <th>Product & Rate</th>
+          <th class="text-right">Sale Amount</th>
+          <th class="text-right">Payable Due</th>
+          <th class="text-right">Collected Paid</th>
+          <th class="text-right">Remaining Due</th>
+          <th class="text-center">Status</th>
         </tr>
       </thead>
       <tbody>
@@ -582,7 +582,7 @@ export function printSalesDueLedger(
       </tbody>
       <tfoot>
         <tr style="background: #F3F4F6; font-weight: 700;">
-          <td colspan="4" class="text-right">সর্বমোট (Total):</td>
+          <td colspan="4" class="text-right">Total:</td>
           <td class="text-right mono">৳ ${totalSales.toLocaleString()}</td>
           <td class="text-right mono">-</td>
           <td class="text-right mono" style="color: #15803D;">৳ ${totalPaid.toLocaleString()}</td>
@@ -594,13 +594,13 @@ export function printSalesDueLedger(
 
     <div class="signatures" style="margin-top: 40px;">
       <div>
-        <div class="sign-line">প্রস্তুতকারক</div>
+        <div class="sign-line">Prepared By</div>
       </div>
       <div>
-        <div class="sign-line">হিসাব কর্মকর্তা</div>
+        <div class="sign-line">Accountant</div>
       </div>
       <div>
-        <div class="sign-line">ইউনিট ম্যানেজার স্বাক্ষর</div>
+        <div class="sign-line">Unit Manager Signature</div>
       </div>
     </div>
   `;
@@ -624,7 +624,7 @@ export function printCustomerList(
       <td class="text-center mono">${idx + 1}</td>
       <td>
         <div style="font-weight: 700;">${c.name}</div>
-        <div style="font-size: 10px; color: #6B7280;">রেফারেন্স: ${c.reference || 'N/A'}</div>
+        <div style="font-size: 10px; color: #6B7280;">Ref: ${c.reference || 'N/A'}</div>
       </td>
       <td class="mono">${c.phone}</td>
       <td>${c.address}</td>
@@ -643,25 +643,25 @@ export function printCustomerList(
     <div class="header">
       <div class="enterprise-title">AL SAMURA GROUP OF COMPANIES</div>
       <div class="business-title">${businessName}</div>
-      <div class="sub-title">গ্রাহক তালিকা ও বকেয়া খাতা (Customer Directory & Due Balances)</div>
+      <div class="sub-title">Customer Directory & Outstanding Due Ledger</div>
       <div class="info-bar">
-        <span><strong>মোট গ্রাহক সংখ্যা:</strong> ${customers.length} জন</span>
-        <span><strong>সর্বমোট বকেয়া পাওনা:</strong> ৳ ${totalDue.toLocaleString()}</span>
-        <span><strong>তারিখ:</strong> ${new Date().toISOString().split('T')[0]}</span>
+        <span><strong>Total Customers:</strong> ${customers.length} Parties</span>
+        <span><strong>Total Outstanding Dues:</strong> ৳ ${totalDue.toLocaleString()}</span>
+        <span><strong>Report Date:</strong> ${new Date().toISOString().split('T')[0]}</span>
       </div>
     </div>
 
     <div class="grid-3">
       <div class="card-stat">
-        <div class="label">মোট রেজিস্টার্ড গ্রাহক</div>
-        <div class="value mono">${customers.length} জন</div>
+        <div class="label">Total Registered Customers</div>
+        <div class="value mono">${customers.length} Parties</div>
       </div>
       <div class="card-stat">
-        <div class="label">মোট আদায়কৃত টাকা</div>
+        <div class="label">Total Collected</div>
         <div class="value mono" style="color: #15803D;">৳ ${totalPaid.toLocaleString()}</div>
       </div>
       <div class="card-stat">
-        <div class="label">মোট বকেয়া পাওনা</div>
+        <div class="label">Total Outstanding Due</div>
         <div class="value mono" style="color: #B91C1C;">৳ ${totalDue.toLocaleString()}</div>
       </div>
     </div>
@@ -670,13 +670,13 @@ export function printCustomerList(
       <thead>
         <tr>
           <th class="text-center" style="width: 30px;">#</th>
-          <th>কাস্টমার নাম ও রেফারেন্স</th>
-          <th>মোবাইল</th>
-          <th>ঠিকানা</th>
-          <th class="text-right">মোট বিক্রয়</th>
-          <th class="text-right">মোট জমা</th>
-          <th class="text-right">বর্তমান বকেয়া</th>
-          <th class="text-center">স্ট্যাটাস</th>
+          <th>Customer Name & Ref</th>
+          <th>Phone</th>
+          <th>Address</th>
+          <th class="text-right">Total Sales</th>
+          <th class="text-right">Total Paid</th>
+          <th class="text-right">Current Due</th>
+          <th class="text-center">Status</th>
         </tr>
       </thead>
       <tbody>
@@ -684,7 +684,7 @@ export function printCustomerList(
       </tbody>
       <tfoot>
         <tr style="background: #F3F4F6; font-weight: 700;">
-          <td colspan="4" class="text-right">সর্বমোট (Total):</td>
+          <td colspan="4" class="text-right">Total:</td>
           <td class="text-right mono">৳ ${totalSales.toLocaleString()}</td>
           <td class="text-right mono" style="color: #15803D;">৳ ${totalPaid.toLocaleString()}</td>
           <td class="text-right mono" style="color: #B91C1C;">৳ ${totalDue.toLocaleString()}</td>
@@ -695,13 +695,13 @@ export function printCustomerList(
 
     <div class="signatures" style="margin-top: 40px;">
       <div>
-        <div class="sign-line">প্রস্তুতকারক</div>
+        <div class="sign-line">Prepared By</div>
       </div>
       <div>
-        <div class="sign-line">হিসাব নিরীক্ষক</div>
+        <div class="sign-line">Auditor / Accountant</div>
       </div>
       <div>
-        <div class="sign-line">ইউনিট ম্যানেজার অনুমোদন</div>
+        <div class="sign-line">Unit Manager Approval</div>
       </div>
     </div>
   `;

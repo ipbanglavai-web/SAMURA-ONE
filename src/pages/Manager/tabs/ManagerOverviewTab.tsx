@@ -70,9 +70,9 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               <span className="w-2 h-2 rounded-full bg-[#22A06B] animate-pulse" />
               <span>{business.name} · Unit Command Dashboard</span>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">ইউনিট ওভারভিউ ও আর্থিক সারসংক্ষেপ</h1>
+            <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Unit Overview & Financial Summary</h1>
             <p className="text-xs sm:text-sm text-[#A3B8B0] mt-1 max-w-2xl">
-              দৈনন্দিন বিক্রয়, নগদ আদায়, গ্রাহকদের বকেয়া ও ইনভেন্টরির রিয়েলটাইম ব্যালেন্স শীট।
+              Real-time balance sheet for daily sales, cash collections, customer dues, and inventory.
             </p>
           </div>
 
@@ -84,7 +84,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               className="px-4 py-2.5 rounded-xl bg-[#22A06B] hover:bg-[#1C885A] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
               <Plus className="w-4 h-4" />
-              <span>+ নতুন সেল ও বকেয়া</span>
+              <span>+ New Sale & Due</span>
             </button>
             <button
               id="overview-add-product-btn"
@@ -92,7 +92,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               className="px-4 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#135E54] text-white text-xs font-bold border border-[#22A06B]/30 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
               <Package className="w-4 h-4" />
-              <span>+ নতুন প্রোডাক্ট</span>
+              <span>+ New Product</span>
             </button>
           </div>
         </div>
@@ -103,7 +103,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
         {/* Total Sales */}
         <div className="bg-white rounded-xl p-4 sm:p-5 border border-[#E5EAE8] shadow-xs hover:border-[#0E5A4F] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">মোট বিক্রয় (Total Sales)</span>
+            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">Total Sales</span>
             <div className="w-8 h-8 rounded-lg bg-[#E6F4ED] text-[#0E5A4F] flex items-center justify-center">
               <TrendingUp className="w-4 h-4" />
             </div>
@@ -114,7 +114,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
             </h3>
             <span className="text-xs text-[#22A06B] font-semibold flex items-center gap-1 mt-1">
               <ArrowUpRight className="w-3.5 h-3.5" />
-              <span>{records.length} টি বিক্রয় এন্ট্রি</span>
+              <span>{records.length} Sales Entries</span>
             </span>
           </div>
         </div>
@@ -122,7 +122,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
         {/* Total Collections */}
         <div className="bg-white rounded-xl p-4 sm:p-5 border border-[#E5EAE8] shadow-xs hover:border-[#22A06B] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">নগদ আদায় (Cash Collection)</span>
+            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">Cash Collection</span>
             <div className="w-8 h-8 rounded-lg bg-[#E6F4ED] text-[#22A06B] flex items-center justify-center">
               <CreditCard className="w-4 h-4" />
             </div>
@@ -132,7 +132,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               ৳ {totalCollections.toLocaleString()}
             </h3>
             <span className="text-xs text-[#71807B] font-medium mt-1 block">
-              আদায় অনুপাত: <strong className="text-[#18211F]">{collectionRatio}%</strong>
+              Collection Rate: <strong className="text-[#18211F]">{collectionRatio}%</strong>
             </span>
           </div>
         </div>
@@ -140,7 +140,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
         {/* Total Running Due */}
         <div className="bg-white rounded-xl p-4 sm:p-5 border border-[#E5EAE8] shadow-xs hover:border-red-300 transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">বর্তমান অবশিষ্ট বকেয়া (Running Due)</span>
+            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">Running Due</span>
             <div className="w-8 h-8 rounded-lg bg-red-50 text-[#D9534F] flex items-center justify-center">
               <Coins className="w-4 h-4" />
             </div>
@@ -150,7 +150,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               ৳ {totalRunningDue.toLocaleString()}
             </h3>
             <span className="text-xs text-[#D9534F] font-semibold mt-1 block">
-              {overdueRecords.length > 0 ? `${overdueRecords.length} টি মেয়াদোত্তীর্ণ পার্টি` : 'কোনো মেয়াদোত্তীর্ণ বকেয়া নেই'}
+              {overdueRecords.length > 0 ? `${overdueRecords.length} Overdue Accounts` : 'No overdue accounts'}
             </span>
           </div>
         </div>
@@ -158,7 +158,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
         {/* Total Sacrifice / Concession */}
         <div className="bg-white rounded-xl p-4 sm:p-5 border border-[#E5EAE8] shadow-xs hover:border-[#D9A441] transition-all">
           <div className="flex items-center justify-between">
-            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">মোট ছাড় (Sacrifice / Discount)</span>
+            <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">Sacrifice / Discount</span>
             <div className="w-8 h-8 rounded-lg bg-[#FEF6E7] text-[#D9A441] flex items-center justify-center">
               <DollarSign className="w-4 h-4" />
             </div>
@@ -168,7 +168,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               ৳ {totalSacrifice.toLocaleString()}
             </h3>
             <span className="text-xs text-[#71807B] font-medium mt-1 block">
-              ইনভেন্টরি আইটেম: <strong className="text-[#18211F]">{products.length} টি</strong>
+              Catalog Items: <strong className="text-[#18211F]">{products.length} Products</strong>
             </span>
           </div>
         </div>
@@ -181,10 +181,10 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
           <div>
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-[#18211F] uppercase tracking-wider">
-                আদায় ও বকেয়া অনুপাত
+                Collection vs Due Ratio
               </h3>
               <span className="text-xs font-bold px-2 py-0.5 rounded bg-[#E6F4ED] text-[#22A06B]">
-                {collectionRatio}% আদায়
+                {collectionRatio}% Collected
               </span>
             </div>
 
@@ -206,7 +206,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               <div className="flex items-center justify-between p-2 rounded-lg bg-[#F6F8F7]">
                 <span className="text-[#71807B] flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#22A06B]" />
-                  মোট আদায় (Paid Cash):
+                  Total Cash Collected:
                 </span>
                 <span className="font-bold text-[#22A06B] font-mono">৳ {totalCollections.toLocaleString()}</span>
               </div>
@@ -214,7 +214,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               <div className="flex items-center justify-between p-2 rounded-lg bg-[#F6F8F7]">
                 <span className="text-[#71807B] flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#D9534F]" />
-                  মোট অবশিষ্ট বকেয়া (Running Due):
+                  Total Running Due:
                 </span>
                 <span className="font-bold text-[#D9534F] font-mono">৳ {totalRunningDue.toLocaleString()}</span>
               </div>
@@ -222,7 +222,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               <div className="flex items-center justify-between p-2 rounded-lg bg-[#F6F8F7]">
                 <span className="text-[#71807B] flex items-center gap-1.5">
                   <span className="w-2.5 h-2.5 rounded-full bg-[#D9A441]" />
-                  পূর্বের বকেয়া (Ex-Due):
+                  Previous Due (Ex-Due):
                 </span>
                 <span className="font-bold text-[#18211F] font-mono">৳ {totalExDue.toLocaleString()}</span>
               </div>
@@ -233,7 +233,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
             onClick={onNavigateToSalesDue}
             className="w-full mt-4 py-2 px-3 rounded-lg border border-[#0E5A4F] text-xs font-bold text-[#0E5A4F] hover:bg-[#0E5A4F] hover:text-white transition-all flex items-center justify-center gap-1 cursor-pointer"
           >
-            <span>সম্পূর্ণ সেলস ও বকেয়া লেজার দেখুন</span>
+            <span>View Full Sales & Due Ledger</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
         </div>
@@ -244,15 +244,15 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
             <div className="flex items-center justify-between mb-3">
               <div>
                 <h3 className="text-sm font-bold text-[#18211F] uppercase tracking-wider">
-                  প্রোডাক্ট তালিকা ও রেট চার্ট
+                  Product Catalog & Price Chart
                 </h3>
-                <span className="text-xs text-[#71807B]">{products.length} টি নিবন্ধিত পণ্য</span>
+                <span className="text-xs text-[#71807B]">{products.length} Registered Products</span>
               </div>
               <button
                 onClick={onNavigateToProducts}
                 className="text-xs text-[#0E5A4F] font-bold hover:underline flex items-center gap-0.5 cursor-pointer"
               >
-                <span>সব প্রোডাক্ট দেখুন</span>
+                <span>View All Products</span>
                 <ArrowUpRight className="w-3.5 h-3.5" />
               </button>
             </div>
@@ -275,7 +275,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
                       ৳ {p.unitPrice.toLocaleString()}
                     </span>
                     {p.stock !== undefined && (
-                      <span className="text-[10px] text-[#22A06B] font-semibold block">স্টক: {p.stock}</span>
+                      <span className="text-[10px] text-[#22A06B] font-semibold block">Stock: {p.stock}</span>
                     )}
                   </div>
                 </div>
@@ -284,12 +284,12 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
           </div>
 
           <div className="mt-4 pt-3 border-t border-[#E5EAE8] flex items-center justify-between text-xs text-[#71807B]">
-            <span>সেলস এন্ট্রির সময় সরাসরি এই প্রোডাক্টগুলো সার্চ ও সিলেক্ট করা যায়।</span>
+            <span>Products can be searched and selected during sale entries.</span>
             <button
               onClick={onOpenAddProductModal}
               className="text-[#0E5A4F] font-bold hover:underline cursor-pointer"
             >
-              + নতুন প্রোডাক্ট যুক্ত করুন
+              + Add New Product
             </button>
           </div>
         </div>
@@ -299,26 +299,26 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
       <div className="bg-white rounded-2xl border border-[#E5EAE8] shadow-xs overflow-hidden">
         <div className="p-4 sm:p-5 border-b border-[#E5EAE8] flex items-center justify-between">
           <div>
-            <h3 className="text-sm sm:text-base font-bold text-[#18211F]">সাম্প্রতিক সেলস ও বকেয়া লেনদেন</h3>
-            <p className="text-xs text-[#71807B] mt-0.5">সর্বশেষ ৫টি কাস্টমার এন্ট্রি ও বর্তমান অবস্থা</p>
+            <h3 className="text-sm sm:text-base font-bold text-[#18211F]">Recent Sales & Due Transactions</h3>
+            <p className="text-xs text-[#71807B] mt-0.5">Latest customer entries and running statuses</p>
           </div>
           <button
             onClick={onNavigateToSalesDue}
             className="px-3 py-1.5 rounded-lg bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-semibold flex items-center gap-1 transition-colors cursor-pointer"
           >
-            <span>সব এন্ট্রি ({records.length})</span>
+            <span>All Entries ({records.length})</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
           </button>
         </div>
 
         {recentRecords.length === 0 ? (
           <div className="p-8 text-center text-xs text-[#71807B]">
-            এখনো কোনো সেলস ও বকেয়া এন্ট্রি যোগ করা হয়নি।{' '}
+            No sales or due entries recorded yet.{' '}
             <button
               onClick={onOpenAddSaleModal}
               className="text-[#0E5A4F] font-bold underline ml-1 cursor-pointer"
             >
-              প্রথম এন্ট্রি তৈরি করুন
+              Create first entry
             </button>
           </div>
         ) : (
@@ -326,13 +326,13 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F8FAFA] border-b border-[#E5EAE8] text-[11px] uppercase font-bold text-[#556963] tracking-wider">
                 <tr>
-                  <th className="py-3.5 px-4">তারিখ ও ভাউচার</th>
-                  <th className="py-3.5 px-4">কাস্টমার ও এলাকা</th>
-                  <th className="py-3.5 px-4">পণ্য ও পরিমাণ</th>
-                  <th className="py-3.5 px-4 text-right">মোট মূল্য</th>
-                  <th className="py-3.5 px-4 text-right">নগদ জমা</th>
-                  <th className="py-3.5 px-4 text-right">অবশিষ্ট বকেয়া</th>
-                  <th className="py-3.5 px-4 text-center">স্ট্যাটাস</th>
+                  <th className="py-3.5 px-4">Date & Voucher</th>
+                  <th className="py-3.5 px-4">Customer & Area</th>
+                  <th className="py-3.5 px-4">Product & Quantity</th>
+                  <th className="py-3.5 px-4 text-right">Total Amount</th>
+                  <th className="py-3.5 px-4 text-right">Paid Cash</th>
+                  <th className="py-3.5 px-4 text-right">Running Due</th>
+                  <th className="py-3.5 px-4 text-center">Status</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#EBF0EE]">
@@ -346,7 +346,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
                     </td>
                     <td className="py-3.5 px-4 align-middle">
                       <span className="font-bold text-[#18211F] text-xs block">{r.customerName}</span>
-                      <span className="text-[11px] text-[#71807B] mt-0.5 block">{r.customerOf || 'সাধারণ কাস্টমার'}</span>
+                      <span className="text-[11px] text-[#71807B] mt-0.5 block">{r.customerOf || 'General Customer'}</span>
                     </td>
                     <td className="py-3.5 px-4 align-middle">
                       <span className="font-semibold text-[#2C3E3A] text-xs block">{r.productName}</span>
@@ -379,7 +379,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
                             : 'bg-amber-50 text-[#B45309] border border-amber-200'
                         }`}
                       >
-                        {r.status === 'Full Paid' ? 'পরিশোধিত' : r.status === 'Overdue' ? 'মেয়াদোত্তীর্ণ' : 'বকেয়া আছে'}
+                        {r.status === 'Full Paid' ? 'Full Paid' : r.status === 'Overdue' ? 'Overdue' : 'Partial Due'}
                       </span>
                     </td>
                   </tr>

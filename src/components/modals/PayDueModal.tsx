@@ -49,7 +49,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
   const [paymentAmount, setPaymentAmount] = useState<string>('');
   const [paymentMethod, setPaymentMethod] = useState<string>('Cash');
   const [paymentDate, setPaymentDate] = useState<string>(() => new Date().toISOString().split('T')[0]);
-  const [notes, setNotes] = useState<string>('বকেয়া আদায় / আংশিক পরিশোধ');
+  const [notes, setNotes] = useState<string>('Due collection / partial payment');
   const [error, setError] = useState<string | null>(null);
 
   // Initialize payment amount with current due or empty
@@ -75,12 +75,12 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
     setError(null);
 
     if (isNaN(numAmount) || numAmount <= 0) {
-      setError('পরিশোধের পরিমাণ সঠিকভাবে লিখুন (Please enter a valid amount).');
+      setError('Please enter a valid payment amount.');
       return;
     }
 
     if (numAmount > currentDue) {
-      setError(`পরিশোধের পরিমাণ বকেয়া টাকার (৳${currentDue.toLocaleString()}) চেয়ে বেশি হতে পারে না।`);
+      setError(`Payment amount cannot exceed total outstanding due (৳${currentDue.toLocaleString()}).`);
       return;
     }
 
@@ -108,10 +108,10 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
             </div>
             <div>
               <span className="text-[10px] font-bold text-[#22A06B] uppercase tracking-wider block">
-                PAY NOW · বকেয়া আদায় / টাকা জমা
+                PAY NOW · SETTLE OUTSTANDING DUE
               </span>
               <h3 className="text-base font-bold text-white">
-                {record ? `মেমো বকেয়া আদায় (${record.invoiceNo})` : 'কাস্টমার বকেয়া খতিয়ান আদায়'}
+                {record ? `Invoice Due Payment (${record.invoiceNo})` : 'Customer Ledger Due Settlement'}
               </h3>
             </div>
           </div>
@@ -138,7 +138,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
               </div>
             </div>
             <div className="text-right">
-              <span className="text-[10px] uppercase font-bold text-[#71807B] block">রেফারেন্স</span>
+              <span className="text-[10px] uppercase font-bold text-[#71807B] block">Reference</span>
               <span className="text-xs font-semibold text-[#0E5A4F] bg-white border border-[#E5EAE8] px-2 py-0.5 rounded">
                 {reference}
               </span>
@@ -148,27 +148,27 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
           {/* Current Due vs Remaining Due live banner */}
           <div className="grid grid-cols-3 gap-2 bg-white p-3 rounded-xl border border-[#E5EAE8]">
             <div>
-              <span className="text-[10px] font-semibold text-[#71807B] uppercase block">বর্তমান বকেয়া</span>
+              <span className="text-[10px] font-semibold text-[#71807B] uppercase block">Current Due</span>
               <span className="text-sm sm:text-base font-bold font-mono text-[#D9534F]">
                 ৳ {currentDue.toLocaleString()}
               </span>
             </div>
 
             <div className="text-center border-x border-[#E5EAE8] px-1">
-              <span className="text-[10px] font-semibold text-[#71807B] uppercase block">এখন জমা দিচ্ছেন</span>
+              <span className="text-[10px] font-semibold text-[#71807B] uppercase block">Paying Now</span>
               <span className="text-sm sm:text-base font-bold font-mono text-[#22A06B]">
                 ৳ {numAmount.toLocaleString()}
               </span>
             </div>
 
             <div className="text-right">
-              <span className="text-[10px] font-semibold text-[#71807B] uppercase block">অবশিষ্ট ডিউ</span>
+              <span className="text-[10px] font-semibold text-[#71807B] uppercase block">Remaining Due</span>
               <span
                 className={`text-sm sm:text-base font-bold font-mono ${
                   remainingDue === 0 ? 'text-[#22A06B]' : 'text-[#18211F]'
                 }`}
               >
-                {remainingDue === 0 ? '৳ 0 (ক্লিয়ার)' : `৳ ${remainingDue.toLocaleString()}`}
+                {remainingDue === 0 ? '৳ 0 (Clear)' : `৳ ${remainingDue.toLocaleString()}`}
               </span>
             </div>
           </div>
@@ -186,7 +186,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
           {/* Quick Pay Buttons */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] mb-1.5">
-              জমার পরিমাণ (Payment Amount, ৳) <span className="text-red-500">*</span>
+              Payment Amount (৳) <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <span className="absolute left-3.5 top-2.5 font-bold text-[#0E5A4F] text-sm">৳</span>
@@ -199,7 +199,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
                 required
                 value={paymentAmount}
                 onChange={(e) => setPaymentAmount(e.target.value)}
-                placeholder="টাকার পরিমাণ লিখুন"
+                placeholder="Enter amount"
                 className="w-full pl-8 pr-4 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-base font-bold font-mono text-[#18211F] focus:border-[#0E5A4F] focus:ring-2 focus:ring-[#0E5A4F]/10 focus:outline-none"
                 autoFocus
               />
@@ -212,7 +212,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
                 onClick={() => handleQuickAmount(currentDue)}
                 className="px-2.5 py-1 rounded-lg bg-[#E6F4ED] hover:bg-[#22A06B] hover:text-white text-[#0E5A4F] text-[11px] font-bold transition-colors cursor-pointer"
               >
-                সম্পূর্ণ বকেয়া (৳{currentDue.toLocaleString()})
+                Full Due (৳{currentDue.toLocaleString()})
               </button>
               {currentDue > 10000 && (
                 <button
@@ -220,7 +220,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
                   onClick={() => handleQuickAmount(Math.round(currentDue / 2))}
                   className="px-2.5 py-1 rounded-lg bg-[#F6F8F7] hover:bg-[#E5EAE8] text-[#18211F] text-[11px] font-medium transition-colors cursor-pointer"
                 >
-                  ৫০% (৳{Math.round(currentDue / 2).toLocaleString()})
+                  50% (৳{Math.round(currentDue / 2).toLocaleString()})
                 </button>
               )}
               {currentDue >= 20000 && (
@@ -229,7 +229,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
                   onClick={() => handleQuickAmount(20000)}
                   className="px-2.5 py-1 rounded-lg bg-[#F6F8F7] hover:bg-[#E5EAE8] text-[#18211F] text-[11px] font-medium transition-colors cursor-pointer"
                 >
-                  ৳ ২০,০০০
+                  ৳ 20,000
                 </button>
               )}
               {currentDue >= 10000 && (
@@ -238,7 +238,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
                   onClick={() => handleQuickAmount(10000)}
                   className="px-2.5 py-1 rounded-lg bg-[#F6F8F7] hover:bg-[#E5EAE8] text-[#18211F] text-[11px] font-medium transition-colors cursor-pointer"
                 >
-                  ৳ ১০,০০০
+                  ৳ 10,000
                 </button>
               )}
             </div>
@@ -248,23 +248,23 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold text-[#18211F] mb-1">
-                পেমেন্ট মাধ্যম (Payment Method) <span className="text-red-500">*</span>
+                Payment Method <span className="text-red-500">*</span>
               </label>
               <select
                 value={paymentMethod}
                 onChange={(e) => setPaymentMethod(e.target.value)}
                 className="w-full px-3 py-2 rounded-xl border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none cursor-pointer"
               >
-                <option value="Cash">নগদ ক্যাশ (Cash)</option>
-                <option value="Bank Transfer">ব্যাংক ট্রান্সফার (Bank Transfer)</option>
-                <option value="bKash / Nagad">বিকাশ / নগদ (Mobile Banking)</option>
-                <option value="Cheque">চেক (Cheque)</option>
+                <option value="Cash">Cash</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+                <option value="bKash / Nagad">Mobile Banking (bKash / Nagad)</option>
+                <option value="Cheque">Cheque</option>
               </select>
             </div>
 
             <div>
               <label className="block text-xs font-bold text-[#18211F] mb-1">
-                পেমেন্টের তারিখ (Payment Date) <span className="text-red-500">*</span>
+                Payment Date <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <input
@@ -281,13 +281,13 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
           {/* Transaction Note */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] mb-1">
-              লেনদেন বিবরণ বা নোট (Transaction Note)
+              Transaction Note
             </label>
             <input
               type="text"
               value={notes}
               onChange={(e) => setNotes(e.target.value)}
-              placeholder="e.g. ক্যাশ ভাউচার মারফত জমা / ব্যাংক রশিদ নং"
+              placeholder="e.g. Cash voucher ref / Bank slip number"
               className="w-full px-3 py-2 rounded-xl border border-[#E5EAE8] bg-white text-xs text-[#18211F] focus:border-[#0E5A4F] focus:outline-none"
             />
           </div>
@@ -299,8 +299,8 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
             <Check className="w-4 h-4 shrink-0 text-current" />
             <span>
               {isFullPayment
-                ? `সম্পূর্ণ ৳${currentDue.toLocaleString()} পরিশোধ সম্পন্ন হলে ${customerName}-এর বকেয়া শূন্য (৳0) হয়ে যাবে।`
-                : `৳${numAmount.toLocaleString()} জমা হলে ${customerName}-এর অবশিষ্ট বকেয়া থাকবে ৳${remainingDue.toLocaleString()}।`}
+                ? `Paying full ৳${currentDue.toLocaleString()} will clear all dues for ${customerName} (Due: ৳0).`
+                : `Paying ৳${numAmount.toLocaleString()} will leave a remaining balance of ৳${remainingDue.toLocaleString()} for ${customerName}.`}
             </span>
           </div>
 
@@ -311,7 +311,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
               onClick={onClose}
               className="px-4 py-2.5 border border-[#E5EAE8] rounded-xl text-xs font-bold text-[#71807B] hover:bg-[#F6F8F7] transition-colors cursor-pointer"
             >
-              বাতিল (Cancel)
+              Cancel
             </button>
             <button
               type="submit"
@@ -319,7 +319,7 @@ export const PayDueModal: React.FC<PayDueModalProps> = ({
               className="px-5 py-2.5 bg-[#22A06B] hover:bg-[#1C885A] text-white rounded-xl text-xs font-bold shadow-md transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
               <Check className="w-4 h-4" />
-              <span>জমা নিশ্চিত করুন (Confirm Pay Now)</span>
+              <span>Confirm Payment</span>
             </button>
           </div>
         </form>

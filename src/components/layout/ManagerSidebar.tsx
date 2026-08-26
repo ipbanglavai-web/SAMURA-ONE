@@ -150,7 +150,7 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
           {/* Command Group */}
           <div>
             <p className="text-[10px] text-[#71807B] uppercase font-bold tracking-wider mb-2 px-2">
-              Unit Navigation (স্লাইডার মেনু)
+              Unit Navigation
             </p>
             <ul className="space-y-1" role="list">
               {commandNavItems.map((item) => {

@@ -78,10 +78,10 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
             <span className="text-xs text-[#71807B]">{business.name}</span>
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-[#18211F] mt-1">
-            প্রোডাক্ট ক্যাটালগ ও মূল্য তালিকা (Unit Product List)
+            Product Catalog & Price List
           </h2>
           <p className="text-xs text-[#71807B] mt-0.5">
-            মোট <strong>{products.length}টি</strong> পণ্য ক্যাটালগে অন্তর্ভুক্ত রয়েছে। যেকোনো পণ্যের দর পরিবর্তন বা নতুন পণ্য যুক্ত করা সম্ভব।
+            Total <strong>{products.length} products</strong> listed in catalog. You can update unit prices or add new products.
           </p>
         </div>
 
@@ -91,7 +91,7 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
           className="px-4 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>+ নতুন প্রোডাক্ট যোগ করুন (Add Product)</span>
+          <span>+ Add Product</span>
         </button>
       </div>
 
@@ -134,15 +134,15 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="প্রোডাক্ট নাম, ইউনিট বা ক্যাটাগরি দিয়ে খুঁজুন..."
+            placeholder="Search by product name, unit or category..."
             className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-[#E5EAE8] bg-[#F6F8F7] focus:bg-white focus:border-[#0E5A4F] focus:outline-none"
           />
         </div>
 
         <div className="flex items-center gap-4 text-xs text-[#71807B] font-medium">
-          <span>প্রদর্শিত প্রোডাক্ট: <strong className="text-[#18211F]">{filteredProducts.length} টি</strong> (মোট {products.length} টির মধ্যে)</span>
+          <span>Showing Products: <strong className="text-[#18211F]">{filteredProducts.length}</strong> (Out of {products.length} total)</span>
           <span>•</span>
-          <span>ইউনিট: <strong className="text-[#0E5A4F]">{business.name}</strong></span>
+          <span>Business Unit: <strong className="text-[#0E5A4F]">{business.name}</strong></span>
         </div>
       </div>
 
@@ -151,12 +151,12 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
         {filteredProducts.length === 0 ? (
           <div className="p-12 text-center text-[#71807B] text-xs">
             <Package className="w-8 h-8 text-[#A3B8B0] mx-auto mb-2" />
-            <p>কোনো প্রোডাক্ট পাওয়া যায়নি।</p>
+            <p>No products found.</p>
             <button
               onClick={onOpenAddProductModal}
               className="mt-2 text-[#0E5A4F] font-bold underline cursor-pointer"
             >
-              + নতুন প্রোডাক্ট যুক্ত করুন
+              + Add New Product
             </button>
           </div>
         ) : (
@@ -165,12 +165,12 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
               <thead className="bg-[#0E5A4F] text-white text-[10px] uppercase font-bold tracking-wider">
                 <tr>
                   <th className="p-3">#</th>
-                  <th className="p-3">Product Name (পণ্য নাম)</th>
-                  <th className="p-3">Category (গ্রুপ)</th>
-                  <th className="p-3">Product Unit (পরিমাপক ইউনিট)</th>
-                  <th className="p-3 text-right">Unit/Price (প্রতি ইউনিট মূল্য)</th>
-                  <th className="p-3 text-center">Current Stock (স্টক)</th>
-                  <th className="p-3 text-center">অ্যাকশন</th>
+                  <th className="p-3">Product Name</th>
+                  <th className="p-3">Category</th>
+                  <th className="p-3">Unit</th>
+                  <th className="p-3 text-right">Unit Price</th>
+                  <th className="p-3 text-center">Stock</th>
+                  <th className="p-3 text-center">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5EAE8]">
@@ -219,7 +219,7 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
                         {p.stock !== undefined ? p.stock : '—'}
                       </span>
                       {p.stock !== undefined && (
-                        <span className="text-[10px] text-[#22A06B] block font-sans">ইন-স্টক</span>
+                        <span className="text-[10px] text-[#22A06B] block font-sans">In-Stock</span>
                       )}
                     </td>
 
@@ -228,14 +228,14 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
                         <button
                           onClick={() => handleStartEdit(p)}
                           className="p-1 rounded text-[#0E5A4F] hover:bg-[#E6F4ED] transition-colors cursor-pointer"
-                          title="মূল্য পরিবর্তন করুন"
+                          title="Update Price"
                         >
                           <Edit2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => setProductToDelete(p)}
                           className="p-1 rounded text-[#71807B] hover:text-[#D9534F] hover:bg-red-50 transition-colors cursor-pointer"
-                          title="প্রোডাক্ট মুছে ফেলুন"
+                          title="Delete Product"
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
@@ -253,12 +253,12 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
       {editingProduct && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 shadow-2xl border border-[#E5EAE8]">
-            <h3 className="text-sm font-bold text-[#18211F]">ইউনিট মূল্য হালনাগাদ (Update Price)</h3>
+            <h3 className="text-sm font-bold text-[#18211F]">Update Unit Price</h3>
             <p className="text-xs text-[#71807B] mt-0.5">{editingProduct.name} ({editingProduct.unit})</p>
 
             <div className="my-4">
               <label className="block text-xs font-bold text-[#18211F] mb-1">
-                নতুন দর (New Unit Price ৳)
+                New Unit Price (৳)
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center font-bold text-[#0E5A4F]">৳</span>
@@ -279,13 +279,13 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
                 onClick={() => setEditingProduct(null)}
                 className="px-3 py-1.5 rounded-lg border border-[#E5EAE8] text-xs font-semibold text-[#71807B] hover:bg-[#F6F8F7] cursor-pointer"
               >
-                বাতিল
+                Cancel
               </button>
               <button
                 onClick={handleSavePrice}
                 className="px-4 py-1.5 rounded-lg bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-xs cursor-pointer"
               >
-                সংরক্ষণ করুন
+                Save Changes
               </button>
             </div>
           </div>
@@ -299,16 +299,16 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
             <div className="w-12 h-12 rounded-full bg-red-100 text-[#D9534F] flex items-center justify-center mx-auto mb-3">
               <Trash2 className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-[#18211F]">প্রোডাক্ট ডিলিট নিশ্চিত করুন</h3>
+            <h3 className="text-base font-bold text-[#18211F]">Confirm Product Deletion</h3>
             <p className="text-xs text-[#71807B] mt-1">
-              আপনি কি <strong>{productToDelete.name}</strong> ক্যাটালগ থেকে মুছে ফেলতে চান?
+              Are you sure you want to delete <strong>{productToDelete.name}</strong> from the catalog?
             </p>
             <div className="mt-5 flex items-center justify-center gap-2.5">
               <button
                 onClick={() => setProductToDelete(null)}
                 className="px-4 py-2 rounded-lg border border-[#E5EAE8] text-xs font-bold text-[#71807B] hover:bg-[#F6F8F7] cursor-pointer"
               >
-                বাতিল
+                Cancel
               </button>
               <button
                 onClick={() => {
@@ -317,7 +317,7 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
                 }}
                 className="px-4 py-2 rounded-lg bg-[#D9534F] hover:bg-red-700 text-white text-xs font-bold shadow-xs cursor-pointer"
               >
-                হ্যাঁ, ডিলিট করুন
+                Yes, Delete
               </button>
             </div>
           </div>

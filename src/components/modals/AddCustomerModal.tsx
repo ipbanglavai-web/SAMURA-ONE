@@ -32,17 +32,17 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
     setError(null);
 
     if (!name.trim()) {
-      setError('কাস্টমার বা প্রতিষ্ঠানের নাম লিখুন (Customer Name is required).');
+      setError('Customer or Party Name is required.');
       return;
     }
 
     if (!phone.trim()) {
-      setError('মোবাইল নম্বর লিখুন (Phone number is required).');
+      setError('Phone number is required.');
       return;
     }
 
     if (!address.trim()) {
-      setError('কাস্টমারের ঠিকানা লিখুন (Address is required).');
+      setError('Customer address is required.');
       return;
     }
 
@@ -83,7 +83,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
               {businessName} · NEW CUSTOMER
             </span>
             <h3 className="text-base font-bold text-white mt-0.5">
-              নতুন কাস্টমার নিবন্ধন (Add New Customer)
+              Add New Customer
             </h3>
           </div>
           <button
@@ -105,7 +105,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
           {/* 1. Customer Name */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] mb-1">
-              কাস্টমার / প্রতিষ্ঠানের নাম (Customer Name) <span className="text-red-500">*</span>
+              Customer / Party Name <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <User className="w-4 h-4 text-[#71807B] absolute left-3 top-2.5" />
@@ -113,7 +113,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="যেমন: হাজী মকবুল ট্রেডার্স / বাবলু ফ্রুটস"
+                placeholder="e.g. Haji Mokbul Traders / Bablu Fruits"
                 className="w-full pl-9 pr-3 py-2 border border-[#E5EAE8] rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0E5A4F] text-[#18211F]"
                 required
               />
@@ -124,7 +124,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-bold text-[#18211F] mb-1">
-                মোবাইল নম্বর (Phone / Mobile) <span className="text-red-500">*</span>
+                Phone Number <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Phone className="w-4 h-4 text-[#71807B] absolute left-3 top-2.5" />
@@ -141,7 +141,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-[#18211F] mb-1">
-                রেফারেন্স / কার পার্টি (Reference)
+                Reference / Market Cluster
               </label>
               <div className="relative">
                 <Building className="w-4 h-4 text-[#71807B] absolute left-3 top-2.5" />
@@ -149,7 +149,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
                   type="text"
                   value={reference}
                   onChange={(e) => setReference(e.target.value)}
-                  placeholder="যেমন: কারওয়ান বাজার ক্লাস্টার"
+                  placeholder="e.g. Kawran Bazar Cluster"
                   className="w-full pl-9 pr-3 py-2 border border-[#E5EAE8] rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0E5A4F] text-[#18211F]"
                 />
               </div>
@@ -159,7 +159,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
           {/* 3. Address */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] mb-1">
-              ঠিকানা ও বাজার এলাকা (Address) <span className="text-red-500">*</span>
+              Address & Market Area <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <MapPin className="w-4 h-4 text-[#71807B] absolute left-3 top-2.5" />
@@ -167,7 +167,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
                 type="text"
                 value={address}
                 onChange={(e) => setAddress(e.target.value)}
-                placeholder="যেমন: বাদামতলী ঘাট-৪, সদরঘাট, ঢাকা"
+                placeholder="e.g. Badamtoli Ghat-4, Sadarghat, Dhaka"
                 className="w-full pl-9 pr-3 py-2 border border-[#E5EAE8] rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0E5A4F] text-[#18211F]"
                 required
               />
@@ -177,7 +177,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
           {/* 4. Opening Due */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] mb-1">
-              পূর্বের প্রারম্ভিক বকেয়া (Opening Due Amount, ৳)
+              Opening Due Balance (৳)
             </label>
             <div className="relative">
               <DollarSign className="w-4 h-4 text-[#71807B] absolute left-3 top-2.5" />
@@ -192,14 +192,14 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
               />
             </div>
             <p className="text-[10px] text-[#71807B] mt-0.5">
-              যদি কাস্টমারের পূর্বে কোনো বকেয়া থাকে তবে এখানে লিখুন, অন্যথায় ০ রাখুন।
+              If the customer has existing previous dues, enter amount here (otherwise leave 0).
             </p>
           </div>
 
           {/* 5. Notes */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] mb-1">
-              বিশেষ নোট / মন্তব্য (Optional Notes)
+              Optional Notes
             </label>
             <div className="relative">
               <FileText className="w-4 h-4 text-[#71807B] absolute left-3 top-2.5" />
@@ -207,7 +207,7 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
                 rows={2}
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
-                placeholder="ক্রেডিটের শর্ত বা বিশেষ নির্দেশনা..."
+                placeholder="Credit terms or special instructions..."
                 className="w-full pl-9 pr-3 py-2 border border-[#E5EAE8] rounded-xl text-xs focus:outline-none focus:ring-2 focus:ring-[#0E5A4F] text-[#18211F] resize-none"
               />
             </div>
@@ -220,13 +220,13 @@ export const AddCustomerModal: React.FC<AddCustomerModalProps> = ({
               onClick={onClose}
               className="px-4 py-2 border border-[#E5EAE8] rounded-xl text-xs font-semibold text-[#71807B] hover:bg-[#F6F8F7] transition-colors cursor-pointer"
             >
-              বাতিল (Cancel)
+              Cancel
             </button>
             <button
               type="submit"
               className="px-5 py-2 bg-[#0E5A4F] hover:bg-[#073F37] text-white rounded-xl text-xs font-bold shadow-sm transition-all cursor-pointer"
             >
-              সংরক্ষণ করুন (Save Customer)
+              Save Customer
             </button>
           </div>
         </form>

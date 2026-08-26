@@ -117,10 +117,10 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             <span className="text-xs text-[#71807B] font-medium">{business.name}</span>
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-[#18211F] mt-1">
-            গ্রাহক বিক্রয় ও বকেয়া খতিয়ান (Sales & Due Ledger)
+            Customer Sales & Due Ledger
           </h2>
           <p className="text-xs text-[#71807B] mt-0.5">
-            প্রতিটি বিক্রয় মেমো, পূর্বের বকেয়া, আদায় ও অবশিষ্ট পাওনা টাকার সুবিন্যস্ত বিবরণী।
+            Structured records of sales invoices, previous dues, collections, and remaining balances.
           </p>
         </div>
 
@@ -132,19 +132,19 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                 processedRecords,
                 business.name,
                 filterStatus === 'all'
-                  ? 'সব রেকর্ড'
+                  ? 'All Records'
                   : filterStatus === 'has_due'
-                  ? 'বকেয়া রেকর্ডসমূহ'
+                  ? 'Due Records'
                   : filterStatus === 'Full Paid'
-                  ? 'পরিশোধিত রেকর্ডসমূহ'
-                  : 'ওভারডিউ রেকর্ডসমূহ'
+                  ? 'Paid Records'
+                  : 'Overdue Records'
               )
             }
             className="px-3.5 py-2.5 rounded-xl bg-white border border-[#E5EAE8] text-[#18211F] hover:bg-[#F6F8F7] hover:border-[#0E5A4F]/40 text-xs font-bold shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
-            title="সম্পূর্ণ ফিল্টারকৃত লেজার প্রিন্ট করুন"
+            title="Print Filtered Ledger"
           >
             <Printer className="w-4 h-4 text-[#0E5A4F]" />
-            <span>প্রিন্ট লেজার ({processedRecords.length})</span>
+            <span>Print Ledger ({processedRecords.length})</span>
           </button>
 
           <button
@@ -153,7 +153,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             className="px-4 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
           >
             <Plus className="w-4 h-4" />
-            <span>+ নতুন বিক্রয় ও বকেয়া এন্ট্রি</span>
+            <span>+ New Sale & Due Entry</span>
           </button>
         </div>
       </div>
@@ -163,7 +163,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
         {/* Total Sales */}
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs hover:border-[#0E5A4F]/30 transition-all">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[11px] font-semibold text-[#71807B]">মোট বিক্রয় (Total Sales)</span>
+            <span className="text-[11px] font-semibold text-[#71807B]">Total Sales</span>
             <div className="w-7 h-7 rounded-lg bg-[#E6F4ED] text-[#0E5A4F] flex items-center justify-center">
               <ShoppingBag className="w-3.5 h-3.5" />
             </div>
@@ -172,9 +172,9 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             ৳ {totalSales.toLocaleString()}
           </div>
           <div className="text-[11px] text-[#71807B] mt-1 flex items-center justify-between">
-            <span>মোট চালান: {records.length} টি</span>
+            <span>Total Invoices: {records.length}</span>
             {totalSacrifice > 0 && (
-              <span className="text-[#D9A441] font-mono">ছাড়: ৳{totalSacrifice.toLocaleString()}</span>
+              <span className="text-[#D9A441] font-mono">Discount: ৳{totalSacrifice.toLocaleString()}</span>
             )}
           </div>
         </div>
@@ -182,7 +182,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
         {/* Total Collected / Paid */}
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs hover:border-[#22A06B]/30 transition-all">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[11px] font-semibold text-[#71807B]">নগদ আদায় (Collected)</span>
+            <span className="text-[11px] font-semibold text-[#71807B]">Cash Collected</span>
             <div className="w-7 h-7 rounded-lg bg-[#E6F4ED] text-[#22A06B] flex items-center justify-center">
               <CheckCircle2 className="w-3.5 h-3.5" />
             </div>
@@ -191,14 +191,14 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             ৳ {totalPaid.toLocaleString()}
           </div>
           <div className="text-[11px] text-[#22A06B] mt-1 font-medium">
-            পরিশোধিত চালান: {paidRecordsCount} টি
+            Paid Invoices: {paidRecordsCount}
           </div>
         </div>
 
         {/* Total Running Due */}
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs hover:border-[#D9534F]/30 transition-all">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[11px] font-semibold text-[#71807B]">অবশিষ্ট বকেয়া (Running Due)</span>
+            <span className="text-[11px] font-semibold text-[#71807B]">Running Due</span>
             <div className="w-7 h-7 rounded-lg bg-red-50 text-[#D9534F] flex items-center justify-center">
               <DollarSign className="w-3.5 h-3.5" />
             </div>
@@ -207,23 +207,23 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             ৳ {totalRunningDue.toLocaleString()}
           </div>
           <div className="text-[11px] text-[#D9534F] mt-1 font-medium">
-            {dueRecordsCount} টি চালানে বকেয়া রয়েছে
+            {dueRecordsCount} invoices with due balance
           </div>
         </div>
 
         {/* Overdue Alert */}
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs hover:border-amber-300 transition-all">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[11px] font-semibold text-[#71807B]">মেয়াদোত্তীর্ণ (Overdue Due)</span>
+            <span className="text-[11px] font-semibold text-[#71807B]">Overdue Invoices</span>
             <div className="w-7 h-7 rounded-lg bg-amber-50 text-amber-600 flex items-center justify-center">
               <Clock className="w-3.5 h-3.5" />
             </div>
           </div>
           <div className="text-xl sm:text-2xl font-bold text-amber-600 font-mono mt-2">
-            {overdueCount} <span className="text-xs font-sans font-normal text-[#71807B]">টি চালান</span>
+            {overdueCount} <span className="text-xs font-sans font-normal text-[#71807B]">Invoices</span>
           </div>
           <div className="text-[11px] text-[#71807B] mt-1">
-            তাগাদা বা কালেকশন প্রয়োজন
+            Requires follow-up / collection
           </div>
         </div>
       </div>
@@ -239,7 +239,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="কাস্টমার নাম, ফোন, মার্কেট, পণ্য বা মেমো নং খুঁজুন..."
+              placeholder="Search customer name, phone, market, product or invoice #..."
               className="w-full pl-10 pr-4 py-2.5 text-xs rounded-xl border border-[#E5EAE8] bg-[#F6F8F7] focus:bg-white focus:border-[#0E5A4F] focus:outline-none transition-all placeholder:text-[#71807B]/70"
             />
             {searchTerm && (
@@ -255,7 +255,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
           {/* Quick Filters */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 lg:pb-0">
             <span className="text-xs font-semibold text-[#71807B] shrink-0 mr-1 hidden sm:inline">
-              ফিল্টার:
+              Filter:
             </span>
             <button
               onClick={() => setFilterStatus('all')}
@@ -265,7 +265,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                   : 'bg-[#F6F8F7] text-[#71807B] hover:bg-[#E5EAE8]'
               }`}
             >
-              সব ({records.length})
+              All ({records.length})
             </button>
             <button
               onClick={() => setFilterStatus('has_due')}
@@ -275,7 +275,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                   : 'bg-[#F6F8F7] text-[#71807B] hover:bg-[#E5EAE8]'
               }`}
             >
-              বকেয়া আছে ({dueRecordsCount})
+              Has Due ({dueRecordsCount})
             </button>
             <button
               onClick={() => setFilterStatus('Full Paid')}
@@ -285,7 +285,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                   : 'bg-[#F6F8F7] text-[#71807B] hover:bg-[#E5EAE8]'
               }`}
             >
-              পরিশোধিত ({paidRecordsCount})
+              Paid ({paidRecordsCount})
             </button>
             {overdueCount > 0 && (
               <button
@@ -296,7 +296,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                     : 'bg-[#F6F8F7] text-amber-700 hover:bg-amber-100'
                 }`}
               >
-                ওভারডিউ ({overdueCount})
+                Overdue ({overdueCount})
               </button>
             )}
           </div>
@@ -311,10 +311,10 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                 onChange={(e) => setSortBy(e.target.value as any)}
                 className="bg-transparent text-xs font-medium text-[#18211F] focus:outline-none cursor-pointer"
               >
-                <option value="date_desc">নতুন তারিখ আগে</option>
-                <option value="due_desc">বকেয়া বেশি থেকে কম</option>
-                <option value="amount_desc">বিক্রয় মূল্য বেশি</option>
-                <option value="name_asc">কাস্টমার নাম (A-Z)</option>
+                <option value="date_desc">Newest Date First</option>
+                <option value="due_desc">Highest Due First</option>
+                <option value="amount_desc">Highest Sale Amount</option>
+                <option value="name_asc">Customer Name (A-Z)</option>
               </select>
             </div>
 
@@ -322,7 +322,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             <div className="flex items-center bg-[#F6F8F7] p-0.5 rounded-lg border border-[#E5EAE8]">
               <button
                 onClick={() => setViewMode('table')}
-                title="টেবিল ভিউ"
+                title="Table View"
                 className={`p-1.5 rounded-md transition-all cursor-pointer ${
                   viewMode === 'table'
                     ? 'bg-white text-[#0E5A4F] shadow-2xs font-bold'
@@ -333,7 +333,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
               </button>
               <button
                 onClick={() => setViewMode('cards')}
-                title="কার্ড ভিউ"
+                title="Card View"
                 className={`p-1.5 rounded-md transition-all cursor-pointer ${
                   viewMode === 'cards'
                     ? 'bg-white text-[#0E5A4F] shadow-2xs font-bold'
@@ -353,16 +353,16 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
           <div className="w-12 h-12 rounded-full bg-[#F6F8F7] text-[#71807B] flex items-center justify-center mx-auto mb-3">
             <Search className="w-6 h-6 text-[#71807B]/60" />
           </div>
-          <h3 className="text-base font-bold text-[#18211F]">কোনো বিক্রয় বা বকেয়া রেকর্ড পাওয়া যায়নি</h3>
+          <h3 className="text-base font-bold text-[#18211F]">No sales or due records found</h3>
           <p className="text-xs text-[#71807B] mt-1 max-w-sm mx-auto">
-            সার্চ ফিল্টার পরিবর্তন করুন অথবা নতুন বিক্রয় ও বকেয়া এন্ট্রি যোগ করুন।
+            Change your search filter or add a new sales and due entry.
           </p>
           <button
             onClick={onOpenAddSaleModal}
             className="mt-4 px-4 py-2 bg-[#0E5A4F] hover:bg-[#073F37] text-white rounded-xl text-xs font-bold shadow-xs cursor-pointer inline-flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4" />
-            <span>নতুন এন্ট্রি যোগ করুন</span>
+            <span>Add New Entry</span>
           </button>
         </div>
       ) : viewMode === 'table' ? (
@@ -372,14 +372,14 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             <table className="w-full text-left text-xs border-collapse">
               <thead>
                 <tr className="bg-[#0E5A4F] text-white font-bold text-xs border-b border-[#073F37] uppercase tracking-wider">
-                  <th className="py-3.5 px-4 font-bold text-white">মেমো ও তারিখ</th>
-                  <th className="py-3.5 px-4 font-bold text-white">কাস্টমার ও এলাকা</th>
-                  <th className="py-3.5 px-4 font-bold text-white">পণ্য ও পরিমাণ</th>
-                  <th className="py-3.5 px-4 text-right font-bold text-white">বিক্রয় ও হিসাব</th>
-                  <th className="py-3.5 px-4 text-right font-bold text-white">নগদ আদায়</th>
-                  <th className="py-3.5 px-4 text-right font-bold text-white">অবশিষ্ট বকেয়া</th>
-                  <th className="py-3.5 px-4 text-center font-bold text-white">পরিশোধের তারিখ ও স্ট্যাটাস</th>
-                  <th className="py-3.5 px-4 text-center min-w-[130px] font-bold text-white">অ্যাকশন</th>
+                  <th className="py-3.5 px-4 font-bold text-white">Invoice & Date</th>
+                  <th className="py-3.5 px-4 font-bold text-white">Customer & Area</th>
+                  <th className="py-3.5 px-4 font-bold text-white">Product & Qty</th>
+                  <th className="py-3.5 px-4 text-right font-bold text-white">Sale Breakdown</th>
+                  <th className="py-3.5 px-4 text-right font-bold text-white">Cash Paid</th>
+                  <th className="py-3.5 px-4 text-right font-bold text-white">Running Due</th>
+                  <th className="py-3.5 px-4 text-center font-bold text-white">Due Date & Status</th>
+                  <th className="py-3.5 px-4 text-center min-w-[130px] font-bold text-white">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5EAE8]">
@@ -399,7 +399,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                             <button
                               onClick={() => toggleExpandRow(r.id)}
                               className="text-[#71807B] hover:text-[#0E5A4F] p-0.5 rounded cursor-pointer transition-colors"
-                              title="বিস্তারিত দেখতে ক্লিক করুন"
+                              title="Click to view details"
                             >
                               {isExpanded ? (
                                 <ChevronUp className="w-3.5 h-3.5 text-[#0E5A4F]" />
@@ -426,7 +426,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                           </div>
                           <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                             <span className="text-[10px] bg-[#0E5A4F]/10 text-[#0E5A4F] px-1.5 py-0.2 rounded font-bold truncate max-w-[120px]">
-                              {r.customerOf || 'সাধারণ'}
+                              {r.customerOf || 'General'}
                             </span>
                             <span className="text-[11px] text-[#71807B] truncate max-w-[130px]" title={r.address}>
                               {r.address}
@@ -453,10 +453,10 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                           {(r.exDue > 0 || r.sacrifice > 0) && (
                             <div className="text-[10px] text-[#71807B] mt-0.5 space-x-1">
                               {r.exDue > 0 && (
-                                <span>পূর্বের: +৳{r.exDue.toLocaleString()}</span>
+                                <span>Prev: +৳{r.exDue.toLocaleString()}</span>
                               )}
                               {r.sacrifice > 0 && (
-                                <span className="text-amber-600">ছাড়: -৳{r.sacrifice.toLocaleString()}</span>
+                                <span className="text-amber-600">Disc: -৳{r.sacrifice.toLocaleString()}</span>
                               )}
                             </div>
                           )}
@@ -468,7 +468,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                             ৳ {r.paid.toLocaleString()}
                           </div>
                           <div className="text-[10px] text-[#71807B] mt-0.5">
-                            {r.paid >= r.payableDue ? 'পূর্ণ পরিশোধ' : r.paid > 0 ? 'আংশিক জমা' : '০ জমা'}
+                            {r.paid >= r.payableDue ? 'Full Paid' : r.paid > 0 ? 'Partial' : '৳0 Paid'}
                           </div>
                         </td>
 
@@ -481,7 +481,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                           ) : (
                             <span className="inline-flex items-center gap-1 text-[#168051] font-bold text-[11px] bg-[#E6F4ED] px-2 py-0.5 rounded-full">
                               <CheckCircle2 className="w-3 h-3" />
-                              <span>পরিশোধিত</span>
+                              <span>Paid</span>
                             </span>
                           )}
                         </td>
@@ -498,7 +498,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                                   : 'bg-amber-50 text-[#B45309] border border-amber-200'
                               }`}
                             >
-                              {r.runningDue === 0 ? 'পরিশোধিত' : isOverdue ? 'মেয়াদোত্তীর্ণ' : 'বকেয়া আছে'}
+                              {r.runningDue === 0 ? 'Full Paid' : isOverdue ? 'Overdue' : 'Partial Due'}
                             </span>
                             {r.duePaymentDate && r.runningDue > 0 && (
                               <span className="text-[10px] text-[#71807B] flex items-center gap-1 font-mono mt-0.5">
@@ -517,7 +517,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                               <button
                                 onClick={() => onOpenPayModal(r)}
                                 className="px-2.5 py-1 rounded-lg bg-[#22A06B] hover:bg-[#1a8356] text-white text-[11px] font-bold flex items-center gap-1 shadow-2xs transition-all cursor-pointer active:scale-95"
-                                title="বকেয়া টাকা জমা নিন"
+                                title="Collect payment"
                               >
                                 <DollarSign className="w-3 h-3" />
                                 <span>Pay Now</span>
@@ -528,7 +528,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                             <button
                               onClick={() => onViewVoucher(r)}
                               className="p-1.5 rounded-lg text-[#0E5A4F] hover:bg-[#E6F4ED] transition-colors cursor-pointer"
-                              title="মেমো ভাউচার দেখুন ও প্রিন্ট করুন"
+                              title="View & Print Voucher"
                             >
                               <Printer className="w-3.5 h-3.5" />
                             </button>
@@ -537,7 +537,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                             <button
                               onClick={() => setRecordToDelete(r)}
                               className="p-1.5 rounded-lg text-[#71807B] hover:text-[#D9534F] hover:bg-red-50 transition-colors cursor-pointer"
-                              title="রেকর্ড ডিলিট করুন"
+                              title="Delete Record"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -553,39 +553,39 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                               <div className="flex items-center justify-between border-b border-[#E5EAE8] pb-2">
                                 <span className="font-bold text-[#0E5A4F] flex items-center gap-1.5">
                                   <Info className="w-3.5 h-3.5" />
-                                  <span>হিসাব বিবরণী ও চালানের পূর্ণাঙ্গ ব্রেকডাউন ({r.invoiceNo})</span>
+                                  <span>Invoice Breakdown & Computation ({r.invoiceNo})</span>
                                 </span>
                                 <span className="text-[11px] text-[#71807B]">
-                                  এন্ট্রি তারিখ: <strong>{r.date}</strong> · সম্ভাব্য পরিশোধ: <strong>{r.duePaymentDate || 'N/A'}</strong>
+                                  Date: <strong>{r.date}</strong> · Target Due Date: <strong>{r.duePaymentDate || 'N/A'}</strong>
                                 </span>
                               </div>
 
                               <div className="grid grid-cols-2 sm:grid-cols-5 gap-3 pt-1 text-center font-mono">
                                 <div className="p-2 bg-[#F6F8F7] rounded-lg">
-                                  <span className="text-[10px] text-[#71807B] block">১. বিক্রয় বিল</span>
+                                  <span className="text-[10px] text-[#71807B] block">1. Sale Bill</span>
                                   <span className="font-bold text-[#18211F]">৳ {r.amount.toLocaleString()}</span>
                                 </div>
                                 <div className="p-2 bg-[#F6F8F7] rounded-lg">
-                                  <span className="text-[10px] text-[#71807B] block">২. পূর্বের বকেয়া (Ex-Due)</span>
+                                  <span className="text-[10px] text-[#71807B] block">2. Prev Due (Ex-Due)</span>
                                   <span className="font-bold text-amber-700">৳ {r.exDue.toLocaleString()}</span>
                                 </div>
                                 <div className="p-2 bg-[#F6F8F7] rounded-lg">
-                                  <span className="text-[10px] text-[#71807B] block">৩. ছাড় (Sacrifice)</span>
+                                  <span className="text-[10px] text-[#71807B] block">3. Discount</span>
                                   <span className="font-bold text-[#D9A441]">- ৳ {r.sacrifice.toLocaleString()}</span>
                                 </div>
                                 <div className="p-2 bg-[#F6F8F7] rounded-lg">
-                                  <span className="text-[10px] text-[#71807B] block">৪. মোট পাওনা (Payable)</span>
+                                  <span className="text-[10px] text-[#71807B] block">4. Total Payable</span>
                                   <span className="font-bold text-[#0E5A4F]">৳ {r.payableDue.toLocaleString()}</span>
                                 </div>
                                 <div className="p-2 bg-red-50 border border-red-100 rounded-lg col-span-2 sm:col-span-1">
-                                  <span className="text-[10px] text-red-600 font-sans font-medium block">অবশিষ্ট বকেয়া</span>
+                                  <span className="text-[10px] text-red-600 font-sans font-medium block">Running Due</span>
                                   <span className="font-bold text-[#D9534F] text-sm">৳ {r.runningDue.toLocaleString()}</span>
                                 </div>
                               </div>
 
                               {r.notes && (
                                 <div className="pt-1.5 text-xs text-[#71807B] bg-[#F6F8F7] p-2 rounded-lg">
-                                  <span className="font-semibold text-[#18211F]">মন্তব্য / নোট:</span> {r.notes}
+                                  <span className="font-semibold text-[#18211F]">Notes / Remarks:</span> {r.notes}
                                 </div>
                               )}
                             </div>
@@ -602,11 +602,11 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
           {/* Table Footer */}
           <div className="p-4 bg-[#F6F8F7] border-t border-[#E5EAE8] flex flex-col sm:flex-row items-center justify-between text-xs text-[#71807B] gap-2">
             <div>
-              প্রদর্শিত হচ্ছে: <strong className="text-[#18211F]">{processedRecords.length}</strong> টি চালান (মোট {records.length} টির মধ্যে)
+              Showing: <strong className="text-[#18211F]">{processedRecords.length}</strong> Invoices (Out of {records.length} total)
             </div>
             <div className="flex items-center gap-4">
               <span>
-                মোট বকেয়া: <strong className="text-[#D9534F] font-mono text-sm">৳ {totalRunningDue.toLocaleString()}</strong>
+                Total Running Due: <strong className="text-[#D9534F] font-mono text-sm">৳ {totalRunningDue.toLocaleString()}</strong>
               </span>
             </div>
           </div>
@@ -684,15 +684,15 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                 {/* Financial Summary Grid */}
                 <div className="grid grid-cols-3 gap-2 bg-[#FAFCFA] p-2.5 rounded-xl border border-[#E5EAE8] text-center font-mono">
                   <div>
-                    <span className="text-[9px] uppercase text-[#71807B] block">মোট পাওনা</span>
+                    <span className="text-[9px] uppercase text-[#71807B] block">Total Payable</span>
                     <span className="text-xs font-bold text-[#18211F]">৳{r.payableDue.toLocaleString()}</span>
                   </div>
                   <div>
-                    <span className="text-[9px] uppercase text-[#71807B] block">নগদ জমা</span>
+                    <span className="text-[9px] uppercase text-[#71807B] block">Cash Paid</span>
                     <span className="text-xs font-bold text-[#22A06B]">৳{r.paid.toLocaleString()}</span>
                   </div>
                   <div className="bg-red-50/80 rounded-lg p-0.5">
-                    <span className="text-[9px] uppercase text-red-600 font-sans font-bold block">বকেয়া</span>
+                    <span className="text-[9px] uppercase text-red-600 font-sans font-bold block">Running Due</span>
                     <span className={`text-xs font-bold ${r.runningDue > 0 ? 'text-[#D9534F]' : 'text-[#22A06B]'}`}>
                       ৳{r.runningDue.toLocaleString()}
                     </span>
@@ -704,7 +704,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                   <div className="text-[11px] text-[#71807B] flex items-center justify-between px-1">
                     <span className="flex items-center gap-1">
                       <Calendar className="w-3 h-3 text-[#71807B]" />
-                      পরিশোধের তারিখ:
+                      Payment Due Date:
                     </span>
                     <strong className={`font-mono ${isOverdue ? 'text-[#D9534F]' : 'text-[#18211F]'}`}>
                       {r.duePaymentDate}
@@ -718,15 +718,15 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                     <button
                       onClick={() => onViewVoucher(r)}
                       className="p-1.5 rounded-lg text-[#0E5A4F] hover:bg-[#E6F4ED] text-xs font-medium flex items-center gap-1 cursor-pointer"
-                      title="মেমো প্রিন্ট করুন"
+                      title="Print Invoice"
                     >
                       <Printer className="w-3.5 h-3.5" />
-                      <span className="text-[11px]">মেমো</span>
+                      <span className="text-[11px]">Invoice</span>
                     </button>
                     <button
                       onClick={() => setRecordToDelete(r)}
                       className="p-1.5 rounded-lg text-[#71807B] hover:text-[#D9534F] hover:bg-red-50 cursor-pointer"
-                      title="ডিলিট"
+                      title="Delete"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -755,16 +755,16 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             <div className="w-12 h-12 rounded-full bg-red-100 text-[#D9534F] flex items-center justify-center mx-auto mb-3">
               <Trash2 className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-[#18211F]">সেলস এন্ট্রি ডিলিট নিশ্চিত করুন</h3>
+            <h3 className="text-base font-bold text-[#18211F]">Confirm Sale Record Deletion</h3>
             <p className="text-xs text-[#71807B] mt-1">
-              আপনি কি <strong>{recordToDelete.customerName}</strong> ({recordToDelete.invoiceNo}) এর এন্ট্রিটি মুছে ফেলতে চান?
+              Are you sure you want to delete invoice <strong>{recordToDelete.invoiceNo}</strong> for <strong>{recordToDelete.customerName}</strong>?
             </p>
             <div className="mt-5 flex items-center justify-center gap-2.5">
               <button
                 onClick={() => setRecordToDelete(null)}
                 className="px-4 py-2 rounded-xl border border-[#E5EAE8] text-xs font-bold text-[#71807B] hover:bg-[#F6F8F7] cursor-pointer"
               >
-                বাতিল
+                Cancel
               </button>
               <button
                 onClick={() => {
@@ -773,7 +773,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                 }}
                 className="px-4 py-2 rounded-xl bg-[#D9534F] hover:bg-red-700 text-white text-xs font-bold cursor-pointer shadow-xs"
               >
-                হ্যাঁ, ডিলিট করুন
+                Yes, Delete
               </button>
             </div>
           </div>

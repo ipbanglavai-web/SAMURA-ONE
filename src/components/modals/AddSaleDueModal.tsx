@@ -173,33 +173,33 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
     setError(null);
 
     if (!customerName.trim()) {
-      setError('কাস্টমারের নাম প্রদান করুন (Customer Name is required).');
+      setError('Customer Name is required.');
       return;
     }
 
     if (!address.trim()) {
-      setError('ঠিকানা ও যোগাযোগ নম্বর প্রদান করুন (Address with Contact is required).');
+      setError('Address with Contact number is required.');
       return;
     }
 
     if (!customerOf.trim()) {
-      setError('"Customer of" (মার্কেট বা ক্লাস্টার) প্রদান করুন.');
+      setError('Customer of (market/reference) is required.');
       return;
     }
 
     if (!selectedProduct) {
-      setError('বিক্রয়কৃত পণ্য সিলেক্ট করুন (Please select a sold product).');
+      setError('Please select a sold product.');
       return;
     }
 
     const qty = parseFloat(productQuantity);
     if (isNaN(qty) || qty <= 0) {
-      setError('পণ্য পরিমাণ সঠিকভাবে লিখুন (Valid product quantity is required).');
+      setError('Valid product quantity is required.');
       return;
     }
 
     if (isNaN(numAmount) || numAmount < 0) {
-      setError('বিক্রয় মূল্য সঠিকভাবে লিখুন (Valid sale amount is required).');
+      setError('Valid sale amount is required.');
       return;
     }
 
@@ -262,7 +262,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
               <FileText className="w-5 h-5 text-[#22A06B]" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold leading-tight">নতুন সেলস ও বকেয়া এন্ট্রি (Sales & Due Entry)</h2>
+              <h2 className="text-base sm:text-lg font-bold leading-tight">New Sale & Due Entry</h2>
               <p className="text-xs text-[#A3B8B0]">{businessName} · Manager Sales Ledger</p>
             </div>
           </div>
@@ -288,7 +288,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 border-b border-[#E5EAE8] pb-2.5">
               <div className="text-xs font-bold text-[#18211F] flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-[#0E5A4F]/10 text-[#0E5A4F] text-[11px] flex items-center justify-center font-mono">1</span>
-                <span>কাস্টমার ও পার্টি বিবরণ (Customer Details)</span>
+                <span>Customer & Party Details</span>
               </div>
 
               {/* Mode Toggle: Existing vs New */}
@@ -303,7 +303,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   }`}
                 >
                   <UserCheck className="w-3.5 h-3.5" />
-                  <span>বিদ্যমান পার্টি ({customers.length})</span>
+                  <span>Existing Party ({customers.length})</span>
                 </button>
                 <button
                   type="button"
@@ -315,7 +315,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   }`}
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>নতুন পার্টি</span>
+                  <span>New Party</span>
                 </button>
               </div>
             </div>
@@ -324,7 +324,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             {customerMode === 'existing' && customers.length > 0 && (
               <div className="p-3.5 rounded-xl border border-[#0E5A4F]/20 bg-[#F6F8F7]/50 space-y-2">
                 <label className="block text-xs font-bold text-[#18211F]">
-                  কাস্টমার বেছে নিন <span className="text-red-500">*</span>
+                  Select Customer <span className="text-red-500">*</span>
                 </label>
 
                 <div className="relative">
@@ -337,14 +337,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                       <span className="font-semibold text-[#18211F] truncate">
                         {customerName ? (
                           <>
-                            {customerName} <span className="text-[#71807B] font-normal">({customerOf || 'সাধারণ'})</span>
+                            {customerName} <span className="text-[#71807B] font-normal">({customerOf || 'General'})</span>
                           </>
                         ) : (
-                          <span className="text-[#71807B]">তালিকা থেকে কাস্টমার বেছে নিন</span>
+                          <span className="text-[#71807B]">Select a customer from list</span>
                         )}
                       </span>
                     </div>
-                    <span className="text-[11px] text-[#0E5A4F] font-semibold shrink-0 ml-2">খুঁজুন ▾</span>
+                    <span className="text-[11px] text-[#0E5A4F] font-semibold shrink-0 ml-2">Search ▾</span>
                   </div>
 
                   {isCustomerDropdownOpen && (
@@ -352,7 +352,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                       <div className="p-1 sticky top-0 bg-white border-b border-[#E5EAE8]">
                         <input
                           type="text"
-                          placeholder="নাম, ফোন বা এলাকা দিয়ে খুঁজুন..."
+                          placeholder="Search by name, phone or address..."
                           value={customerSearchTerm}
                           onChange={(e) => setCustomerSearchTerm(e.target.value)}
                           className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] text-xs focus:outline-none focus:border-[#0E5A4F]"
@@ -363,7 +363,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                       <div className="divide-y divide-[#EBF0EE] mt-1">
                         {filteredCustomers.length === 0 ? (
                           <div className="p-4 text-center text-xs text-[#71807B]">
-                            কোনো কাস্টমার পাওয়া যায়নি
+                            No customers found
                           </div>
                         ) : (
                           filteredCustomers.map((c) => (
@@ -391,7 +391,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                                 <span className={`text-xs font-mono font-bold ${
                                   c.dueAmount > 0 ? 'text-[#C93B37]' : 'text-[#168051]'
                                 }`}>
-                                  {c.dueAmount > 0 ? `বকেয়া: ৳${c.dueAmount.toLocaleString()}` : 'ক্লিয়ার (৳০)'}
+                                  {c.dueAmount > 0 ? `Due: ৳${c.dueAmount.toLocaleString()}` : 'Clear (৳0)'}
                                 </span>
                               </div>
                             </div>
@@ -405,7 +405,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                 {/* Ex Due Preview */}
                 {selectedCustomer && numExDue > 0 && (
                   <div className="px-3 py-2 rounded-lg bg-amber-50/80 border border-amber-200/70 text-xs flex items-center justify-between">
-                    <span className="text-[#854D0E] font-medium">পূর্বের বকেয়া হিসাব (Previous Due):</span>
+                    <span className="text-[#854D0E] font-medium">Previous Due Balance:</span>
                     <span className="font-mono font-bold text-[#854D0E]">৳ {numExDue.toLocaleString()}</span>
                   </div>
                 )}
@@ -416,7 +416,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  কাস্টমারের নাম (Customer Name) <span className="text-red-500">*</span>
+                  Customer Name <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-customer-name"
@@ -424,14 +424,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   required
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  placeholder="যেমন: রাজ আলামিন / হাজী ট্রেডার্স"
+                  placeholder="e.g. Raj Alamin / Haji Traders"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  মার্কেট / পার্টি / রেফারেন্স <span className="text-red-500">*</span>
+                  Market / Reference / Customer of <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-customer-of"
@@ -439,7 +439,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   required
                   value={customerOf}
                   onChange={(e) => setCustomerOf(e.target.value)}
-                  placeholder="যেমন: কাওরান বাজার আড়ত / বাদামতলী"
+                  placeholder="e.g. Kawran Bazar / Badamtoli"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
@@ -448,7 +448,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="sm:col-span-2">
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  ঠিকানা ও মোবাইল নম্বর <span className="text-red-500">*</span>
+                  Address & Phone Number <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-address"
@@ -456,14 +456,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   required
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  placeholder="যেমন: দোকান নং-১২, কাওরান বাজার · ০১৭১২-৩৪৫৬৭৮"
+                  placeholder="e.g. Shop #12, Kawran Bazar · 01712-345678"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  পূর্বের বকেয়া (Ex-Due ৳)
+                  Previous Due (Ex-Due ৳)
                 </label>
                 <input
                   id="sale-ex-due"
@@ -483,7 +483,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             <div className="flex items-center justify-between border-b border-[#E5EAE8] pb-2.5">
               <div className="text-xs font-bold text-[#18211F] flex items-center gap-2">
                 <span className="w-5 h-5 rounded-full bg-[#0E5A4F]/10 text-[#0E5A4F] text-[11px] flex items-center justify-center font-mono">2</span>
-                <span>বিক্রয়কৃত পণ্য ও পরিমাণ (Product & Pricing)</span>
+                <span>Product & Pricing Details</span>
               </div>
               {onOpenAddProductModal && (
                 <button
@@ -492,7 +492,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   className="text-xs text-[#0E5A4F] font-bold hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>নতুন পণ্য</span>
+                  <span>+ New Product</span>
                 </button>
               )}
             </div>
@@ -500,7 +500,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             {/* Product Search & Dropdown */}
             <div className="relative">
               <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                পণ্য নির্বাচন করুন <span className="text-red-500">*</span>
+                Select Product <span className="text-red-500">*</span>
               </label>
 
               <div
@@ -515,11 +515,11 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                         {selectedProduct.name} <span className="text-[#71807B] font-normal">({selectedProduct.unit}) · ৳{selectedProduct.unitPrice.toLocaleString()} / {selectedProduct.unit}</span>
                       </>
                     ) : (
-                      <span className="text-[#71807B]">পণ্য বেছে নিন</span>
+                      <span className="text-[#71807B]">Select a product</span>
                     )}
                   </span>
                 </div>
-                <span className="text-[11px] text-[#0E5A4F] font-semibold shrink-0">বাছাই করুন ▾</span>
+                <span className="text-[11px] text-[#0E5A4F] font-semibold shrink-0">Select ▾</span>
               </div>
 
               {isProductDropdownOpen && (
@@ -527,7 +527,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   <div className="p-1 sticky top-0 bg-white border-b border-[#E5EAE8]">
                     <input
                       type="text"
-                      placeholder="পণ্যের নাম লিখে সার্চ করুন..."
+                      placeholder="Search product by name..."
                       value={productSearchTerm}
                       onChange={(e) => setProductSearchTerm(e.target.value)}
                       className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] text-xs focus:outline-none focus:border-[#0E5A4F]"
@@ -538,7 +538,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   <div className="divide-y divide-[#EBF0EE] mt-1">
                     {filteredProducts.length === 0 ? (
                       <div className="p-4 text-center text-xs text-[#71807B]">
-                        কোনো পণ্য পাওয়া যায়নি
+                        No products found
                       </div>
                     ) : (
                       filteredProducts.map((p) => (
@@ -570,7 +570,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  পরিমাণ (Quantity) <span className="text-red-500">*</span>
+                  Quantity <span className="text-red-500">*</span>
                 </label>
                 <div className="flex items-center">
                   <input
@@ -591,7 +591,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  দর (Unit Price ৳)
+                  Unit Price (৳)
                 </label>
                 <input
                   id="sale-unit-price"
@@ -600,14 +600,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   step="any"
                   value={customUnitPrice}
                   onChange={(e) => setCustomUnitPrice(e.target.value)}
-                  placeholder="রেট"
+                  placeholder="Rate"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-mono font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
 
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  মোট মূল্য (Amount ৳) <span className="text-red-500">*</span>
+                  Sale Amount (৳) <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-amount"
@@ -627,13 +627,13 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
           <div className="space-y-4 pt-2">
             <div className="text-xs font-bold text-[#18211F] flex items-center gap-2 border-b border-[#E5EAE8] pb-2.5">
               <span className="w-5 h-5 rounded-full bg-[#0E5A4F]/10 text-[#0E5A4F] text-[11px] flex items-center justify-center font-mono">3</span>
-              <span>আর্থিক জমা ও বকেয়া নিষ্পত্তি (Payment & Settlement)</span>
+              <span>Payment & Settlement</span>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  ছাড় বা ডিসকাউন্ট (Sacrifice ৳)
+                  Discount / Sacrifice (৳)
                 </label>
                 <input
                   id="sale-sacrifice"
@@ -648,7 +648,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  নগদ জমা (Paid ৳) <span className="text-red-500">*</span>
+                  Paid Amount (৳) <span className="text-red-500">*</span>
                 </label>
                 <input
                   id="sale-paid"
@@ -665,22 +665,22 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             {/* Live Calculation Banner */}
             <div className="bg-[#F8FAFA] p-4 rounded-xl border border-[#E5EAE8] grid grid-cols-2 sm:grid-cols-4 gap-3 text-center">
               <div>
-                <span className="text-[11px] text-[#71807B] block">পণ্য মূল্য</span>
+                <span className="text-[11px] text-[#71807B] block">Sale Amount</span>
                 <span className="text-sm font-bold font-mono text-[#18211F] mt-0.5 block">৳ {numAmount.toLocaleString()}</span>
               </div>
 
               <div>
-                <span className="text-[11px] text-[#71807B] block">মোট প্রদেয় (Payable)</span>
+                <span className="text-[11px] text-[#71807B] block">Total Payable</span>
                 <span className="text-sm font-bold font-mono text-[#18211F] mt-0.5 block">৳ {payableDue.toLocaleString()}</span>
               </div>
 
               <div>
-                <span className="text-[11px] text-[#71807B] block">নগদ জমা (Paid)</span>
+                <span className="text-[11px] text-[#71807B] block">Paid Amount</span>
                 <span className="text-sm font-bold font-mono text-[#168051] mt-0.5 block">৳ {numPaid.toLocaleString()}</span>
               </div>
 
               <div className="border-l border-[#E5EAE8] pl-2">
-                <span className="text-[11px] text-[#71807B] block font-bold">অবশিষ্ট বকেয়া (Due)</span>
+                <span className="text-[11px] text-[#71807B] block font-bold">Running Due</span>
                 <span className={`text-sm font-bold font-mono mt-0.5 block ${
                   runningDue === 0 ? 'text-[#168051]' : 'text-[#C93B37]'
                 }`}>
@@ -692,7 +692,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  বকেয়া পরিশোধের তারিখ
+                  Due Payment Commitment Date
                 </label>
                 <input
                   id="sale-due-date"
@@ -705,14 +705,14 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
 
               <div>
                 <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  মন্তব্য / বিবরণ
+                  Notes & Details
                 </label>
                 <input
                   id="sale-notes"
                   type="text"
                   value={notes}
                   onChange={(e) => setNotes(e.target.value)}
-                  placeholder="যেমন: বাকির প্রতিশ্রুতি বা শর্ত"
+                  placeholder="e.g. Terms, promise or special note"
                   className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
                 />
               </div>
@@ -726,7 +726,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
               onClick={onClose}
               className="px-5 py-2.5 rounded-xl border border-[#E5EAE8] text-xs font-bold text-[#71807B] hover:bg-[#F6F8F7] transition-colors cursor-pointer"
             >
-              বাতিল
+              Cancel
             </button>
 
             <button
@@ -735,7 +735,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
               className="px-6 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-98"
             >
               <Check className="w-4 h-4" />
-              <span>চালান ও বকেয়া সেভ করুন</span>
+              <span>Save Sale & Due Record</span>
             </button>
           </div>
         </form>

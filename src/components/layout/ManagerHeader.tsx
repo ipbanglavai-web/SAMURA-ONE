@@ -87,11 +87,11 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
   const pageInfo = getPageInfo(activeTab);
 
   const datePresets = [
-    { label: 'All Records', bangla: 'সব রেকর্ড', value: 'All Records' },
-    { label: 'Today', bangla: 'আজকে', value: 'Today' },
-    { label: 'Yesterday', bangla: 'গতকাল', value: 'Yesterday' },
-    { label: 'Last 7 Days', bangla: 'গত ৭ দিন', value: 'Last 7 Days' },
-    { label: 'This Month', bangla: 'চলতি মাস', value: 'This Month' }
+    { label: 'All Records', value: 'All Records' },
+    { label: 'Today', value: 'Today' },
+    { label: 'Yesterday', value: 'Yesterday' },
+    { label: 'Last 7 Days', value: 'Last 7 Days' },
+    { label: 'This Month', value: 'This Month' }
   ];
 
   const handleApplyCustomDate = (e: React.FormEvent) => {
@@ -142,17 +142,11 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
             id="manager-header-date-selector"
             onClick={() => setDateDropdownOpen(!dateDropdownOpen)}
             className="text-xs font-bold px-3 py-1.5 border border-[#0E5A4F]/40 hover:border-[#0E5A4F] rounded-lg flex items-center bg-[#F6F8F7] hover:bg-[#E6F4ED] shadow-2xs transition-all cursor-pointer text-[#0A4A41] active:scale-98"
-            title="তারিখ ফিল্টার পরিবর্তন করুন"
+            title="Change Date Filter"
           >
             <Calendar className="w-3.5 h-3.5 mr-1.5 text-[#0E5A4F]" />
             <span className="font-semibold text-[#111827]">
-              {selectedDate === 'Today'
-                ? 'আজকে (Today)'
-                : selectedDate === 'Yesterday'
-                ? 'গতকাল (Yesterday)'
-                : selectedDate === 'All Records'
-                ? 'সব রেকর্ড'
-                : selectedDate}
+              {selectedDate}
             </span>
             <ChevronDown className={`ml-1.5 w-3.5 h-3.5 text-[#0E5A4F] transition-transform duration-200 ${dateDropdownOpen ? 'rotate-180' : ''}`} />
           </button>
@@ -160,7 +154,7 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
           {dateDropdownOpen && (
             <div className="absolute right-0 mt-2 w-56 bg-white border border-[#E5EAE8] rounded-xl shadow-xl py-1.5 z-50 text-xs font-medium animate-fade-in">
               <div className="px-3 py-1.5 text-[10px] font-bold text-[#71807B] uppercase tracking-wider border-b border-[#E5EAE8]">
-                তারিখের ব্যপ্তি নির্বাচন
+                Select Date Range
               </div>
 
               {datePresets.map((preset) => (
@@ -179,10 +173,7 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
                 >
                   <div className="flex items-center gap-2">
                     <Clock className="w-3.5 h-3.5 text-[#71807B]" />
-                    <div>
-                      <span className="block font-medium">{preset.label}</span>
-                      <span className="text-[10px] text-[#71807B]">{preset.bangla}</span>
-                    </div>
+                    <span className="block font-medium">{preset.label}</span>
                   </div>
                   {selectedDate === preset.value && (
                     <Check className="w-4 h-4 text-[#0E5A4F] stroke-[2.5]" />
@@ -197,12 +188,12 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
                     className="w-full text-left py-1.5 text-xs text-[#0E5A4F] font-bold hover:underline flex items-center gap-1.5 cursor-pointer"
                   >
                     <CalendarDays className="w-3.5 h-3.5" />
-                    <span>+ নির্দিষ্ট তারিখ নির্বাচন করুন</span>
+                    <span>+ Select Specific Date</span>
                   </button>
                 ) : (
                   <form onSubmit={handleApplyCustomDate} className="space-y-2 py-1">
                     <label className="text-[10px] font-bold text-[#4B5563] block">
-                      ক্যালেন্ডার থেকে তারিখ বাছুন:
+                      Choose from Calendar:
                     </label>
                     <input
                       type="date"
@@ -216,14 +207,14 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
                         type="submit"
                         className="flex-1 py-1 rounded-lg bg-[#0E5A4F] text-white text-xs font-bold hover:bg-[#073F37] cursor-pointer"
                       >
-                        প্রয়োগ করুন
+                        Apply
                       </button>
                       <button
                         type="button"
                         onClick={() => setShowCustomPicker(false)}
                         className="py-1 px-2 rounded-lg border border-[#E5EAE8] text-xs text-[#4B5563] hover:bg-[#F6F8F7] cursor-pointer"
                       >
-                        বাতিল
+                        Cancel
                       </button>
                     </div>
                   </form>
@@ -289,7 +280,7 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
                   className="w-full text-left px-4 py-2 text-[#D9534F] hover:bg-[#FEF2F2] flex items-center gap-2 font-medium transition-colors cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" />
-                  <span>Sign Out (লগআউট)</span>
+                  <span>Sign Out</span>
                 </button>
               </div>
             </div>

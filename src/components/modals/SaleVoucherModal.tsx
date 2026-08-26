@@ -30,7 +30,7 @@ export const SaleVoucherModal: React.FC<SaleVoucherModalProps> = ({
           <div className="flex items-center gap-2.5">
             <FileText className="w-5 h-5 text-[#22A06B]" />
             <div>
-              <h3 className="text-sm sm:text-base font-bold leading-tight">মেমো / বিক্রয় ও বকেয়া ভাউচার</h3>
+              <h3 className="text-sm sm:text-base font-bold leading-tight">Sale & Due Voucher Memo</h3>
               <p className="text-[11px] text-[#A3B8B0]">Invoice #{record.invoiceNo}</p>
             </div>
           </div>
@@ -40,7 +40,7 @@ export const SaleVoucherModal: React.FC<SaleVoucherModalProps> = ({
               className="px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-xs font-semibold flex items-center gap-1.5 transition-colors cursor-pointer"
             >
               <Printer className="w-3.5 h-3.5" />
-              <span>প্রিন্ট / রসিদ</span>
+              <span>Print / Receipt</span>
             </button>
             <button
               onClick={onClose}
@@ -72,15 +72,15 @@ export const SaleVoucherModal: React.FC<SaleVoucherModalProps> = ({
           {/* Customer & Cluster Details */}
           <div className="grid grid-cols-2 gap-4 bg-[#F6F8F7] p-3.5 rounded-xl border border-[#E5EAE8] text-xs">
             <div>
-              <span className="text-[10px] text-[#71807B] uppercase font-bold block">Customer (গ্রাহক)</span>
+              <span className="text-[10px] text-[#71807B] uppercase font-bold block">Customer / Party</span>
               <span className="font-bold text-sm text-[#18211F] block mt-0.5">{record.customerName}</span>
               <span className="text-[#71807B] mt-0.5 block">{record.address}</span>
             </div>
             <div className="text-right">
-              <span className="text-[10px] text-[#71807B] uppercase font-bold block">Customer of (ক্লাস্টার)</span>
+              <span className="text-[10px] text-[#71807B] uppercase font-bold block">Customer of / Cluster</span>
               <span className="font-semibold text-xs text-[#0E5A4F] block mt-0.5">{record.customerOf}</span>
               <span className="text-[10px] text-[#71807B] block mt-1">
-                Due Date: <strong className="text-[#18211F]">{record.duePaymentDate}</strong>
+                Due Commitment: <strong className="text-[#18211F]">{record.duePaymentDate}</strong>
               </span>
             </div>
           </div>
@@ -90,10 +90,10 @@ export const SaleVoucherModal: React.FC<SaleVoucherModalProps> = ({
             <table className="w-full text-left text-xs">
               <thead className="bg-[#F6F8F7] border-b border-[#E5EAE8] text-[10px] uppercase font-bold text-[#71807B]">
                 <tr>
-                  <th className="p-2.5">পণ্য বিবরণ (Product)</th>
-                  <th className="p-2.5 text-center">পরিমাণ (Qty)</th>
-                  <th className="p-2.5 text-right">দর (Rate)</th>
-                  <th className="p-2.5 text-right">মোট (Amount)</th>
+                  <th className="p-2.5">Product Description</th>
+                  <th className="p-2.5 text-center">Quantity</th>
+                  <th className="p-2.5 text-right">Unit Rate</th>
+                  <th className="p-2.5 text-right">Total Amount</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5EAE8]">
@@ -115,36 +115,36 @@ export const SaleVoucherModal: React.FC<SaleVoucherModalProps> = ({
           {/* Financial Calculation Breakdown */}
           <div className="bg-[#F6F8F7] p-4 rounded-xl border border-[#E5EAE8] space-y-2 text-xs">
             <div className="flex justify-between text-[#71807B]">
-              <span>পূর্বের বকেয়া (Ex-Due):</span>
+              <span>Previous Due (Ex-Due):</span>
               <span className="font-mono font-medium">৳ {record.exDue.toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-[#18211F] font-semibold">
-              <span>বর্তমান বিক্রয় মূল্য (Current Sale Amount):</span>
+              <span>Current Sale Amount:</span>
               <span className="font-mono font-bold text-[#0E5A4F]">৳ {record.amount.toLocaleString()}</span>
             </div>
             {record.sacrifice > 0 && (
               <div className="flex justify-between text-[#71807B]">
-                <span>ছাড় / সমন্বয় (Sacrifice / Discount):</span>
+                <span>Discount / Sacrifice:</span>
                 <span className="font-mono text-red-500 font-medium">- ৳ {record.sacrifice.toLocaleString()}</span>
               </div>
             )}
             <div className="flex justify-between border-t border-[#E5EAE8] pt-2 text-[#18211F] font-bold">
-              <span>মোট প্রদেয় বকেয়া (Payable Due):</span>
+              <span>Total Payable Due:</span>
               <span className="font-mono">৳ {record.payableDue.toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-[#22A06B] font-bold">
-              <span>পরিশোধিত নগদ টাকা (Paid Amount):</span>
+              <span>Paid Cash Amount:</span>
               <span className="font-mono">- ৳ {record.paid.toLocaleString()}</span>
             </div>
             <div className="flex justify-between border-t-2 border-[#0E5A4F] pt-2 text-sm font-bold">
-              <span className="text-[#D9534F]">বর্তমান অবশিষ্ট বকেয়া (Running Due):</span>
+              <span className="text-[#D9534F]">Remaining Balance (Running Due):</span>
               <span className="font-mono text-[#D9534F]">৳ {record.runningDue.toLocaleString()}</span>
             </div>
           </div>
 
           {record.notes && (
             <div className="p-2.5 bg-amber-50/70 rounded-lg border border-amber-200 text-xs text-[#18211F]">
-              <span className="font-bold block text-[10px] text-amber-800 uppercase">নোট:</span>
+              <span className="font-bold block text-[10px] text-amber-800 uppercase">Notes:</span>
               <span>{record.notes}</span>
             </div>
           )}
@@ -152,10 +152,10 @@ export const SaleVoucherModal: React.FC<SaleVoucherModalProps> = ({
           {/* Signatures */}
           <div className="pt-8 grid grid-cols-2 gap-8 text-center text-xs text-[#71807B]">
             <div>
-              <div className="border-t border-[#71807B]/40 pt-1.5 font-semibold">গ্রাহকের স্বাক্ষর (Customer Sign)</div>
+              <div className="border-t border-[#71807B]/40 pt-1.5 font-semibold">Customer Signature</div>
             </div>
             <div>
-              <div className="border-t border-[#71807B]/40 pt-1.5 font-semibold">ম্যানেজার / দায়িত্বপ্রাপ্ত (Manager Sign)</div>
+              <div className="border-t border-[#71807B]/40 pt-1.5 font-semibold">Manager / Authorized Sign</div>
             </div>
           </div>
         </div>
@@ -167,7 +167,7 @@ export const SaleVoucherModal: React.FC<SaleVoucherModalProps> = ({
             onClick={onClose}
             className="px-4 py-1.5 rounded-lg bg-[#0E5A4F] hover:bg-[#073F37] text-white font-semibold transition-colors cursor-pointer"
           >
-            বন্ধ করুন (Close)
+            Close
           </button>
         </div>
       </div>

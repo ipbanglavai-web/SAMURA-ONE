@@ -140,10 +140,10 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             <span className="text-xs text-[#71807B]">{business.name}</span>
           </div>
           <h2 className="text-lg sm:text-xl font-bold text-[#18211F] mt-1">
-            কাস্টমার খাতা ও বাকি তালিকা (Customer List & Due Balances)
+            Customer Directory & Due Balances
           </h2>
           <p className="text-xs text-[#71807B] mt-0.5">
-            সকল নিয়মিত পার্টির নাম, মোবাইল নম্বর, ঠিকানা, রেফারেন্স ও মোট বকেয়া টাকার লাইভ হিসাব।
+            Live records of regular buyers, phone numbers, addresses, references, and pending dues.
           </p>
         </div>
 
@@ -152,10 +152,10 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             id="print-customers-btn"
             onClick={() => printCustomerList(filteredCustomers, business.name)}
             className="px-3.5 py-2 rounded-xl bg-white border border-[#E5EAE8] hover:bg-[#F6F8F7] hover:border-[#0E5A4F]/40 text-[#18211F] text-xs font-semibold shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
-            title="কাস্টমার খাতা তালিকা প্রিন্ট করুন"
+            title="Print Customer List"
           >
             <Printer className="w-4 h-4 text-[#0E5A4F]" />
-            <span>প্রিন্ট তালিকা ({filteredCustomers.length})</span>
+            <span>Print List ({filteredCustomers.length})</span>
           </button>
 
           <button
@@ -164,7 +164,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             className="px-3.5 py-2 rounded-xl bg-white border border-[#E5EAE8] hover:bg-[#F6F8F7] text-[#18211F] text-xs font-semibold shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <TrendingUp className="w-4 h-4 text-[#0E5A4F]" />
-            <span>+ নতুন সেল এন্ট্রি</span>
+            <span>+ New Sale Entry</span>
           </button>
 
           <button
@@ -173,7 +173,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             className="px-4 py-2 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>+ নতুন কাস্টমার যোগ করুন</span>
+            <span>+ Add Customer</span>
           </button>
         </div>
       </div>
@@ -182,53 +182,53 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[10px] font-bold uppercase tracking-wider">মোট কাস্টমার (Total)</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Total Customers</span>
             <Users className="w-4 h-4 text-[#0E5A4F]" />
           </div>
           <div className="text-xl sm:text-2xl font-bold text-[#18211F] font-mono mt-1">
-            {totalCustomers} <span className="text-xs font-sans font-normal text-[#71807B]">জন</span>
+            {totalCustomers}
           </div>
           <div className="text-[11px] text-[#71807B] mt-1">
-            নিবন্ধিত পাইকারি ও খুচরা ক্রেতা
+            Registered wholesale & retail buyers
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[10px] font-bold uppercase tracking-wider">মোট বকেয়া পাওনা (Total Due)</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Total Due Receivable</span>
             <DollarSign className="w-4 h-4 text-[#D9534F]" />
           </div>
           <div className="text-xl sm:text-2xl font-bold text-[#D9534F] font-mono mt-1">
             ৳ {totalDueAmount.toLocaleString()}
           </div>
           <div className="text-[11px] text-[#D9534F] font-medium mt-1">
-            {withDueCount} জনের কাছে বকেয়া বিদ্যমান
+            {withDueCount} parties with due balance
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[10px] font-bold uppercase tracking-wider">পরিশোধিত পার্টি (Zero Due)</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Zero Due Parties</span>
             <CheckCircle2 className="w-4 h-4 text-[#22A06B]" />
           </div>
           <div className="text-xl sm:text-2xl font-bold text-[#22A06B] font-mono mt-1">
-            {clearDueCount} <span className="text-xs font-sans font-normal text-[#71807B]">জন</span>
+            {clearDueCount}
           </div>
           <div className="text-[11px] text-[#22A06B] font-medium mt-1">
-            কোনো বকেয়া বাকি নেই
+            Fully settled accounts
           </div>
         </div>
 
         <div className="bg-white p-4 rounded-xl border border-[#E5EAE8] shadow-xs">
           <div className="flex items-center justify-between text-[#71807B]">
-            <span className="text-[10px] font-bold uppercase tracking-wider">বকেয়া হার (Due Ratio)</span>
+            <span className="text-[10px] font-bold uppercase tracking-wider">Due Ratio</span>
             <TrendingUp className="w-4 h-4 text-amber-600" />
           </div>
           <div className="text-xl sm:text-2xl font-bold text-[#18211F] font-mono mt-1">
             {totalCustomers > 0 ? ((withDueCount / totalCustomers) * 100).toFixed(0) : 0}%
           </div>
           <div className="text-[11px] text-[#71807B] mt-1">
-            মোট কাস্টমারের মধ্যে বাকি পার্টির অনুপাত
+            Percentage of customers with due
           </div>
         </div>
       </div>
@@ -242,13 +242,13 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             type="text"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            placeholder="কাস্টমার নাম, মোবাইল, ঠিকানা বা রেফারেন্স দিয়ে খুঁজুন..."
+            placeholder="Search by customer name, phone, address or reference..."
             className="w-full pl-9 pr-4 py-2 text-xs rounded-lg border border-[#E5EAE8] bg-[#F6F8F7] focus:bg-white focus:border-[#0E5A4F] focus:outline-none"
           />
         </div>
 
         <div className="flex items-center gap-1.5 w-full md:w-auto overflow-x-auto pb-1 md:pb-0">
-          <span className="text-xs font-semibold text-[#71807B] shrink-0 mr-1">ফিল্টার:</span>
+          <span className="text-xs font-semibold text-[#71807B] shrink-0 mr-1">Filter:</span>
           <button
             onClick={() => setFilterDue('all')}
             className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-colors cursor-pointer whitespace-nowrap ${
@@ -257,7 +257,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                 : 'bg-[#F6F8F7] text-[#71807B] hover:text-[#18211F]'
             }`}
           >
-            সব ({totalCustomers})
+            All ({totalCustomers})
           </button>
           <button
             onClick={() => setFilterDue('has_due')}
@@ -267,7 +267,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                 : 'bg-[#F6F8F7] text-[#71807B] hover:text-[#18211F]'
             }`}
           >
-            বকেয়া আছে ({withDueCount})
+            Has Due ({withDueCount})
           </button>
           <button
             onClick={() => setFilterDue('clear')}
@@ -277,7 +277,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                 : 'bg-[#F6F8F7] text-[#71807B] hover:text-[#18211F]'
             }`}
           >
-            পরিশোধিত ({clearDueCount})
+            Paid / Clear ({clearDueCount})
           </button>
           <button
             onClick={() => setFilterDue('high_due')}
@@ -287,7 +287,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                 : 'bg-[#F6F8F7] text-[#71807B] hover:text-[#18211F]'
             }`}
           >
-            ১ লাখ+ বকেয়া
+            ৳100K+ Due
           </button>
         </div>
       </div>
@@ -299,12 +299,12 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             <thead className="bg-[#F6F8F7] text-[#71807B] font-bold border-b border-[#E5EAE8] uppercase tracking-wider text-[10px]">
               <tr>
                 <th className="py-3 px-4 w-12 text-center"># SL</th>
-                <th className="py-3 px-4">কাস্টমারের নাম (Name)</th>
-                <th className="py-3 px-4">মোবাইল নম্বর (Number)</th>
-                <th className="py-3 px-4">ঠিকানা (Address)</th>
-                <th className="py-3 px-4">রেফারেন্স (Reference / Customer Of)</th>
-                <th className="py-3 px-4 text-right">বকেয়া পরিমাণ (Due Amount)</th>
-                <th className="py-3 px-4 text-center min-w-[130px]">অ্যাকশন (Actions)</th>
+                <th className="py-3 px-4">Customer Name</th>
+                <th className="py-3 px-4">Phone Number</th>
+                <th className="py-3 px-4">Address</th>
+                <th className="py-3 px-4">Reference / Customer Of</th>
+                <th className="py-3 px-4 text-right">Due Amount</th>
+                <th className="py-3 px-4 text-center min-w-[130px]">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-[#E5EAE8]">
@@ -313,13 +313,13 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                   <td colSpan={7} className="py-12 text-center text-[#71807B]">
                     <div className="max-w-sm mx-auto space-y-2">
                       <Users className="w-8 h-8 text-[#71807B]/40 mx-auto" />
-                      <p className="font-semibold text-[#18211F]">কোনো কাস্টমার তথ্য পাওয়া যায়নি</p>
-                      <p className="text-[11px]">সার্চ কীওয়ার্ড পরিবর্তন করুন অথবা নতুন কাস্টমার যোগ করুন।</p>
+                      <p className="font-semibold text-[#18211F]">No customer information found</p>
+                      <p className="text-[11px]">Change your search query or add a new customer.</p>
                       <button
                         onClick={onOpenAddCustomerModal}
                         className="mt-2 px-3 py-1.5 bg-[#0E5A4F] text-white rounded-lg text-xs font-bold cursor-pointer"
                       >
-                        + নতুন কাস্টমার যোগ করুন
+                        + Add New Customer
                       </button>
                     </div>
                   </td>
@@ -363,7 +363,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                               </span>
                               {cust.lastTransactionDate && (
                                 <span className="text-[10px] text-[#71807B] truncate">
-                                  · শেষ লেনদেন: {cust.lastTransactionDate}
+                                  · Last: {cust.lastTransactionDate}
                                 </span>
                               )}
                             </div>
@@ -427,7 +427,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                             <button
                               onClick={() => handlePayClick(cust)}
                               className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#22A06B] hover:bg-[#1C885A] text-white text-[10px] font-bold shadow-2xs transition-all cursor-pointer"
-                              title="বকেয়া আদায় / Pay Now"
+                              title="Pay Now"
                             >
                               <Wallet className="w-2.5 h-2.5" />
                               <span>Pay Now</span>
@@ -439,7 +439,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                               ৳ 0
                             </span>
                             <span className="text-[10px] text-[#22A06B] block">
-                              (পরিশোধিত)
+                              (Paid)
                             </span>
                           </div>
                         )}
@@ -454,7 +454,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                               id={`customer-settle-btn-${cust.id}`}
                               onClick={() => handlePayClick(cust)}
                               className="px-2.5 py-1 bg-[#22A06B] hover:bg-[#1C885A] text-white rounded-md text-[10px] font-bold transition-all cursor-pointer flex items-center gap-1 shadow-2xs"
-                              title="বকেয়া টাকা জমা / আদায় করুন (Pay Now)"
+                              title="Collect Payment (Pay Now)"
                             >
                               <DollarSign className="w-3 h-3" />
                               <span>Pay Now</span>
@@ -466,7 +466,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                             id={`customer-statement-btn-${cust.id}`}
                             onClick={() => setSelectedCustomerForStatement(cust)}
                             className="p-1.5 text-[#0E5A4F] hover:bg-[#0E5A4F]/10 rounded-md transition-colors cursor-pointer"
-                            title="খতিয়ান / হিসাব বিবরণী দেখুন"
+                            title="View Customer Statement"
                           >
                             <Eye className="w-4 h-4" />
                           </button>
@@ -476,7 +476,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                             id={`customer-delete-btn-${cust.id}`}
                             onClick={() => setCustomerToDelete(cust)}
                             className="p-1.5 text-[#71807B] hover:text-red-500 hover:bg-red-50 rounded-md transition-colors cursor-pointer"
-                            title="মুছে ফেলুন (Delete)"
+                            title="Delete Customer"
                           >
                             <Trash2 className="w-4 h-4" />
                           </button>
@@ -493,11 +493,11 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
         {/* Table Footer Summary */}
         <div className="p-4 bg-[#F6F8F7] border-t border-[#E5EAE8] flex flex-col sm:flex-row items-center justify-between text-xs text-[#71807B] gap-2 font-medium">
           <div>
-            প্রদর্শিত কাস্টমার: <strong className="text-[#18211F]">{filteredCustomers.length}</strong> জন (মোট {enrichedCustomers.length} জনের মধ্যে)
+            Showing: <strong className="text-[#18211F]">{filteredCustomers.length}</strong> Customers (Out of {enrichedCustomers.length} total)
           </div>
           <div className="flex items-center gap-4">
             <span>
-              মোট পাওনা বকেয়া: <strong className="text-[#D9534F] font-mono text-sm">৳ {totalDueAmount.toLocaleString()}</strong>
+              Total Due Receivable: <strong className="text-[#D9534F] font-mono text-sm">৳ {totalDueAmount.toLocaleString()}</strong>
             </span>
           </div>
         </div>
@@ -522,7 +522,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                   PAYMENT COLLECTION
                 </span>
                 <h3 className="text-sm font-bold text-white mt-0.5">
-                  বকেয়া টাকা জমা গ্রহণ (Settle Due)
+                  Settle Customer Due
                 </h3>
               </div>
               <button
@@ -535,13 +535,13 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
 
             <form onSubmit={handleSettleSubmit} className="p-5 space-y-4">
               <div>
-                <p className="text-xs text-[#71807B]">কাস্টমার নাম:</p>
+                <p className="text-xs text-[#71807B]">Customer Name:</p>
                 <p className="text-sm font-bold text-[#18211F] mt-0.5">{settleCustomer.name}</p>
                 <p className="text-xs text-[#71807B] mt-0.5">{settleCustomer.phone} · {settleCustomer.address}</p>
               </div>
 
               <div className="p-3 bg-red-50 border border-red-100 rounded-xl flex items-center justify-between">
-                <span className="text-xs text-red-700 font-medium">বর্তমান মোট বকেয়া:</span>
+                <span className="text-xs text-red-700 font-medium">Current Total Due:</span>
                 <span className="text-base font-bold font-mono text-red-600">
                   ৳ {settleCustomer.dueAmount.toLocaleString()}
                 </span>
@@ -549,7 +549,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  জমা / আদায়ের পরিমাণ (Collected Amount, ৳) <span className="text-red-500">*</span>
+                  Collected Amount (৳) <span className="text-red-500">*</span>
                 </label>
                 <input
                   type="number"
@@ -557,7 +557,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                   step="any"
                   value={settleAmount}
                   onChange={(e) => setSettleAmount(e.target.value)}
-                  placeholder="টাকার পরিমাণ লিখুন"
+                  placeholder="Enter amount"
                   className="w-full px-3 py-2 border border-[#E5EAE8] rounded-xl text-sm font-mono font-bold focus:outline-none focus:ring-2 focus:ring-[#0E5A4F] text-[#18211F]"
                   required
                   autoFocus
@@ -570,13 +570,13 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                   onClick={() => setSettleCustomer(null)}
                   className="px-3 py-1.5 border border-[#E5EAE8] rounded-lg text-xs font-semibold text-[#71807B] hover:bg-[#F6F8F7]"
                 >
-                  বাতিল
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-1.5 bg-[#22A06B] hover:bg-[#1a8356] text-white rounded-lg text-xs font-bold shadow-xs"
                 >
-                  জমা নিশ্চিত করুন
+                  Confirm Payment
                 </button>
               </div>
             </form>
@@ -592,9 +592,9 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
               <Trash2 className="w-5 h-5" />
             </div>
             <div className="text-center">
-              <h4 className="text-sm font-bold text-[#18211F]">কাস্টমার রেকর্ড মুছে ফেলতে চান?</h4>
+              <h4 className="text-sm font-bold text-[#18211F]">Delete Customer Record?</h4>
               <p className="text-xs text-[#71807B] mt-1">
-                <strong>{customerToDelete.name}</strong> কাস্টমারের তথ্য তালিকা থেকে মুছে যাবে।
+                <strong>{customerToDelete.name}</strong> will be permanently removed from the customer directory.
               </p>
             </div>
             <div className="flex items-center justify-center gap-2">
@@ -602,7 +602,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                 onClick={() => setCustomerToDelete(null)}
                 className="px-4 py-2 border border-[#E5EAE8] rounded-xl text-xs font-semibold text-[#71807B] hover:bg-[#F6F8F7]"
               >
-                বাতিল
+                Cancel
               </button>
               <button
                 onClick={() => {
@@ -611,7 +611,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                 }}
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-xl text-xs font-bold"
               >
-                হ্যাঁ, মুছে ফেলুন
+                Yes, Delete
               </button>
             </div>
           </div>

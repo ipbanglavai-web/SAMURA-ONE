@@ -48,19 +48,19 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
     setError(null);
 
     if (!name.trim()) {
-      setError('প্রোডাক্টের নাম লিখুন (Product name is required).');
+      setError('Product name is required.');
       return;
     }
 
     const finalUnit = customUnit.trim() || unit;
     if (!finalUnit.trim()) {
-      setError('প্রোডাক্ট ইউনিট সিলেক্ট করুন বা লিখুন (Product unit is required).');
+      setError('Product unit is required.');
       return;
     }
 
     const priceNum = parseFloat(unitPrice);
     if (isNaN(priceNum) || priceNum <= 0) {
-      setError('সঠিক ইউনিট মূল্য নির্ধারণ করুন (Valid unit price is required).');
+      setError('Valid unit price is required.');
       return;
     }
 
@@ -97,7 +97,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
               <Package className="w-5 h-5 text-[#22A06B]" />
             </div>
             <div>
-              <h2 className="text-base sm:text-lg font-bold leading-tight">নতুন প্রোডাক্ট যুক্ত করুন</h2>
+              <h2 className="text-base sm:text-lg font-bold leading-tight">Add New Product</h2>
               <p className="text-xs text-[#A3B8B0]">{businessName} · Unit Inventory Entry</p>
             </div>
           </div>
@@ -121,7 +121,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
           {/* Product Name */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] uppercase tracking-wider mb-1.5">
-              প্রোডাক্টের নাম (Product Name) <span className="text-red-500">*</span>
+              Product Name <span className="text-red-500">*</span>
             </label>
             <input
               id="product-name-input"
@@ -137,7 +137,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
           {/* Unit Selection */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] uppercase tracking-wider mb-1.5">
-              প্রোডাক্ট ইউনিট (Product Unit) <span className="text-red-500">*</span>
+              Product Unit <span className="text-red-500">*</span>
             </label>
             <div className="flex flex-wrap gap-1.5 mb-2">
               {COMMON_UNITS.slice(0, 6).map((u) => (
@@ -179,7 +179,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
                 type="text"
                 value={customUnit}
                 onChange={(e) => setCustomUnit(e.target.value)}
-                placeholder="বা কাস্টম ইউনিট লিখুন"
+                placeholder="Or type custom unit"
                 className="w-full px-3 py-2 rounded-lg border border-[#E5EAE8] bg-[#F6F8F7] text-xs text-[#18211F] focus:bg-white focus:border-[#0E5A4F] focus:outline-none"
               />
             </div>
@@ -189,7 +189,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-[#18211F] uppercase tracking-wider mb-1.5">
-                ইউনিট প্রতি মূল্য (Unit/Price ৳) <span className="text-red-500">*</span>
+                Unit Price (৳) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <span className="absolute inset-y-0 left-0 pl-3 flex items-center font-bold text-sm text-[#0E5A4F]">
@@ -211,7 +211,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-[#18211F] uppercase tracking-wider mb-1.5">
-                প্রাথমিক স্টক পরিমাণ (Initial Stock)
+                Initial Stock
               </label>
               <input
                 type="number"
@@ -227,7 +227,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
           {/* Category */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] uppercase tracking-wider mb-1.5">
-              ক্যাটাগরি (Category / গ্রুপ)
+              Category / Group
             </label>
             <input
               type="text"
@@ -241,7 +241,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
           {/* Notes */}
           <div>
             <label className="block text-xs font-bold text-[#18211F] uppercase tracking-wider mb-1.5">
-              মন্তব্য বা বিবরণ (Notes / Spec)
+              Notes / Specifications
             </label>
             <input
               type="text"
@@ -259,7 +259,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
               onClick={onClose}
               className="px-4 py-2.5 rounded-lg border border-[#E5EAE8] text-xs font-bold text-[#71807B] hover:bg-[#F6F8F7] transition-colors cursor-pointer"
             >
-              বাতিল (Cancel)
+              Cancel
             </button>
             <button
               id="save-product-btn"
@@ -267,7 +267,7 @@ export const AddProductModal: React.FC<AddProductModalProps> = ({
               className="px-5 py-2.5 rounded-lg bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
             >
               <Check className="w-4 h-4" />
-              <span>প্রোডাক্ট সেভ করুন (Save Product)</span>
+              <span>Save Product</span>
             </button>
           </div>
         </form>
