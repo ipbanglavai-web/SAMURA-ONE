@@ -417,21 +417,13 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
                         </div>
                       </td>
 
-                      {/* 5. Due amount with Pay Now CTA */}
+                      {/* 5. Due amount */}
                       <td className="py-3.5 px-4 text-right">
                         {hasDue ? (
-                          <div className="flex flex-col items-end gap-1">
+                          <div>
                             <span className="font-mono font-bold text-sm text-[#D9534F]">
                               ৳ {cust.dueAmount.toLocaleString()}
                             </span>
-                            <button
-                              onClick={() => handlePayClick(cust)}
-                              className="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-[#22A06B] hover:bg-[#1C885A] text-white text-[10px] font-bold shadow-2xs transition-all cursor-pointer"
-                              title="Pay Now"
-                            >
-                              <Wallet className="w-2.5 h-2.5" />
-                              <span>Pay Now</span>
-                            </button>
                           </div>
                         ) : (
                           <div>
