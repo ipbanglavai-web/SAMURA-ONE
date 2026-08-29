@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { AuthProvider, useAuth } from './auth/AuthContext';
-import { RoutePath, CriticalAlert, PendingApproval, BusinessHealthItem, BusinessManager } from './types';
+import { LogoProvider } from './context/LogoContext';
+import { RoutePath, CriticalAlert, PendingApproval, BusinessHealthItem, BusinessManager, SaleDueRecord } from './types';
 import { Sidebar } from './components/layout/Sidebar';
 import { Header } from './components/layout/Header';
 import { LoginPage } from './pages/Login/LoginPage';
@@ -21,7 +22,8 @@ import { SettingsPage } from './pages/Settings/SettingsPage';
 import { ManagerDashboardPage } from './pages/Manager/ManagerDashboardPage';
 import { ApprovalDetailModal } from './components/modals/ApprovalDetailModal';
 import { AlertDetailModal } from './components/modals/AlertDetailModal';
-import { calculateDerivedBusinessData } from './utils/businessCalculations';
+import { BusinessUnitDetailsModal } from './components/modals/BusinessUnitDetailsModal';
+import { calculateDerivedBusinessData, computeDynamicBusinesses } from './utils/businessCalculations';
 import {
   KPI_DATA,
   SALES_COLLECTION_CHART_DATA,
@@ -29,8 +31,23 @@ import {
   BUSINESS_HEALTH_DATA,
   RECEIVABLE_AGING_DATA,
   PENDING_APPROVALS_DATA,
-  INITIAL_MANAGERS_DATA
+  INITIAL_MANAGERS_DATA,
+  INITIAL_SALES_DUE_DATA
 } from './data/mockData';
+import {
+  seedInitialFirestoreData,
+  subscribeToBusinesses,
+  subscribeToManagers,
+  subscribeToAlerts,
+  subscribeToApprovals,
+  subscribeToSalesRecords,
+  saveBusinessToFirestore,
+  deleteBusinessFromFirestore,
+  saveManagerToFirestore,
+  deleteManagerFromFirestore,
+  updateAlertStatusInFirestore,
+  updateApprovalStatusInFirestore
+} from './services/firestoreService';
 
 const MainApp: React.FC = () => {
   const { isAuthenticated, user } = useAuth();
@@ -51,11 +68,25 @@ const MainApp: React.FC = () => {
   const [selectedDate, setSelectedDate] = useState('Today');
   const [selectedBusiness, setSelectedBusiness] = useState('All Businesses');
 
-  // Business Units State (Persisted in localStorage)
-  const [businesses, setBusinesses] = useState<BusinessHealthItem[]>(() => {
+  // Sales Due Records State (Persisted in Firestore & localStorage)
+  const [salesRecords, setSalesRecords] = useState<SaleDueRecord[]>(() => {
+    try {
+      const stored = localStorage.getItem('samura_sales_due_records_v2') || localStorage.getItem('samura_sales_due_records');
+      if (stored !== null) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed)) return parsed;
+      }
+    } catch (e) {
+      console.error('Failed to load sales records from storage', e);
+    }
+    return INITIAL_SALES_DUE_DATA;
+  });
+
+  // Business Units State (Persisted in Firestore & localStorage)
+  const [rawBusinesses, setRawBusinesses] = useState<BusinessHealthItem[]>(() => {
     try {
       const stored = localStorage.getItem('samura_businesses_data');
-      if (stored) {
+      if (stored !== null) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) {
           return parsed;
@@ -67,17 +98,22 @@ const MainApp: React.FC = () => {
     return BUSINESS_HEALTH_DATA;
   });
 
+  // Compute live dynamic businesses from active sales records
+  const businesses = useMemo(() => {
+    return computeDynamicBusinesses(rawBusinesses, salesRecords);
+  }, [rawBusinesses, salesRecords]);
+
   // Dynamic Derived Financial States
-  const initialDerived = calculateDerivedBusinessData(businesses);
+  const initialDerived = calculateDerivedBusinessData(businesses, salesRecords);
   const [kpis, setKpis] = useState(initialDerived.kpis);
   const [chartData, setChartData] = useState(initialDerived.chartData);
   const [agingData, setAgingData] = useState(initialDerived.agingData);
 
-  // Alerts & Approvals States (Persisted in localStorage)
+  // Alerts & Approvals States (Persisted in Firestore & localStorage)
   const [alerts, setAlerts] = useState<CriticalAlert[]>(() => {
     try {
       const stored = localStorage.getItem('samura_alerts_data');
-      if (stored) {
+      if (stored !== null) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) return parsed;
       }
@@ -90,7 +126,7 @@ const MainApp: React.FC = () => {
   const [approvals, setApprovals] = useState<PendingApproval[]>(() => {
     try {
       const stored = localStorage.getItem('samura_approvals_data');
-      if (stored) {
+      if (stored !== null) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed)) return parsed;
       }
@@ -100,11 +136,11 @@ const MainApp: React.FC = () => {
     return PENDING_APPROVALS_DATA;
   });
 
-  // Managers State (Persisted in localStorage)
+  // Managers State (Persisted in Firestore & localStorage)
   const [managers, setManagers] = useState<BusinessManager[]>(() => {
     try {
       const stored = localStorage.getItem('samura_managers_data');
-      if (stored) {
+      if (stored !== null) {
         const parsed = JSON.parse(stored);
         if (Array.isArray(parsed) && parsed.length > 0) return parsed;
       }
@@ -113,6 +149,47 @@ const MainApp: React.FC = () => {
     }
     return INITIAL_MANAGERS_DATA;
   });
+
+  // Realtime Firestore listeners & initial seeding
+  useEffect(() => {
+    seedInitialFirestoreData();
+
+    const unsubSales = subscribeToSalesRecords((remoteSales) => {
+      setSalesRecords(remoteSales);
+    });
+
+    const unsubBiz = subscribeToBusinesses((remoteBiz) => {
+      if (remoteBiz && remoteBiz.length > 0) {
+        setRawBusinesses(remoteBiz);
+      }
+    });
+
+    const unsubMgrs = subscribeToManagers((remoteMgrs) => {
+      if (remoteMgrs) {
+        setManagers(remoteMgrs);
+      }
+    });
+
+    const unsubAlerts = subscribeToAlerts((remoteAlerts) => {
+      if (remoteAlerts) {
+        setAlerts(remoteAlerts);
+      }
+    });
+
+    const unsubApps = subscribeToApprovals((remoteApps) => {
+      if (remoteApps) {
+        setApprovals(remoteApps);
+      }
+    });
+
+    return () => {
+      unsubSales();
+      unsubBiz();
+      unsubMgrs();
+      unsubAlerts();
+      unsubApps();
+    };
+  }, []);
 
   // Sync state changes to localStorage and recalculate financial data
   useEffect(() => {
@@ -123,11 +200,11 @@ const MainApp: React.FC = () => {
     }
 
     // Automatically recalculate sales, collections, receivables, chart points and aging
-    const derived = calculateDerivedBusinessData(businesses);
+    const derived = calculateDerivedBusinessData(businesses, salesRecords);
     setKpis(derived.kpis);
     setChartData(derived.chartData);
     setAgingData(derived.agingData);
-  }, [businesses]);
+  }, [businesses, salesRecords]);
 
   useEffect(() => {
     try {
@@ -154,21 +231,31 @@ const MainApp: React.FC = () => {
   }, [managers]);
 
   // Business Unit Handlers (Add & Cascading Delete)
-  const handleAddBusiness = (newBizData: Omit<BusinessHealthItem, 'id'>) => {
+  const handleAddBusiness = async (newBizData: Omit<BusinessHealthItem, 'id'>) => {
     const newUnit: BusinessHealthItem = {
       id: `bh-${Date.now()}`,
       ...newBizData
     };
-    setBusinesses(prev => [newUnit, ...prev]);
+    setRawBusinesses(prev => [newUnit, ...prev]);
+    try {
+      await saveBusinessToFirestore(newUnit);
+    } catch (e) {
+      console.error('Failed to save business to Firestore:', e);
+    }
   };
 
-  const handleDeleteBusiness = (id: string) => {
+  const handleDeleteBusiness = async (id: string) => {
     const targetBiz = businesses.find(b => b.id === id);
     if (!targetBiz) return;
     const targetName = targetBiz.name.toLowerCase();
 
-    // 1. Remove business unit (this triggers the recalculation of sales & collection totals)
-    setBusinesses(prev => prev.filter(b => b.id !== id));
+    // 1. Remove business unit
+    setRawBusinesses(prev => prev.filter(b => b.id !== id));
+    try {
+      await deleteBusinessFromFirestore(id);
+    } catch (e) {
+      console.error('Failed to delete business from Firestore:', e);
+    }
 
     // 2. Cascade Delete: Remove all alerts associated with this business
     setAlerts(prev => prev.filter(a => {
@@ -200,7 +287,7 @@ const MainApp: React.FC = () => {
   };
 
   // Manager Handlers (Add & Delete)
-  const handleAddManager = (newMgrData: {
+  const handleAddManager = async (newMgrData: {
     name: string;
     phone: string;
     email: string;
@@ -217,9 +304,14 @@ const MainApp: React.FC = () => {
     };
 
     setManagers(prev => [newManager, ...prev]);
+    try {
+      await saveManagerToFirestore(newManager);
+    } catch (e) {
+      console.error('Failed to save manager to Firestore:', e);
+    }
 
     // Update business's assigned manager field
-    setBusinesses(prev =>
+    setRawBusinesses(prev =>
       prev.map(b =>
         b.id === newMgrData.businessId || b.name.toLowerCase() === newMgrData.businessName.toLowerCase()
           ? { ...b, manager: newMgrData.name }
@@ -228,11 +320,16 @@ const MainApp: React.FC = () => {
     );
   };
 
-  const handleDeleteManager = (id: string) => {
+  const handleDeleteManager = async (id: string) => {
     const target = managers.find(m => m.id === id);
     setManagers(prev => prev.filter(m => m.id !== id));
     if (target) {
-      setBusinesses(prev =>
+      try {
+        await deleteManagerFromFirestore(id);
+      } catch (e) {
+        console.error('Failed to delete manager from Firestore:', e);
+      }
+      setRawBusinesses(prev =>
         prev.map(b =>
           (b.id === target.businessId || b.name.toLowerCase() === target.businessName.toLowerCase() || b.manager === target.name)
             ? { ...b, manager: 'None' }
@@ -245,6 +342,7 @@ const MainApp: React.FC = () => {
   // Active Modals
   const [selectedApproval, setSelectedApproval] = useState<PendingApproval | null>(null);
   const [selectedAlert, setSelectedAlert] = useState<CriticalAlert | null>(null);
+  const [selectedBusinessForDetails, setSelectedBusinessForDetails] = useState<BusinessHealthItem | null>(null);
 
   // Sync hash routing
   useEffect(() => {
@@ -265,29 +363,44 @@ const MainApp: React.FC = () => {
   };
 
   // Approval Handlers
-  const handleApprove = (id: string, remarks?: string) => {
+  const handleApprove = async (id: string, remarks?: string) => {
     setApprovals(prev =>
       prev.map(item =>
         item.id === id ? { ...item, status: 'approved' } : item
       )
     );
+    try {
+      await updateApprovalStatusInFirestore(id, 'approved');
+    } catch (e) {
+      console.error('Failed to update approval in Firestore:', e);
+    }
   };
 
-  const handleReject = (id: string, remarks?: string) => {
+  const handleReject = async (id: string, remarks?: string) => {
     setApprovals(prev =>
       prev.map(item =>
         item.id === id ? { ...item, status: 'rejected' } : item
       )
     );
+    try {
+      await updateApprovalStatusInFirestore(id, 'rejected');
+    } catch (e) {
+      console.error('Failed to update approval in Firestore:', e);
+    }
   };
 
   // Alert Handlers
-  const handleResolveAlert = (id: string) => {
+  const handleResolveAlert = async (id: string) => {
     setAlerts(prev =>
       prev.map(item =>
         item.id === id ? { ...item, status: 'resolved' } : item
       )
     );
+    try {
+      await updateAlertStatusInFirestore(id, 'resolved');
+    } catch (e) {
+      console.error('Failed to update alert in Firestore:', e);
+    }
   };
 
   const handleAlertNavigate = (type: CriticalAlert['type']) => {
@@ -350,7 +463,7 @@ const MainApp: React.FC = () => {
               onNavigate={handleNavigate}
               onSelectAlert={(alt) => setSelectedAlert(alt)}
               onSelectApproval={(app) => setSelectedApproval(app)}
-              onSelectBusiness={() => handleNavigate('/businesses')}
+              onSelectBusiness={(biz) => setSelectedBusinessForDetails(biz)}
             />
           )}
 
@@ -431,6 +544,15 @@ const MainApp: React.FC = () => {
       </div>
 
       {/* Global Modals */}
+      {selectedBusinessForDetails && (
+        <BusinessUnitDetailsModal
+          isOpen={!!selectedBusinessForDetails}
+          onClose={() => setSelectedBusinessForDetails(null)}
+          business={selectedBusinessForDetails}
+          managers={managers}
+        />
+      )}
+
       {selectedApproval && (
         <ApprovalDetailModal
           approval={selectedApproval}
@@ -455,7 +577,9 @@ const MainApp: React.FC = () => {
 export default function App() {
   return (
     <AuthProvider>
-      <MainApp />
+      <LogoProvider>
+        <MainApp />
+      </LogoProvider>
     </AuthProvider>
   );
 }

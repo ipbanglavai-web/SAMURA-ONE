@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../../auth/AuthContext';
+import { useLogo } from '../../context/LogoContext';
 import {
   Eye,
   EyeOff,
@@ -20,12 +21,15 @@ interface LoginPageProps {
 
 export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
   const { login, isLoading } = useAuth();
+  const { loginLogo, customLogo } = useLogo();
   const [loginRole, setLoginRole] = useState<'admin' | 'manager'>('admin');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [emailTouched, setEmailTouched] = useState(false);
+
+  const effectiveLoginLogo = loginLogo || customLogo;
 
   const isEmailValid = (val: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
@@ -86,11 +90,23 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
       {/* Top Header Bar */}
       <header className="px-6 py-4 sm:py-5 border-b border-[#0E5A4F]/40 flex items-center justify-between z-10">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-lg bg-[#0E5A4F] border border-[#22A06B]/30 flex items-center justify-center font-bold text-xs tracking-wider text-white shadow-sm">
-            <span className="leading-tight text-center">AL<br/>SAMU</span>
-          </div>
+          {effectiveLoginLogo ? (
+            <div className="h-10 max-w-[150px] px-2 py-1 bg-white rounded-lg flex items-center justify-center shadow-xs border border-white/30">
+              <img
+                src={effectiveLoginLogo}
+                alt="Brand Logo"
+                className="max-h-8 max-w-full object-contain"
+              />
+            </div>
+          ) : (
+            <div className="w-9 h-9 rounded-lg bg-[#0E5A4F] border border-[#22A06B]/30 flex items-center justify-center font-bold text-xs tracking-wider text-white shadow-sm">
+              <span className="leading-tight text-center">AL<br/>SAMU</span>
+            </div>
+          )}
           <div>
-            <h1 className="text-base font-bold tracking-tight text-white leading-none">SAMURA ONE</h1>
+            <h1 className="text-base font-bold tracking-tight text-white leading-none">
+              {effectiveLoginLogo ? 'SAMURA ONE' : 'SAMURA ONE'}
+            </h1>
             <p className="text-[11px] text-[#A3B8B0] font-medium tracking-wide">AL SAMURA Group Command Platform</p>
           </div>
         </div>
@@ -140,13 +156,25 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
           </div>
 
           <div className="mb-6 text-center">
-            <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#0E5A4F]/60 border border-[#22A06B]/30 text-[#22A06B] mb-3">
-              {loginRole === 'admin' ? (
-                <Shield className="w-6 h-6" />
-              ) : (
-                <Building2 className="w-6 h-6" />
-              )}
-            </div>
+            {effectiveLoginLogo ? (
+              <div className="mb-4 flex flex-col items-center justify-center">
+                <div className="h-16 max-w-[200px] px-3 py-1.5 bg-white rounded-xl flex items-center justify-center shadow-md border border-white/40">
+                  <img
+                    src={effectiveLoginLogo}
+                    alt="Login Brand Logo"
+                    className="max-h-12 max-w-full object-contain"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div className="inline-flex items-center justify-center w-12 h-12 rounded-xl bg-[#0E5A4F]/60 border border-[#22A06B]/30 text-[#22A06B] mb-3">
+                {loginRole === 'admin' ? (
+                  <Shield className="w-6 h-6" />
+                ) : (
+                  <Building2 className="w-6 h-6" />
+                )}
+              </div>
+            )}
             <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
               {loginRole === 'admin' ? 'Executive Admin Portal' : 'Business Unit Manager Login'}
             </h2>

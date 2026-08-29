@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { RoutePath } from '../../types';
+import { useLogo } from '../../context/LogoContext';
+import { LogoUploadModal } from '../modals/LogoUploadModal';
 import {
   LayoutGrid,
   Building2,
@@ -14,7 +16,8 @@ import {
   CheckCircle,
   Sparkles,
   Settings,
-  X
+  X,
+  Camera
 } from 'lucide-react';
 
 interface SidebarProps {
@@ -40,6 +43,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   isOpenMobile = false,
   onCloseMobile
 }) => {
+  const { customLogo } = useLogo();
+  const [logoModalOpen, setLogoModalOpen] = useState(false);
+
   const commandNavItems: NavItem[] = [
     { id: 'group-overview', name: 'Group Overview', path: '/dashboard', icon: LayoutGrid },
     { id: 'businesses', name: 'Businesses', path: '/businesses', icon: Building2 },
@@ -86,11 +92,33 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Top Branding & Foundation Badge */}
         <div className="p-5 pb-3">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white">SAMURA ONE</h1>
-              <p className="text-[10px] text-[#22A06B] font-medium tracking-widest uppercase mt-0.5 opacity-90">
-                AL SAMURA Group Command
-              </p>
+            <div
+              onClick={() => setLogoModalOpen(true)}
+              className="flex items-center gap-2.5 cursor-pointer group"
+              title="Click to change brand logo"
+            >
+              {customLogo ? (
+                <div className="h-10 max-w-[140px] px-2 py-1 bg-white rounded-lg flex items-center justify-center shadow-xs border border-white/40">
+                  <img
+                    src={customLogo}
+                    alt="Custom Logo"
+                    className="max-h-8 max-w-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-[#0E5A4F] border border-[#22A06B]/30 flex items-center justify-center font-bold text-xs tracking-wider text-white shadow-sm shrink-0">
+                  <span>SO</span>
+                </div>
+              )}
+              <div>
+                <h1 className="text-lg font-bold tracking-tight text-white flex items-center gap-1.5 leading-none">
+                  {customLogo ? 'CUSTOM' : 'SAMURA ONE'}
+                  <Camera className="w-3 h-3 text-[#22A06B] opacity-0 group-hover:opacity-100 transition-opacity" />
+                </h1>
+                <p className="text-[10px] text-[#22A06B] font-medium tracking-widest uppercase mt-1 opacity-90">
+                  {customLogo ? 'Enterprise Active' : 'AL SAMURA Command'}
+                </p>
+              </div>
             </div>
 
             {/* Mobile Close Button */}
@@ -105,8 +133,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
             )}
           </div>
 
-          <div className="mt-3 bg-[#0E5A4F] px-2 py-1 rounded text-[10px] w-fit font-mono text-[#D5E2DC] font-semibold tracking-wide">
-            FOUNDATION v0.2
+          <div className="mt-3 bg-[#0E5A4F] px-2 py-1 rounded text-[10px] w-fit font-mono text-[#D5E2DC] font-semibold tracking-wide flex items-center gap-2">
+            <span>FOUNDATION v0.2</span>
           </div>
         </div>
 
@@ -202,6 +230,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
       </aside>
+
+      {/* Brand Logo Upload Modal */}
+      <LogoUploadModal
+        isOpen={logoModalOpen}
+        onClose={() => setLogoModalOpen(false)}
+      />
     </>
   );
 };

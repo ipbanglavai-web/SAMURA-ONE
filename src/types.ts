@@ -118,6 +118,8 @@ export interface BusinessHealthItem {
   collectionRate?: string;
   margin?: string;
   manager?: string;
+  salesGrowth?: number; // % growth difference, positive for up e.g. 14.5, negative for down e.g. -6.2
+  previousSales?: string;
 }
 
 export interface BusinessManager {

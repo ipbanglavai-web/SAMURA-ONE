@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
+import { useLogo } from '../../context/LogoContext';
 import { ManagerTab } from './ManagerSidebar';
 import {
   Menu,
@@ -31,6 +32,7 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
   onSelectDate
 }) => {
   const { user, logout } = useAuth();
+  const { customLogo } = useLogo();
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [customDateInput, setCustomDateInput] = useState('');
@@ -87,11 +89,11 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
   const pageInfo = getPageInfo(activeTab);
 
   const datePresets = [
-    { label: 'All Records', value: 'All Records' },
-    { label: 'Today', value: 'Today' },
+    { label: 'Today (Default)', value: 'Today' },
     { label: 'Yesterday', value: 'Yesterday' },
     { label: 'Last 7 Days', value: 'Last 7 Days' },
-    { label: 'This Month', value: 'This Month' }
+    { label: 'This Month', value: 'This Month' },
+    { label: 'All Records', value: 'All Records' }
   ];
 
   const handleApplyCustomDate = (e: React.FormEvent) => {
@@ -123,6 +125,20 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
         >
           <Menu className="w-5 h-5" />
         </button>
+
+        {/* Custom Brand Logo if uploaded */}
+        {customLogo && (
+          <div className="flex items-center gap-2.5 shrink-0">
+            <div className="h-8 max-w-[120px] sm:max-w-[140px] px-1 flex items-center justify-center">
+              <img
+                src={customLogo}
+                alt="Brand Logo"
+                className="max-h-7 max-w-full object-contain"
+              />
+            </div>
+            <div className="h-5 w-px bg-[#E5EAE8] hidden sm:block" />
+          </div>
+        )}
 
         <div className="min-w-0">
           <h1 className="text-base sm:text-lg font-bold text-[#111827] tracking-tight leading-snug truncate">

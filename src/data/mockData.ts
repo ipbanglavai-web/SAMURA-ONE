@@ -106,6 +106,8 @@ export const BUSINESS_HEALTH_DATA: BusinessHealthItem[] = [
     id: 'bh-1',
     name: 'Elenga Fruits',
     sales: '৳ 11.8L',
+    previousSales: '৳ 10.3L',
+    salesGrowth: 14.5,
     status: 'Healthy',
     collectionRate: '88.4%',
     margin: '14.2%',
@@ -115,6 +117,8 @@ export const BUSINESS_HEALTH_DATA: BusinessHealthItem[] = [
     id: 'bh-2',
     name: 'Mourin Fruits',
     sales: '৳ 8.4L',
+    previousSales: '৳ 8.95L',
+    salesGrowth: -6.2,
     status: 'Watch',
     collectionRate: '62.1%',
     margin: '9.8%',
@@ -124,6 +128,8 @@ export const BUSINESS_HEALTH_DATA: BusinessHealthItem[] = [
     id: 'bh-3',
     name: 'Zaafran',
     sales: '৳ 6.9L',
+    previousSales: '৳ 5.82L',
+    salesGrowth: 18.4,
     status: 'Healthy',
     collectionRate: '91.5%',
     margin: '18.4%',
@@ -133,6 +139,8 @@ export const BUSINESS_HEALTH_DATA: BusinessHealthItem[] = [
     id: 'bh-4',
     name: 'Dhaka Mad',
     sales: '৳ 9.2L',
+    previousSales: '৳ 9.66L',
+    salesGrowth: -4.8,
     status: 'Watch',
     collectionRate: '68.3%',
     margin: '11.0%',
@@ -142,6 +150,8 @@ export const BUSINESS_HEALTH_DATA: BusinessHealthItem[] = [
     id: 'bh-5',
     name: 'Samura Agro Cold Store',
     sales: '৳ 4.1L',
+    previousSales: '৳ 3.79L',
+    salesGrowth: 8.2,
     status: 'Healthy',
     collectionRate: '94.0%',
     margin: '22.5%',
@@ -151,6 +161,8 @@ export const BUSINESS_HEALTH_DATA: BusinessHealthItem[] = [
     id: 'bh-6',
     name: 'Samura General Hospital',
     sales: '৳ 2.4L',
+    previousSales: '৳ 2.28L',
+    salesGrowth: 5.1,
     status: 'Healthy',
     collectionRate: '98.2%',
     margin: '16.8%',
@@ -947,13 +959,31 @@ export const INITIAL_PRODUCTS_DATA: UnitProduct[] = [
   }
 ];
 
+// Helper functions for dynamic realistic relative dates
+export const getTodayIso = () => new Date().toISOString().split('T')[0];
+export const getYesterdayIso = () => {
+  const d = new Date();
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().split('T')[0];
+};
+export const getDaysAgoIso = (days: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() - days);
+  return d.toISOString().split('T')[0];
+};
+export const getFutureDaysIso = (days: number) => {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return d.toISOString().split('T')[0];
+};
+
 export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
-  // Elenga Fruits (bh-1)
+  // Elenga Fruits (bh-1) - Today Records (Default Live Data)
   {
-    id: 'sd-ef-1',
+    id: 'sd-ef-today-1',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-2026-0801',
-    date: '2026-08-21',
+    invoiceNo: 'INV-EF-TODAY-01',
+    date: getTodayIso(),
     customerName: 'Haji Mokbul Traders',
     address: 'Kawran Bazar, Dhaka · 01712-445566',
     customerOf: 'Kawran Bazar Wholesale Cluster',
@@ -963,21 +993,21 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     productUnit: 'Carton (15 Kg)',
     unitPrice: 2900,
     quantity: 50,
-    amount: 145000, // 50 * 2900
+    amount: 145000,
     paid: 120000,
     sacrifice: 2500,
-    payableDue: 187500, // 45000 + 145000 - 2500 = 187500
-    runningDue: 67500, // 187500 - 120000 = 67500
-    duePaymentDate: '2026-08-28',
-    notes: 'Regular wholesale party. Promise to clear next Friday.',
+    payableDue: 187500,
+    runningDue: 67500,
+    duePaymentDate: getFutureDaysIso(5),
+    notes: 'Morning shipment dispatched. Advance payment received.',
     status: 'Partial Due',
-    createdAt: '2026-08-21'
+    createdAt: getTodayIso()
   },
   {
-    id: 'sd-ef-2',
+    id: 'sd-ef-today-2',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-2026-0802',
-    date: '2026-08-21',
+    invoiceNo: 'INV-EF-TODAY-02',
+    date: getTodayIso(),
     customerName: 'Bismillah Fruit Agency',
     address: 'Badamtoli, Sadarghat · 01819-332211',
     customerOf: 'Badamtoli Fruit Market',
@@ -987,21 +1017,21 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     productUnit: 'Carton (18 Kg)',
     unitPrice: 3950,
     quantity: 40,
-    amount: 158000, // 40 * 3950
+    amount: 158000,
     paid: 200000,
     sacrifice: 3000,
-    payableDue: 235000, // 80000 + 158000 - 3000 = 235000
-    runningDue: 35000, // 235000 - 200000 = 35000
-    duePaymentDate: '2026-08-26',
-    notes: 'Payment received via City Bank transfer.',
+    payableDue: 235000,
+    runningDue: 35000,
+    duePaymentDate: getFutureDaysIso(7),
+    notes: 'Payment cleared via City Bank Instant transfer.',
     status: 'Partial Due',
-    createdAt: '2026-08-21'
+    createdAt: getTodayIso()
   },
   {
-    id: 'sd-ef-3',
+    id: 'sd-ef-today-3',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-2026-0803',
-    date: '2026-08-22',
+    invoiceNo: 'INV-EF-TODAY-03',
+    date: getTodayIso(),
     customerName: 'Al-Madina Fruit Corner',
     address: 'Mirpur-10, Dhaka · 01911-889900',
     customerOf: 'Mirpur Retail Syndicate',
@@ -1011,21 +1041,21 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     productUnit: 'Box (10 Kg)',
     unitPrice: 3400,
     quantity: 25,
-    amount: 85000, // 25 * 3400
+    amount: 85000,
     paid: 85000,
     sacrifice: 0,
-    payableDue: 85000, // 0 + 85000 - 0 = 85000
-    runningDue: 0, // 85000 - 85000 = 0
-    duePaymentDate: '2026-08-22',
-    notes: 'Spot cash transaction on loading.',
+    payableDue: 85000,
+    runningDue: 0,
+    duePaymentDate: getTodayIso(),
+    notes: 'Spot cash transaction on loading at counter.',
     status: 'Full Paid',
-    createdAt: '2026-08-22'
+    createdAt: getTodayIso()
   },
   {
-    id: 'sd-ef-4',
+    id: 'sd-ef-today-4',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-2026-0804',
-    date: '2026-08-20',
+    invoiceNo: 'INV-EF-TODAY-04',
+    date: getTodayIso(),
     customerName: 'Chowdhury Fruit Depot',
     address: 'Tangail Sadar · 01715-667788',
     customerOf: 'District Distribution Agent',
@@ -1035,22 +1065,71 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     productUnit: 'Carton (5 Kg)',
     unitPrice: 5800,
     quantity: 20,
-    amount: 116000, // 20 * 5800
+    amount: 116000,
     paid: 80000,
     sacrifice: 2000,
-    payableDue: 234000, // 120000 + 116000 - 2000 = 234000
-    runningDue: 154000, // 234000 - 80000 = 154000
-    duePaymentDate: '2026-08-25',
-    notes: 'Heavy credit balance; follow-up scheduled.',
+    payableDue: 234000,
+    runningDue: 154000,
+    duePaymentDate: getFutureDaysIso(4),
+    notes: 'VIP Ajwa batch loading with Tangail truck receipt.',
     status: 'Partial Due',
-    createdAt: '2026-08-20'
+    createdAt: getTodayIso()
   },
-  // Mourin Fruits (bh-2)
+  // Yesterday and earlier records
   {
-    id: 'sd-mf-1',
+    id: 'sd-ef-1',
+    businessId: 'bh-1',
+    invoiceNo: 'INV-EF-2026-0801',
+    date: getYesterdayIso(),
+    customerName: 'Haji Mokbul Traders',
+    address: 'Kawran Bazar, Dhaka · 01712-445566',
+    customerOf: 'Kawran Bazar Wholesale Cluster',
+    exDue: 45000,
+    productId: 'prd-citrus-7',
+    productName: 'Malta',
+    productUnit: 'Carton (15 Kg)',
+    unitPrice: 2900,
+    quantity: 30,
+    amount: 87000,
+    paid: 87000,
+    sacrifice: 0,
+    payableDue: 132000,
+    runningDue: 45000,
+    duePaymentDate: getYesterdayIso(),
+    notes: 'Yesterday evening delivery clearance.',
+    status: 'Partial Due',
+    createdAt: getYesterdayIso()
+  },
+  {
+    id: 'sd-ef-2',
+    businessId: 'bh-1',
+    invoiceNo: 'INV-EF-2026-0802',
+    date: getDaysAgoIso(3),
+    customerName: 'Rahman & Sons Enterprise',
+    address: 'Chawkbazar Arat, Chattogram · 01720-998877',
+    customerOf: 'Chattogram Division Wholesale Association',
+    exDue: 50000,
+    productId: 'prd-apple-3',
+    productName: 'Galafit',
+    productUnit: 'Carton (18 Kg)',
+    unitPrice: 4200,
+    quantity: 35,
+    amount: 147000,
+    paid: 115000,
+    sacrifice: 0,
+    payableDue: 197000,
+    runningDue: 82000,
+    duePaymentDate: getFutureDaysIso(2),
+    notes: 'Chattogram delivery consignment.',
+    status: 'Partial Due',
+    createdAt: getDaysAgoIso(3)
+  },
+  // Mourin Fruits (bh-2) - Today & Yesterday Records
+  {
+    id: 'sd-mf-today-1',
     businessId: 'bh-2',
-    invoiceNo: 'INV-MF-2026-0801',
-    date: '2026-08-21',
+    invoiceNo: 'INV-MF-TODAY-01',
+    date: getTodayIso(),
     customerName: 'Khan Brothers Fruits',
     address: 'Jatrabari Arat, Dhaka · 01815-112233',
     customerOf: 'Jatrabari Wholesale',
@@ -1065,10 +1144,34 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     sacrifice: 1500,
     payableDue: 177000,
     runningDue: 77000,
-    duePaymentDate: '2026-08-27',
-    notes: 'Advance booking delivery',
+    duePaymentDate: getFutureDaysIso(6),
+    notes: 'Today advance booking delivery at Jatrabari.',
     status: 'Partial Due',
-    createdAt: '2026-08-21'
+    createdAt: getTodayIso()
+  },
+  {
+    id: 'sd-mf-1',
+    businessId: 'bh-2',
+    invoiceNo: 'INV-MF-2026-0801',
+    date: getYesterdayIso(),
+    customerName: 'Khan Brothers Fruits',
+    address: 'Jatrabari Arat, Dhaka · 01815-112233',
+    customerOf: 'Jatrabari Wholesale',
+    exDue: 60000,
+    productId: 'prd-mf-2',
+    productName: 'Ajoa',
+    productUnit: 'Carton (5 Kg)',
+    unitPrice: 5800,
+    quantity: 15,
+    amount: 87000,
+    paid: 87000,
+    sacrifice: 0,
+    payableDue: 147000,
+    runningDue: 60000,
+    duePaymentDate: getYesterdayIso(),
+    notes: 'Yesterday Ajwa delivery.',
+    status: 'Partial Due',
+    createdAt: getYesterdayIso()
   }
 ];
 

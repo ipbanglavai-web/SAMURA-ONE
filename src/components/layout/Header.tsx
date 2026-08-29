@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { RoutePath, BusinessHealthItem } from '../../types';
 import { useAuth } from '../../auth/AuthContext';
+import { useLogo } from '../../context/LogoContext';
+import { LogoUploadModal } from '../modals/LogoUploadModal';
 import {
   Menu,
   ChevronDown,
@@ -10,7 +12,9 @@ import {
   User,
   Shield,
   Check,
-  Bell
+  Bell,
+  Camera,
+  Image as ImageIcon
 } from 'lucide-react';
 
 interface HeaderProps {
@@ -33,6 +37,9 @@ export const Header: React.FC<HeaderProps> = ({
   businesses
 }) => {
   const { user, logout } = useAuth();
+  const { customLogo, loginLogo } = useLogo();
+  const [logoModalOpen, setLogoModalOpen] = useState(false);
+  const [logoModalTab, setLogoModalTab] = useState<'login' | 'system'>('login');
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [businessDropdownOpen, setBusinessDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
@@ -58,10 +65,19 @@ export const Header: React.FC<HeaderProps> = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  const getTodayFormattedDate = () => {
+    return new Intl.DateTimeFormat('en-GB', {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    }).format(new Date());
+  };
+
   const getPageInfo = (path: RoutePath) => {
     switch (path) {
       case '/dashboard':
-        return { title: 'Group Overview', subtitle: 'Wednesday, 22 July 2026 · Demo environment' };
+        return { title: 'Group Overview', subtitle: `${getTodayFormattedDate()} · Live Executive View` };
       case '/businesses':
         return { title: 'Businesses', subtitle: 'Group enterprise performance & subsidiary breakdown' };
       case '/finance':
@@ -118,6 +134,25 @@ export const Header: React.FC<HeaderProps> = ({
         >
           <Menu className="w-5 h-5" />
         </button>
+
+        {/* Custom Brand Logo (dynamically displayed when uploaded) */}
+        {customLogo && (
+          <div className="flex items-center gap-2.5 shrink-0">
+            <button
+              onClick={() => setLogoModalOpen(true)}
+              className="h-8 max-w-[120px] sm:max-w-[140px] px-1 flex items-center justify-center hover:opacity-85 transition-opacity cursor-pointer"
+              title="Custom brand logo active. Click to update."
+              aria-label="Manage custom brand logo"
+            >
+              <img
+                src={customLogo}
+                alt="Brand Logo"
+                className="max-h-7 max-w-full object-contain"
+              />
+            </button>
+            <div className="h-5 w-px bg-[#E5EAE8] hidden sm:block" />
+          </div>
+        )}
 
         <div className="min-w-0">
           <h1 className="text-base sm:text-lg font-bold text-[#18211F] tracking-tight leading-snug truncate">
@@ -225,6 +260,42 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
               <div className="py-1">
+                <button
+                  onClick={() => {
+                    setUserDropdownOpen(false);
+                    setLogoModalTab('login');
+                    setLogoModalOpen(true);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-[#F6F8F7] flex items-center justify-between text-[#18211F] font-medium transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="w-3.5 h-3.5 text-[#0E5A4F]" />
+                    <span>Change Login Page Logo</span>
+                  </div>
+                  {loginLogo ? (
+                    <span className="text-[10px] text-[#22A06B] font-bold">Custom</span>
+                  ) : (
+                    <span className="text-[10px] text-[#71807B]">Default</span>
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    setUserDropdownOpen(false);
+                    setLogoModalTab('system');
+                    setLogoModalOpen(true);
+                  }}
+                  className="w-full text-left px-4 py-2 hover:bg-[#F6F8F7] flex items-center justify-between text-[#18211F] font-medium transition-colors cursor-pointer"
+                >
+                  <div className="flex items-center gap-2">
+                    <ImageIcon className="w-3.5 h-3.5 text-[#0E5A4F]" />
+                    <span>Change System Brand Logo</span>
+                  </div>
+                  {customLogo ? (
+                    <span className="text-[10px] text-[#22A06B] font-bold">Custom</span>
+                  ) : (
+                    <span className="text-[10px] text-[#71807B]">Default</span>
+                  )}
+                </button>
                 <div className="px-4 py-1.5 flex items-center gap-2 text-[#71807B]">
                   <Shield className="w-3.5 h-3.5 text-[#22A06B]" />
                   <span>Security Level: Super Administrator</span>
@@ -252,6 +323,13 @@ export const Header: React.FC<HeaderProps> = ({
           )}
         </div>
       </div>
+
+      {/* Brand Logo Upload Modal */}
+      <LogoUploadModal
+        isOpen={logoModalOpen}
+        initialTab={logoModalTab}
+        onClose={() => setLogoModalOpen(false)}
+      />
     </header>
   );
 };

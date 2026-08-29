@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { BusinessHealthItem, BusinessManager } from '../../types';
 import { AddManagerModal } from '../../components/modals/AddManagerModal';
+import { BusinessUnitDetailsModal } from '../../components/modals/BusinessUnitDetailsModal';
+import { getBusinessGrowthData } from '../../utils/businessCalculations';
 import {
   Building2,
   Plus,
@@ -13,7 +15,9 @@ import {
   UserCheck,
   ShieldCheck,
   AlertCircle,
-  UserPlus
+  UserPlus,
+  TrendingUp,
+  TrendingDown
 } from 'lucide-react';
 
 interface BusinessesPageProps {
@@ -46,11 +50,15 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
   const [isAddBusinessModalOpen, setIsAddBusinessModalOpen] = useState(false);
   const [name, setName] = useState('');
   const [sales, setSales] = useState('');
+  const [salesGrowth, setSalesGrowth] = useState('+8.5%');
   const [status, setStatus] = useState<'Healthy' | 'Watch' | 'Critical'>('Healthy');
   const [collectionRate, setCollectionRate] = useState('85.0%');
   const [margin, setMargin] = useState('12.5%');
   const [manager, setManager] = useState('');
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Business Unit Details Modal State (opens live manager data submitted for Elenga Fruits / unit)
+  const [selectedBusinessForDetails, setSelectedBusinessForDetails] = useState<BusinessHealthItem | null>(null);
 
   // Add Manager Modal State (for business card '+ Add Manager' action)
   const [isAddManagerModalOpen, setIsAddManagerModalOpen] = useState(false);
@@ -72,6 +80,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
   const handleOpenAddBusinessModal = () => {
     setName('');
     setSales('৳ 10.0L');
+    setSalesGrowth('+8.5%');
     setStatus('Healthy');
     setCollectionRate('85.0%');
     setMargin('12.5%');
@@ -88,11 +97,15 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
     }
 
     const formattedSales = sales.trim().startsWith('৳') ? sales.trim() : `৳ ${sales.trim()}`;
+    const parsedGrowth = parseFloat(salesGrowth.replace(/[+%]/g, ''));
+    const finalGrowth = isNaN(parsedGrowth) ? (status === 'Healthy' ? 8.5 : -5.0) : parsedGrowth;
+    const finalStatus: 'Healthy' | 'Watch' | 'Critical' = finalGrowth >= 0 ? 'Healthy' : (finalGrowth >= -10 ? 'Watch' : 'Critical');
 
     onAddBusiness({
       name: name.trim(),
       sales: formattedSales || '৳ 0.0L',
-      status,
+      status: finalStatus,
+      salesGrowth: finalGrowth,
       collectionRate: collectionRate.trim() || '80.0%',
       margin: margin.trim() || '10.0%',
       manager: manager.trim() || 'Assigned Officer'
@@ -273,15 +286,22 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                     </div>
 
                     <div className="flex items-center gap-1.5 shrink-0">
-                      <span
-                        className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold ${
-                          biz.status === 'Healthy'
-                            ? 'bg-[#E6F4ED] text-[#22A06B]'
-                            : 'bg-[#FEF6E7] text-[#D9A441]'
-                        }`}
-                      >
-                        {biz.status}
-                      </span>
+                      {(() => {
+                        const growthInfo = getBusinessGrowthData(biz);
+                        return (
+                          <span
+                            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-black tracking-wide border shadow-2xs ${growthInfo.bgClass} ${growthInfo.textClass} ${growthInfo.borderClass}`}
+                            title={`24h Sales difference: ${growthInfo.badgeText}`}
+                          >
+                            {growthInfo.isPositive ? (
+                              <TrendingUp className="w-3.5 h-3.5 text-[#15803D] shrink-0 stroke-[2.5]" />
+                            ) : (
+                              <TrendingDown className="w-3.5 h-3.5 text-[#B91C1C] shrink-0 stroke-[2.5]" />
+                            )}
+                            <span className="font-extrabold">{growthInfo.badgeText}</span>
+                          </span>
+                        );
+                      })()}
 
                       {/* Admin Delete Action Button */}
                       <button
@@ -369,9 +389,18 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                     <ShieldCheck className="w-3 h-3 text-[#22A06B]" />
                     Active Unit
                   </span>
-                  <span className="text-[10px] text-[#0E5A4F] font-bold uppercase tracking-wider flex items-center gap-0.5 hover:underline cursor-pointer">
-                    Unit Details <ArrowUpRight className="w-3 h-3" />
-                  </span>
+                  <button
+                    type="button"
+                    id={`unit-details-${biz.id}`}
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setSelectedBusinessForDetails(biz);
+                    }}
+                    className="px-2.5 py-1 bg-[#E6F4ED] hover:bg-[#D1ECE0] text-[#0E5A4F] rounded-md text-[11px] font-bold uppercase tracking-wider flex items-center gap-1 transition-all cursor-pointer shadow-2xs border border-[#22A06B]/20"
+                  >
+                    <span>Unit Details</span>
+                    <ArrowUpRight className="w-3 h-3 text-[#0E5A4F]" />
+                  </button>
                 </div>
               </div>
             );
@@ -433,7 +462,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                 />
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                 <div>
                   <label className="block text-xs font-bold text-[#18211F] mb-1">
                     Today's Sales (বিক্রির পরিমাণ)
@@ -449,16 +478,41 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
 
                 <div>
                   <label className="block text-xs font-bold text-[#18211F] mb-1">
+                    Sales Growth / Diff (%)
+                  </label>
+                  <input
+                    type="text"
+                    value={salesGrowth}
+                    onChange={(e) => {
+                      setSalesGrowth(e.target.value);
+                      const val = parseFloat(e.target.value.replace(/[+%]/g, ''));
+                      if (!isNaN(val)) {
+                        setStatus(val >= 0 ? 'Healthy' : (val >= -10 ? 'Watch' : 'Critical'));
+                      }
+                    }}
+                    placeholder="e.g. +8.5% or -4.2%"
+                    className="w-full px-3 py-2 text-xs bg-[#F6F8F7] border border-[#E5EAE8] rounded-lg focus:outline-none focus:border-[#0E5A4F] text-[#18211F]"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-[#18211F] mb-1">
                     Health Status (অবস্থা)
                   </label>
                   <select
                     value={status}
-                    onChange={(e) => setStatus(e.target.value as any)}
+                    onChange={(e) => {
+                      const newStatus = e.target.value as 'Healthy' | 'Watch' | 'Critical';
+                      setStatus(newStatus);
+                      if (newStatus === 'Healthy') setSalesGrowth('+8.5%');
+                      else if (newStatus === 'Watch') setSalesGrowth('-4.5%');
+                      else setSalesGrowth('-12.0%');
+                    }}
                     className="w-full px-3 py-2 text-xs bg-[#F6F8F7] border border-[#E5EAE8] rounded-lg focus:outline-none focus:border-[#0E5A4F] text-[#18211F] cursor-pointer"
                   >
-                    <option value="Healthy">Healthy (সুস্থ / স্বাভাবিক)</option>
-                    <option value="Watch">Watch (পর্যবেক্ষণাধীন)</option>
-                    <option value="Critical">Critical (ঝুঁকিপূর্ণ)</option>
+                    <option value="Healthy">Healthy (+ Growth / স্বাভাবিক)</option>
+                    <option value="Watch">Watch (- Down / পর্যবেক্ষণাধীন)</option>
+                    <option value="Critical">Critical (- High Down / ঝুঁকিপূর্ণ)</option>
                   </select>
                 </div>
               </div>
@@ -576,6 +630,16 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
           </div>
         </div>
       )}
+      {/* ----------------- BUSINESS UNIT DETAILS MODAL (Live Manager Submitted Data) ----------------- */}
+      {selectedBusinessForDetails && (
+        <BusinessUnitDetailsModal
+          isOpen={!!selectedBusinessForDetails}
+          onClose={() => setSelectedBusinessForDetails(null)}
+          business={selectedBusinessForDetails}
+          managers={managers}
+        />
+      )}
+
       {/* ----------------- ADD MANAGER MODAL (For quick assignment from business card) ----------------- */}
       {onAddManager && (
         <AddManagerModal

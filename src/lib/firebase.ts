@@ -1,37 +1,33 @@
 import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getFirestore, Firestore } from 'firebase/firestore';
-import { getAuth } from 'firebase/auth';
+import { getFirestore, initializeFirestore, Firestore } from 'firebase/firestore';
+import { getAuth, signInAnonymously } from 'firebase/auth';
 
 export const firebaseConfig = {
-  projectId: "gen-lang-client-0477283342",
-  appId: "1:1005502270346:web:56d412b31cb2f0159c9673",
-  apiKey: "AIzaSyD3DUaQXTMtRV-G7pLxUPYE9bv6ymKe2Gc",
-  authDomain: "gen-lang-client-0477283342.firebaseapp.com",
-  firestoreDatabaseId: "ai-studio-samuraone-6351e0be-e401-4ebd-af5e-7f0ce1d63bf9",
-  storageBucket: "gen-lang-client-0477283342.firebasestorage.app",
-  messagingSenderId: "1005502270346",
-  measurementId: "",
-  oAuthClientId: "1005502270346-ip4kk92thtvd0r2dnfjlr55ria2c93eb.apps.googleusercontent.com",
-  recaptchaSiteKey: ""
+  apiKey: "AIzaSyA75WRNm38qmLq43NmdL3pcVG9GNSvNG-E",
+  authDomain: "samura-aa16d.firebaseapp.com",
+  projectId: "samura-aa16d",
+  storageBucket: "samura-aa16d.firebasestorage.app",
+  messagingSenderId: "799648587995",
+  appId: "1:799648587995:web:5a37e2b180727ea410acfe"
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();
 
-function initFirestoreInstance(): Firestore {
+export const db: Firestore = (() => {
   try {
-    if (firebaseConfig.firestoreDatabaseId) {
-      try {
-        return getFirestore(app, firebaseConfig.firestoreDatabaseId);
-      } catch {
-        return getFirestore(app);
-      }
-    }
-    return getFirestore(app);
+    return initializeFirestore(app, {
+      experimentalAutoDetectLongPolling: true,
+    });
   } catch {
     return getFirestore(app);
   }
-}
+})();
 
-export const db = initFirestoreInstance();
 export const auth = getAuth(app);
+
+// Sign in anonymously to ensure permission checks pass seamlessly
+signInAnonymously(auth).catch((err) => {
+  // Silently ignore if anonymous auth is disabled on the project
+});
+
 export default app;

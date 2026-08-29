@@ -6,9 +6,22 @@ import { SaleDueRecord, ManagerCustomer } from '../types';
  * pixel-perfect rendering across iFrames, mobile, and desktop.
  */
 
+function getCustomLogoImgTag(): string {
+  try {
+    const logo = localStorage.getItem('samura_custom_logo');
+    if (logo) {
+      return `<div style="text-align: center; margin-bottom: 8px;"><img src="${logo}" alt="Company Logo" style="max-height: 48px; max-width: 180px; object-fit: contain;" /></div>`;
+    }
+  } catch (e) {
+    // Ignore localStorage errors
+  }
+  return '';
+}
+
 function triggerPrintOnHtml(title: string, bodyContent: string) {
   // Try opening a popup window first for clean isolated printing
   const printWindow = window.open('', '_blank', 'width=850,height=900');
+  const logoHeader = getCustomLogoImgTag();
   
   const htmlContent = `
     <!DOCTYPE html>
@@ -218,6 +231,7 @@ function triggerPrintOnHtml(title: string, bodyContent: string) {
       </style>
     </head>
     <body>
+      ${logoHeader}
       ${bodyContent}
       <div class="footer">
         Printed at: ${new Date().toLocaleString('en-US')} · AL SAMURA GROUP ERP · System Generated Report

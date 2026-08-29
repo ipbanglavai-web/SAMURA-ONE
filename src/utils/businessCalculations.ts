@@ -1,4 +1,16 @@
-import { BusinessHealthItem, KpiItem, ChartDataPoint, ReceivableAgingItem } from '../types';
+import { BusinessHealthItem, KpiItem, ChartDataPoint, ReceivableAgingItem, SaleDueRecord } from '../types';
+
+export interface BusinessGrowthData {
+  growthRate: number; // e.g. 14.5 or -6.2
+  isPositive: boolean;
+  badgeText: string; // e.g. "Healthy (+14.5%)" or "Unhealthy (-6.2%)"
+  shortText: string; // e.g. "+14.5%" or "-6.2%"
+  statusLabel: 'Healthy' | 'Unhealthy' | 'Watch' | 'Critical';
+  bgClass: string;
+  textClass: string;
+  borderClass: string;
+  iconType: 'up' | 'down';
+}
 
 export function parseSalesToLakhs(salesStr: string): number {
   if (!salesStr) return 0;
@@ -25,10 +37,19 @@ export function formatLakhs(lakhs: number): string {
     const cr = lakhs / 100;
     return `৳ ${cr.toFixed(2)}Cr`;
   }
+  if (lakhs < 1) {
+    const taka = Math.round(lakhs * 100000);
+    if (taka >= 1000) {
+      return `৳ ${taka.toLocaleString('en-IN')}`;
+    }
+  }
   return `৳ ${lakhs.toFixed(1)}L`;
 }
 
-export function calculateDerivedBusinessData(businesses: BusinessHealthItem[]): {
+export function calculateDerivedBusinessData(
+  businesses: BusinessHealthItem[],
+  salesRecords: SaleDueRecord[] = []
+): {
   kpis: KpiItem[];
   chartData: ChartDataPoint[];
   agingData: ReceivableAgingItem[];
@@ -46,10 +67,37 @@ export function calculateDerivedBusinessData(businesses: BusinessHealthItem[]): 
   }, 0);
 
   const ratio = totalSalesLakhs > 0 ? ((totalCollectionLakhs / totalSalesLakhs) * 100).toFixed(1) : '0.0';
-  const totalReceivableLakhs = totalSalesLakhs * 5.093;
-  const overdueLakhs = totalReceivableLakhs * 0.1766;
-  const totalInventoryLakhs = totalSalesLakhs * 13.13;
-  const totalCashBankLakhs = totalSalesLakhs * 8.738;
+
+  // Calculate actual total running due from active sales records
+  let totalReceivableLakhs = 0;
+  if (Array.isArray(salesRecords) && salesRecords.length > 0) {
+    const totalDueTaka = salesRecords.reduce((sum, r) => sum + (Number(r.runningDue) || 0), 0);
+    const actualDueLakhs = totalDueTaka / 100000;
+
+    // Add receivables for untracked business units
+    const trackedBizIds = new Set(salesRecords.map(r => (r.businessId || '').toLowerCase()));
+    const unTrackedDueLakhs = businesses.reduce((sum, b) => {
+      const bId = (b.id || '').toLowerCase();
+      const bName = (b.name || '').toLowerCase();
+      const isTracked = trackedBizIds.has(bId) || bId === 'bh-1' || bId === 'bh-2' || bName.includes('elenga') || bName.includes('mourin');
+      if (isTracked) return sum;
+      const s = parseSalesToLakhs(b.sales);
+      const rate = parseFloat(b.collectionRate?.replace('%', '') || '80') / 100;
+      return sum + (s * (1 - (isNaN(rate) ? 0.8 : rate)));
+    }, 0);
+
+    totalReceivableLakhs = actualDueLakhs + unTrackedDueLakhs;
+  } else {
+    totalReceivableLakhs = businesses.reduce((sum, b) => {
+      const s = parseSalesToLakhs(b.sales);
+      const rate = parseFloat(b.collectionRate?.replace('%', '') || '80') / 100;
+      return sum + (s * (1 - (isNaN(rate) ? 0.8 : rate)));
+    }, 0);
+  }
+
+  const overdueLakhs = totalReceivableLakhs * 0.25;
+  const totalInventoryLakhs = totalSalesLakhs * 1.2;
+  const totalCashBankLakhs = totalCollectionLakhs;
 
   const totalSalesFormatted = formatLakhs(totalSalesLakhs);
   const totalCollectionFormatted = formatLakhs(totalCollectionLakhs);
@@ -117,13 +165,13 @@ export function calculateDerivedBusinessData(businesses: BusinessHealthItem[]): 
     {
       range: '0–30 days',
       percentage: 58,
-      amount: formatLakhs(totalReceivableLakhs * 0.578),
+      amount: formatLakhs(totalReceivableLakhs * 0.58),
       colorClass: 'bg-[#7E8B26]'
     },
     {
       range: '31–60 days',
       percentage: 24,
-      amount: formatLakhs(totalReceivableLakhs * 0.239),
+      amount: formatLakhs(totalReceivableLakhs * 0.24),
       colorClass: 'bg-[#C98A2C]'
     },
     {
@@ -150,3 +198,129 @@ export function calculateDerivedBusinessData(businesses: BusinessHealthItem[]): 
     collectionRatio: ratio
   };
 }
+
+export function computeDynamicBusinesses(
+  rawBusinesses: BusinessHealthItem[],
+  salesRecords: SaleDueRecord[]
+): BusinessHealthItem[] {
+  if (!Array.isArray(rawBusinesses)) return [];
+
+  return rawBusinesses.map((b) => {
+    const bId = (b.id || '').toLowerCase();
+    const bName = (b.name || '').toLowerCase();
+
+    const unitRecords = (salesRecords || []).filter((r) => {
+      const rBizId = (r.businessId || '').toLowerCase();
+      const rBizName = (r.customerOf || '').toLowerCase();
+      return (
+        rBizId === bId ||
+        (bName.includes('elenga') && (rBizId === 'bh-1' || rBizId === 'biz-1' || rBizName.includes('elenga'))) ||
+        (bName.includes('mourin') && (rBizId === 'bh-2' || rBizId === 'biz-2' || rBizName.includes('mourin'))) ||
+        (rBizName.length > 3 && rBizName.includes(bName))
+      );
+    });
+
+    // If unit is tracked in salesDueRecords and records exist:
+    if (unitRecords.length > 0) {
+      const totalAmount = unitRecords.reduce((sum, r) => sum + (Number(r.amount) || 0), 0);
+      const totalPaid = unitRecords.reduce((sum, r) => sum + (Number(r.paid) || 0), 0);
+      const currentLakhs = totalAmount / 100000;
+      const salesFormatted = formatLakhs(currentLakhs);
+      const colRate = totalAmount > 0 ? ((totalPaid / totalAmount) * 100).toFixed(1) + '%' : '0.0%';
+      const prevSalesLakhs = parseSalesToLakhs(b.previousSales || '10.0L');
+      const growth = prevSalesLakhs > 0 ? Math.round(((currentLakhs - prevSalesLakhs) / prevSalesLakhs) * 1000) / 10 : 0;
+      const status: 'Healthy' | 'Watch' | 'Critical' =
+        growth >= 0 && totalPaid / (totalAmount || 1) >= 0.7
+          ? 'Healthy'
+          : growth >= -15 && totalPaid / (totalAmount || 1) >= 0.4
+          ? 'Watch'
+          : 'Critical';
+
+      return {
+        ...b,
+        sales: salesFormatted,
+        collectionRate: colRate,
+        salesGrowth: growth,
+        status
+      };
+    }
+
+    // If no records exist for this business (e.g. all records deleted by manager):
+    const isSalesTrackedUnit =
+      bId === 'bh-1' ||
+      bId === 'bh-2' ||
+      bName.includes('elenga') ||
+      bName.includes('mourin') ||
+      b.manager?.toLowerCase().includes('shakil') ||
+      b.manager?.toLowerCase().includes('farhan') ||
+      b.manager?.toLowerCase().includes('tanvir');
+
+    if (isSalesTrackedUnit) {
+      return {
+        ...b,
+        sales: '৳ 0.0L',
+        collectionRate: '0.0%',
+        salesGrowth: -100.0,
+        status: 'Critical'
+      };
+    }
+
+    return b;
+  });
+}
+
+export function getBusinessGrowthData(biz: {
+  status?: string;
+  salesGrowth?: number;
+  sales?: string;
+  previousSales?: string;
+}): BusinessGrowthData {
+  let growth = typeof biz.salesGrowth === 'number' ? biz.salesGrowth : undefined;
+
+  // Derive if not explicitly defined
+  if (growth === undefined) {
+    if (biz.sales && biz.previousSales) {
+      const curr = parseSalesToLakhs(biz.sales);
+      const prev = parseSalesToLakhs(biz.previousSales);
+      if (prev > 0) {
+        growth = ((curr - prev) / prev) * 100;
+      }
+    }
+  }
+
+  if (growth === undefined) {
+    if (biz.status === 'Healthy') {
+      growth = 8.5;
+    } else if (biz.status === 'Unhealthy' || biz.status === 'Critical') {
+      growth = -12.4;
+    } else if (biz.status === 'Watch') {
+      growth = -5.8;
+    } else {
+      growth = 5.0;
+    }
+  }
+
+  const isPositive = growth >= 0;
+  const absVal = Math.abs(growth).toFixed(1);
+  const formattedPercent = `${isPositive ? '+' : '-'}${absVal}%`;
+
+  let statusLabel: 'Healthy' | 'Unhealthy' | 'Watch' | 'Critical' = isPositive ? 'Healthy' : 'Unhealthy';
+  let bgClass = isPositive ? 'bg-[#DCFCE7]' : 'bg-[#FEE2E2]';
+  let textClass = isPositive ? 'text-[#15803D]' : 'text-[#B91C1C]';
+  let borderClass = isPositive ? 'border-[#15803D]/40' : 'border-[#B91C1C]/40';
+
+  const badgeText = isPositive ? `Healthy (${formattedPercent})` : `Unhealthy (${formattedPercent})`;
+
+  return {
+    growthRate: growth,
+    isPositive,
+    badgeText,
+    shortText: formattedPercent,
+    statusLabel,
+    bgClass,
+    textClass,
+    borderClass,
+    iconType: isPositive ? 'up' : 'down'
+  };
+}
+

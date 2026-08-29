@@ -1,4 +1,6 @@
 import React from 'react';
+import { useAuth } from '../../auth/AuthContext';
+import { useLogo } from '../../context/LogoContext';
 import {
   LayoutGrid,
   FileSpreadsheet,
@@ -13,7 +15,6 @@ import {
   ShieldCheck,
   Users
 } from 'lucide-react';
-import { useAuth } from '../../auth/AuthContext';
 
 export type ManagerTab = 'overview' | 'sales_due' | 'products' | 'customers';
 
@@ -48,6 +49,7 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
   customerCount = 0
 }) => {
   const { user, logout } = useAuth();
+  const { customLogo } = useLogo();
 
   const commandNavItems: ManagerNavItem[] = [
     {
@@ -119,11 +121,28 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
         {/* Top Branding & Business Unit Badge */}
         <div className="p-5 pb-3">
           <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-xl font-bold tracking-tight text-white">SAMURA ONE</h1>
-              <p className="text-[10px] text-[#22A06B] font-medium tracking-widest uppercase mt-0.5 opacity-90">
-                Unit Manager Portal
-              </p>
+            <div className="flex items-center gap-2.5">
+              {customLogo ? (
+                <div className="h-10 max-w-[140px] px-2 py-1 bg-white rounded-lg flex items-center justify-center shadow-xs border border-white/40">
+                  <img
+                    src={customLogo}
+                    alt="Brand Logo"
+                    className="max-h-8 max-w-full object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="w-8 h-8 rounded-lg bg-[#0E5A4F] border border-[#22A06B]/30 flex items-center justify-center font-bold text-xs tracking-wider text-white shadow-sm shrink-0">
+                  <span>SO</span>
+                </div>
+              )}
+              <div>
+                <h1 className="text-lg font-bold tracking-tight text-white leading-none">
+                  {customLogo ? 'CUSTOM' : 'SAMURA ONE'}
+                </h1>
+                <p className="text-[10px] text-[#22A06B] font-medium tracking-widest uppercase mt-1 opacity-90">
+                  Unit Manager Portal
+                </p>
+              </div>
             </div>
 
             {/* Mobile Close Button */}

@@ -11,9 +11,11 @@ import {
   Users,
   DollarSign,
   Plus,
+  PlusCircle,
   FileText,
   Calendar,
-  Layers
+  Layers,
+  BadgePercent
 } from 'lucide-react';
 
 interface ManagerOverviewTabProps {
@@ -83,8 +85,8 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               onClick={onOpenAddSaleModal}
               className="px-4 py-2.5 rounded-xl bg-[#22A06B] hover:bg-[#1C885A] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
-              <Plus className="w-4 h-4" />
-              <span>+ New Sale & Due</span>
+              <PlusCircle className="w-4 h-4" />
+              <span>New Sale & Due</span>
             </button>
             <button
               id="overview-add-product-btn"
@@ -160,7 +162,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
           <div className="flex items-center justify-between">
             <span className="text-[11px] font-bold text-[#71807B] uppercase tracking-wider">Sacrifice / Discount</span>
             <div className="w-8 h-8 rounded-lg bg-[#FEF6E7] text-[#D9A441] flex items-center justify-center">
-              <DollarSign className="w-4 h-4" />
+              <BadgePercent className="w-4 h-4" />
             </div>
           </div>
           <div className="mt-3">

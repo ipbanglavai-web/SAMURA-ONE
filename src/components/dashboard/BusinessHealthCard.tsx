@@ -1,5 +1,7 @@
 import React from 'react';
 import { BusinessHealthItem } from '../../types';
+import { getBusinessGrowthData } from '../../utils/businessCalculations';
+import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface BusinessHealthCardProps {
   businesses: BusinessHealthItem[];
@@ -42,6 +44,7 @@ export const BusinessHealthCard: React.FC<BusinessHealthCardProps> = ({
               <th className="pb-1.5 font-bold uppercase">Business</th>
               <th className="pb-1.5 font-bold uppercase text-right">Sales</th>
               <th className="pb-1.5 font-bold uppercase text-right">Status</th>
+              <th className="pb-1.5 font-bold uppercase text-right">Action</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-[#E5EAE8]">
@@ -58,14 +61,26 @@ export const BusinessHealthCard: React.FC<BusinessHealthCardProps> = ({
                   {biz.sales}
                 </td>
                 <td className="py-2 text-right">
-                  <span
-                    className={`inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold ${
-                      biz.status === 'Healthy'
-                        ? 'bg-[#E6F4ED] text-[#22A06B]'
-                        : 'bg-[#FEF6E7] text-[#D9A441]'
-                    }`}
-                  >
-                    {biz.status}
+                  {(() => {
+                    const growthInfo = getBusinessGrowthData(biz);
+                    return (
+                      <span
+                        className={`inline-flex items-center gap-1.5 px-2 py-0.5 rounded-md text-[11px] font-extrabold border ${growthInfo.bgClass} ${growthInfo.textClass} ${growthInfo.borderClass}`}
+                        title={`24h Sales difference: ${growthInfo.badgeText}`}
+                      >
+                        {growthInfo.isPositive ? (
+                          <TrendingUp className="w-3 h-3 text-[#15803D] shrink-0 stroke-[2.5]" />
+                        ) : (
+                          <TrendingDown className="w-3 h-3 text-[#B91C1C] shrink-0 stroke-[2.5]" />
+                        )}
+                        <span>{growthInfo.badgeText}</span>
+                      </span>
+                    );
+                  })()}
+                </td>
+                <td className="py-2 text-right">
+                  <span className="text-[10px] font-bold text-[#0E5A4F] hover:underline bg-[#E6F4ED] px-1.5 py-0.5 rounded border border-[#22A06B]/20">
+                    Unit Details →
                   </span>
                 </td>
               </tr>

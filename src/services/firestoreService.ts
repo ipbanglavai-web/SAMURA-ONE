@@ -10,51 +10,92 @@ import {
   writeBatch
 } from 'firebase/firestore';
 import { db } from '../lib/firebase';
-import { SaleDueRecord, UnitProduct, ManagerCustomer } from '../types';
+import {
+  SaleDueRecord,
+  UnitProduct,
+  ManagerCustomer,
+  BusinessHealthItem,
+  BusinessManager,
+  CriticalAlert,
+  PendingApproval
+} from '../types';
 import {
   INITIAL_SALES_DUE_DATA,
   INITIAL_PRODUCTS_DATA,
-  INITIAL_CUSTOMERS_DATA
+  INITIAL_CUSTOMERS_DATA,
+  BUSINESS_HEALTH_DATA,
+  INITIAL_MANAGERS_DATA,
+  CRITICAL_ALERTS_DATA,
+  PENDING_APPROVALS_DATA
 } from '../data/mockData';
 
 const SALES_COLLECTION = 'salesDueRecords';
 const PRODUCTS_COLLECTION = 'managerProducts';
 const CUSTOMERS_COLLECTION = 'managerCustomers';
+const BUSINESSES_COLLECTION = 'businessUnits';
+const MANAGERS_COLLECTION = 'businessManagers';
+const ALERTS_COLLECTION = 'criticalAlerts';
+const APPROVALS_COLLECTION = 'pendingApprovals';
 
-// Seed initial dataset if Firestore collection is empty
+// Seed initial dataset if Firestore collections are empty
 export async function seedInitialFirestoreData() {
   try {
     const salesSnap = await getDocs(collection(db, SALES_COLLECTION));
-    if (salesSnap.empty) {
-      console.log('Seeding initial sales records into Firestore...');
-      const batch = writeBatch(db);
+    const bizSnap = await getDocs(collection(db, BUSINESSES_COLLECTION));
+    
+    // Only seed if both sales and businesses are totally empty on fresh database start
+    if (salesSnap.empty && bizSnap.empty) {
+      console.log('Seeding initial system collections into Firestore...');
+      
+      const salesBatch = writeBatch(db);
       INITIAL_SALES_DUE_DATA.forEach((record) => {
         const ref = doc(db, SALES_COLLECTION, record.id);
-        batch.set(ref, record);
+        salesBatch.set(ref, record);
       });
-      await batch.commit();
-    }
+      await salesBatch.commit();
 
-    const prodSnap = await getDocs(collection(db, PRODUCTS_COLLECTION));
-    if (prodSnap.empty) {
-      console.log('Seeding initial products into Firestore...');
-      const batch = writeBatch(db);
+      const prodBatch = writeBatch(db);
       INITIAL_PRODUCTS_DATA.forEach((prod) => {
         const ref = doc(db, PRODUCTS_COLLECTION, prod.id);
-        batch.set(ref, prod);
+        prodBatch.set(ref, prod);
       });
-      await batch.commit();
-    }
+      await prodBatch.commit();
 
-    const custSnap = await getDocs(collection(db, CUSTOMERS_COLLECTION));
-    if (custSnap.empty) {
-      console.log('Seeding initial customers into Firestore...');
-      const batch = writeBatch(db);
+      const custBatch = writeBatch(db);
       INITIAL_CUSTOMERS_DATA.forEach((cust) => {
         const ref = doc(db, CUSTOMERS_COLLECTION, cust.id);
-        batch.set(ref, cust);
+        custBatch.set(ref, cust);
       });
-      await batch.commit();
+      await custBatch.commit();
+
+      const bizBatch = writeBatch(db);
+      BUSINESS_HEALTH_DATA.forEach((b) => {
+        const ref = doc(db, BUSINESSES_COLLECTION, b.id);
+        bizBatch.set(ref, b);
+      });
+      await bizBatch.commit();
+
+      const mgrBatch = writeBatch(db);
+      INITIAL_MANAGERS_DATA.forEach((m) => {
+        const ref = doc(db, MANAGERS_COLLECTION, m.id);
+        mgrBatch.set(ref, m);
+      });
+      await mgrBatch.commit();
+
+      const altBatch = writeBatch(db);
+      CRITICAL_ALERTS_DATA.forEach((a) => {
+        const ref = doc(db, ALERTS_COLLECTION, a.id);
+        altBatch.set(ref, a);
+      });
+      await altBatch.commit();
+
+      const appBatch = writeBatch(db);
+      PENDING_APPROVALS_DATA.forEach((app) => {
+        const ref = doc(db, APPROVALS_COLLECTION, app.id);
+        appBatch.set(ref, app);
+      });
+      await appBatch.commit();
+      console.log('Firestore successfully seeded with initial collections!');
     }
   } catch (err) {
     console.warn('Firestore seed warning (offline or permissions):', err);
@@ -74,9 +115,7 @@ export function subscribeToSalesRecords(
       snapshot.forEach((doc) => {
         records.push({ id: doc.id, ...doc.data() } as SaleDueRecord);
       });
-      if (records.length > 0) {
-        callback(records);
-      }
+      callback(records);
     },
     (error) => {
       console.warn('Sales Firestore listener error:', error);
@@ -95,9 +134,7 @@ export function subscribeToProducts(
       snapshot.forEach((doc) => {
         products.push({ id: doc.id, ...doc.data() } as UnitProduct);
       });
-      if (products.length > 0) {
-        callback(products);
-      }
+      callback(products);
     },
     (error) => {
       console.warn('Products Firestore listener error:', error);
@@ -116,9 +153,7 @@ export function subscribeToCustomers(
       snapshot.forEach((doc) => {
         customers.push({ id: doc.id, ...doc.data() } as ManagerCustomer);
       });
-      if (customers.length > 0) {
-        callback(customers);
-      }
+      callback(customers);
     },
     (error) => {
       console.warn('Customers Firestore listener error:', error);
@@ -126,48 +161,152 @@ export function subscribeToCustomers(
   );
 }
 
+export function subscribeToBusinesses(
+  callback: (businesses: BusinessHealthItem[]) => void
+) {
+  const q = query(collection(db, BUSINESSES_COLLECTION));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const list: BusinessHealthItem[] = [];
+      snapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() } as BusinessHealthItem);
+      });
+      callback(list);
+    },
+    (error) => {
+      console.warn('Businesses Firestore listener error:', error);
+    }
+  );
+}
+
+export function subscribeToManagers(
+  callback: (managers: BusinessManager[]) => void
+) {
+  const q = query(collection(db, MANAGERS_COLLECTION));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const list: BusinessManager[] = [];
+      snapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() } as BusinessManager);
+      });
+      callback(list);
+    },
+    (error) => {
+      console.warn('Managers Firestore listener error:', error);
+    }
+  );
+}
+
+export function subscribeToAlerts(
+  callback: (alerts: CriticalAlert[]) => void
+) {
+  const q = query(collection(db, ALERTS_COLLECTION));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const list: CriticalAlert[] = [];
+      snapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() } as CriticalAlert);
+      });
+      callback(list);
+    },
+    (error) => {
+      console.warn('Alerts Firestore listener error:', error);
+    }
+  );
+}
+
+export function subscribeToApprovals(
+  callback: (approvals: PendingApproval[]) => void
+) {
+  const q = query(collection(db, APPROVALS_COLLECTION));
+  return onSnapshot(
+    q,
+    (snapshot) => {
+      const list: PendingApproval[] = [];
+      snapshot.forEach((doc) => {
+        list.push({ id: doc.id, ...doc.data() } as PendingApproval);
+      });
+      callback(list);
+    },
+    (error) => {
+      console.warn('Approvals Firestore listener error:', error);
+    }
+  );
+}
+
 // ---------------- Sales Records CRUD ----------------
 
 export async function saveSaleRecordToFirestore(record: SaleDueRecord) {
-  const ref = doc(db, SALES_COLLECTION, record.id);
-  await setDoc(ref, record, { merge: true });
+  try {
+    const ref = doc(db, SALES_COLLECTION, record.id);
+    await setDoc(ref, record, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save sale record to Firestore:', err);
+  }
 }
 
 export async function deleteSaleRecordFromFirestore(recordId: string) {
-  const ref = doc(db, SALES_COLLECTION, recordId);
-  await deleteDoc(ref);
+  try {
+    const ref = doc(db, SALES_COLLECTION, recordId);
+    await deleteDoc(ref);
+  } catch (err) {
+    console.warn('Failed to delete sale record from Firestore:', err);
+  }
 }
 
 export async function updateSalePaymentInFirestore(
   recordId: string,
   updatedData: Partial<SaleDueRecord>
 ) {
-  const ref = doc(db, SALES_COLLECTION, recordId);
-  await updateDoc(ref, updatedData);
+  try {
+    const ref = doc(db, SALES_COLLECTION, recordId);
+    await updateDoc(ref, updatedData);
+  } catch (err) {
+    console.warn('Failed to update sale payment in Firestore:', err);
+  }
 }
 
 // ---------------- Products CRUD ----------------
 
 export async function saveProductToFirestore(product: UnitProduct) {
-  const ref = doc(db, PRODUCTS_COLLECTION, product.id);
-  await setDoc(ref, product, { merge: true });
+  try {
+    const ref = doc(db, PRODUCTS_COLLECTION, product.id);
+    await setDoc(ref, product, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save product to Firestore:', err);
+  }
 }
 
 export async function deleteProductFromFirestore(productId: string) {
-  const ref = doc(db, PRODUCTS_COLLECTION, productId);
-  await deleteDoc(ref);
+  try {
+    const ref = doc(db, PRODUCTS_COLLECTION, productId);
+    await deleteDoc(ref);
+  } catch (err) {
+    console.warn('Failed to delete product from Firestore:', err);
+  }
 }
 
 // ---------------- Customers CRUD ----------------
 
 export async function saveCustomerToFirestore(customer: ManagerCustomer) {
-  const ref = doc(db, CUSTOMERS_COLLECTION, customer.id);
-  await setDoc(ref, customer, { merge: true });
+  try {
+    const ref = doc(db, CUSTOMERS_COLLECTION, customer.id);
+    await setDoc(ref, customer, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save customer to Firestore:', err);
+  }
 }
 
 export async function deleteCustomerFromFirestore(customerId: string) {
-  const ref = doc(db, CUSTOMERS_COLLECTION, customerId);
-  await deleteDoc(ref);
+  try {
+    const ref = doc(db, CUSTOMERS_COLLECTION, customerId);
+    await deleteDoc(ref);
+  } catch (err) {
+    console.warn('Failed to delete customer from Firestore:', err);
+  }
 }
 
 export async function updateCustomerDueInFirestore(
@@ -177,10 +316,94 @@ export async function updateCustomerDueInFirestore(
   additionalPaid: number = 0,
   lastDate?: string
 ) {
-  const ref = doc(db, CUSTOMERS_COLLECTION, customerId);
-  const dataToUpdate: any = {
-    dueAmount: newDueAmount
-  };
-  if (lastDate) dataToUpdate.lastTransactionDate = lastDate;
-  await updateDoc(ref, dataToUpdate);
+  try {
+    const ref = doc(db, CUSTOMERS_COLLECTION, customerId);
+    const dataToUpdate: any = {
+      dueAmount: newDueAmount
+    };
+    if (lastDate) dataToUpdate.lastTransactionDate = lastDate;
+    await updateDoc(ref, dataToUpdate);
+  } catch (err) {
+    console.warn('Failed to update customer due in Firestore:', err);
+  }
+}
+
+// ---------------- Businesses CRUD ----------------
+
+export async function saveBusinessToFirestore(business: BusinessHealthItem) {
+  try {
+    const ref = doc(db, BUSINESSES_COLLECTION, business.id);
+    await setDoc(ref, business, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save business to Firestore:', err);
+  }
+}
+
+export async function deleteBusinessFromFirestore(businessId: string) {
+  try {
+    const ref = doc(db, BUSINESSES_COLLECTION, businessId);
+    await deleteDoc(ref);
+  } catch (err) {
+    console.warn('Failed to delete business from Firestore:', err);
+  }
+}
+
+// ---------------- Managers CRUD ----------------
+
+export async function saveManagerToFirestore(manager: BusinessManager) {
+  try {
+    const ref = doc(db, MANAGERS_COLLECTION, manager.id);
+    await setDoc(ref, manager, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save manager to Firestore:', err);
+  }
+}
+
+export async function deleteManagerFromFirestore(managerId: string) {
+  try {
+    const ref = doc(db, MANAGERS_COLLECTION, managerId);
+    await deleteDoc(ref);
+  } catch (err) {
+    console.warn('Failed to delete manager from Firestore:', err);
+  }
+}
+
+// ---------------- Alerts CRUD ----------------
+
+export async function saveAlertToFirestore(alert: CriticalAlert) {
+  try {
+    const ref = doc(db, ALERTS_COLLECTION, alert.id);
+    await setDoc(ref, alert, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save alert to Firestore:', err);
+  }
+}
+
+export async function updateAlertStatusInFirestore(alertId: string, status: CriticalAlert['status']) {
+  try {
+    const ref = doc(db, ALERTS_COLLECTION, alertId);
+    await updateDoc(ref, { status });
+  } catch (err) {
+    console.warn('Failed to update alert status in Firestore:', err);
+  }
+}
+
+// ---------------- Approvals CRUD ----------------
+
+export async function saveApprovalToFirestore(approval: PendingApproval) {
+  try {
+    const ref = doc(db, APPROVALS_COLLECTION, approval.id);
+    await setDoc(ref, approval, { merge: true });
+  } catch (err) {
+    console.warn('Failed to save approval to Firestore:', err);
+  }
+}
+
+export async function updateApprovalStatusInFirestore(approvalId: string, status: PendingApproval['status']) {
+  try {
+    const ref = doc(db, APPROVALS_COLLECTION, approvalId);
+    await updateDoc(ref, { status });
+  } catch (err) {
+    console.warn('Failed to update approval status in Firestore:', err);
+  }
 }

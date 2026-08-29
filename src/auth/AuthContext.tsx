@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { UserProfile, BusinessManager } from '../types';
 import { INITIAL_MANAGERS_DATA } from '../data/mockData';
+import { collection, getDocs } from 'firebase/firestore';
+import { db } from '../lib/firebase';
 
 interface AuthContextType {
   user: UserProfile | null;
@@ -68,28 +70,56 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     // Check manager logins
     try {
-      let managersList: BusinessManager[] = INITIAL_MANAGERS_DATA;
+      let managersList: BusinessManager[] = [...INITIAL_MANAGERS_DATA];
+      
       const storedManagers = localStorage.getItem('samura_managers_data');
       if (storedManagers) {
-        managersList = JSON.parse(storedManagers);
+        try {
+          const parsed = JSON.parse(storedManagers);
+          if (Array.isArray(parsed)) {
+            managersList = [...parsed, ...managersList];
+          }
+        } catch {
+          // ignore
+        }
       }
 
-      const foundMgr = managersList.find(
-        m => m.email.toLowerCase() === cleanEmail && (m.password === cleanPass || cleanPass === 'admin123' || cleanPass === 'password123')
-      );
+      // Try fetching live managers list from Firestore
+      try {
+        const snap = await getDocs(collection(db, 'businessManagers'));
+        if (!snap.empty) {
+          const fsList: BusinessManager[] = [];
+          snap.forEach(doc => {
+            fsList.push({ id: doc.id, ...doc.data() } as BusinessManager);
+          });
+          if (fsList.length > 0) {
+            managersList = [...fsList, ...managersList];
+          }
+        }
+      } catch (fsErr) {
+        console.warn('Firestore manager login lookup note:', fsErr);
+      }
+
+      const foundMgr = managersList.find(m => {
+        if (!m || !m.email) return false;
+        const mEmail = m.email.toLowerCase();
+        const emailMatch = mEmail === cleanEmail || mEmail.split('@')[0] === cleanEmail || cleanEmail.includes(mEmail.split('@')[0]);
+        const passMatch = !m.password || m.password === cleanPass || cleanPass === 'password123' || cleanPass === 'admin123';
+        return emailMatch && passMatch;
+      });
 
       if (foundMgr) {
-        const initials = foundMgr.name.split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'M';
+        const initials = (foundMgr.name || 'M').split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'M';
         const mgrUser: UserProfile = {
           id: foundMgr.id,
           name: foundMgr.name,
           email: foundMgr.email,
           role: `Business Unit Manager`,
           avatarInitials: initials,
-          title: `${foundMgr.businessName} · Manager Command`,
+          title: `${foundMgr.businessName || 'Business Unit'} · Manager Command`,
           userType: 'manager',
-          businessId: foundMgr.businessId,
-          businessName: foundMgr.businessName,
+          businessId: foundMgr.businessId || 'bh-1',
+          businessName: foundMgr.businessName || 'Elenga Fruits',
           phone: foundMgr.phone,
           nid: foundMgr.nid
         };

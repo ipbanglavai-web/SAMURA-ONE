@@ -39,7 +39,7 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
   // Active Tab state
   const [activeTab, setActiveTab] = useState<ManagerTab>('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [selectedDate, setSelectedDate] = useState('All Records');
+  const [selectedDate, setSelectedDate] = useState('Today');
 
   // Business context
   const currentBusinessId = user?.businessId || 'biz-1';
@@ -79,9 +79,9 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
   const [salesDueRecords, setSalesDueRecords] = useState<SaleDueRecord[]>(() => {
     try {
       const stored = localStorage.getItem('samura_sales_due_records_v2') || localStorage.getItem('samura_sales_due_records');
-      if (stored) {
+      if (stored !== null) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           return parsed;
         }
       }
@@ -95,9 +95,9 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
   const [customers, setCustomers] = useState<ManagerCustomer[]>(() => {
     try {
       const stored = localStorage.getItem('samura_manager_customers_v2') || localStorage.getItem('samura_manager_customers');
-      if (stored) {
+      if (stored !== null) {
         const parsed: ManagerCustomer[] = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           return parsed;
         }
       }
@@ -182,12 +182,10 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
       return unitRecords;
     }
     if (selectedDate === 'Today') {
-      const match = unitRecords.filter((r) => r.date === todayStr);
-      return match.length > 0 ? match : unitRecords;
+      return unitRecords.filter((r) => r.date === todayStr);
     }
     if (selectedDate === 'Yesterday') {
-      const match = unitRecords.filter((r) => r.date === yesterdayStr);
-      return match.length > 0 ? match : unitRecords.filter((r) => r.date?.includes('2026-08-21'));
+      return unitRecords.filter((r) => r.date === yesterdayStr);
     }
     if (selectedDate === 'Last 7 Days') {
       return unitRecords.filter((r) => !r.date || r.date >= last7DaysStr);
@@ -197,8 +195,7 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
     }
     // Specific date format like YYYY-MM-DD
     if (selectedDate.match(/^\d{4}-\d{2}-\d{2}$/)) {
-      const match = unitRecords.filter((r) => r.date === selectedDate);
-      return match;
+      return unitRecords.filter((r) => r.date === selectedDate);
     }
     return unitRecords;
   }, [unitRecords, selectedDate, todayStr, yesterdayStr, last7DaysStr, currentMonthPrefix]);
