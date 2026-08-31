@@ -1,11 +1,11 @@
 {
-  "projectId": "samura-aa16d",
-  "appId": "1:799648587995:web:5a37e2b180727ea410acfe",
-  "apiKey": "AIzaSyA75WRNm38qmLq43NmdL3pcVG9GNSvNG-E",
-  "authDomain": "samura-aa16d.firebaseapp.com",
+  "projectId": "samura1",
+  "appId": "1:711394370951:web:ee05aed8fb926ab72bdf22",
+  "apiKey": "AIzaSyCCvWplyapy19Mt7XgD4YjXWyzn0uYE5as",
+  "authDomain": "samura1.firebaseapp.com",
   "firestoreDatabaseId": "(default)",
-  "storageBucket": "samura-aa16d.firebasestorage.app",
-  "messagingSenderId": "799648587995",
+  "storageBucket": "samura1.firebasestorage.app",
+  "messagingSenderId": "711394370951",
   "measurementId": "",
   "oAuthClientId": "",
   "recaptchaSiteKey": ""

@@ -492,7 +492,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
                   className="text-xs text-[#0E5A4F] font-bold hover:underline flex items-center gap-1 cursor-pointer"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>+ New Product</span>
+                  <span>New Product</span>
                 </button>
               )}
             </div>

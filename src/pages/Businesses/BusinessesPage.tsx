@@ -92,7 +92,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
   const handleBusinessFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!name.trim()) {
-      setFormError('বিজনেস ইউনিটের নাম লিখুন (Business unit name is required)');
+      setFormError('Business unit name is required.');
       return;
     }
 
@@ -112,7 +112,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
     });
 
     setIsAddBusinessModalOpen(false);
-    showToast(`"${name.trim()}" সফলভাবে যুক্ত করা হয়েছে! (Business unit added successfully)`);
+    showToast(`"${name.trim()}" added successfully!`);
   };
 
   const handleConfirmDeleteBusiness = () => {
@@ -120,7 +120,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
       const deletedName = businessToDelete.name;
       onDeleteBusiness(businessToDelete.id);
       setBusinessToDelete(null);
-      showToast(`"${deletedName}" এবং এর সাথে সম্পর্কিত সকল সেলস, কালেকশন ও ডেটা মুছে ফেলা হয়েছে!`);
+      showToast(`"${deletedName}" and all associated sales records were removed.`);
     }
   };
 
@@ -158,7 +158,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
             </h2>
           </div>
           <p className="text-xs text-[#71807B] mt-1">
-            গ্রুপের সকল ব্যবসায়িক প্রতিষ্ঠান, স্বাস্থ্য পর্যবেক্ষণ, বিক্রয় ও কালেকশন অনুপাত
+            Overview of group business units, health metrics, sales growth, and collection ratios
           </p>
         </div>
 
@@ -192,7 +192,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
             className="px-3.5 py-1.5 bg-[#0E5A4F] hover:bg-[#073F37] text-white rounded-md text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Add Business Unit</span>
+            <span>Add Business Unit</span>
           </button>
         </div>
       </div>
@@ -376,7 +376,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                           className="px-2.5 py-1 bg-[#0E5A4F] hover:bg-[#073F37] text-white rounded-md text-[11px] font-bold flex items-center gap-1 transition-all cursor-pointer shadow-2xs"
                         >
                           <UserPlus className="w-3 h-3" />
-                          <span>+ Add Manager</span>
+                          <span>Add Manager</span>
                         </button>
                       </div>
                     </div>
@@ -547,7 +547,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
 
               <div>
                 <label className="block text-xs font-bold text-[#18211F] mb-1">
-                  In-Charge Officer Name (দায়িত্বপ্রাপ্ত কর্মকর্তা)
+                  In-Charge Officer Name
                 </label>
                 <input
                   type="text"
@@ -565,14 +565,14 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                   onClick={() => setIsAddBusinessModalOpen(false)}
                   className="px-4 py-2 bg-[#F6F8F7] hover:bg-[#E5EAE8] text-[#18211F] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
                 >
-                  Cancel (বাতিল)
+                  Cancel
                 </button>
                 <button
                   type="submit"
                   className="px-4 py-2 bg-[#0E5A4F] hover:bg-[#073F37] text-white rounded-lg text-xs font-bold shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
                 >
                   <Plus className="w-3.5 h-3.5" />
-                  <span>Add Unit (ইউনিট যোগ করুন)</span>
+                  <span>Add Unit</span>
                 </button>
               </div>
             </form>
@@ -590,7 +590,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-[#18211F]">
-                  বিজনেস ইউনিট ডিলিট করবেন?
+                  Delete Business Unit?
                 </h3>
                 <p className="text-xs text-[#71807B] mt-0.5">
                   Confirm removal of business unit
@@ -600,12 +600,12 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
 
             <div className="my-4 p-3.5 bg-red-50/80 border border-red-200 rounded-lg text-xs text-red-800 space-y-1.5">
               <p className="font-semibold text-red-900">
-                আপনি কি নিশ্চিত যে <strong className="font-bold underline">"{businessToDelete.name}"</strong> মুছে ফেলতে চান?
+                Are you sure you want to delete <strong className="font-bold underline">"{businessToDelete.name}"</strong>?
               </p>
               <ul className="text-[11px] text-red-700 list-disc list-inside space-y-0.5 pt-1">
-                <li>এই বিজনেসের দৈনিক সেলস (Today's Sales) হিসাব থেকে বাদ পড়বে</li>
-                <li>কালেকশন (Collection) ও কালেকশন অনুপাত স্বয়ংক্রিয়ভাবে রিক্যালকুলেট হবে</li>
-                <li>সম্পর্কিত বকেয়া (Receivables), এলার্ট এবং পেন্ডিং অনুমোদন তালিকা থেকে স্থায়ীভাবে মুছে যাবে</li>
+                <li>Daily sales entries for this unit will be removed</li>
+                <li>Collection ratios will automatically recalculate</li>
+                <li>Associated dues, alerts, and pending approvals will be cleared</li>
               </ul>
             </div>
 
@@ -615,7 +615,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                 onClick={() => setBusinessToDelete(null)}
                 className="px-4 py-2 bg-[#F6F8F7] hover:bg-[#E5EAE8] text-[#18211F] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
               >
-                Cancel (বাতিল)
+                Cancel
               </button>
               <button
                 type="button"
@@ -624,7 +624,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Delete Unit (মুছে ফেলুন)</span>
+                <span>Delete Unit</span>
               </button>
             </div>
           </div>
@@ -652,7 +652,7 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
           defaultBusinessId={selectedBusinessForManager}
           onAddManager={(newMgr) => {
             onAddManager(newMgr);
-            showToast(`ম্যানেজার "${newMgr.name}" "${newMgr.businessName}" ইউনিটের জন্য সফলভাবে যুক্ত হয়েছে!`);
+            showToast(`Manager "${newMgr.name}" assigned to "${newMgr.businessName}".`);
           }}
         />
       )}

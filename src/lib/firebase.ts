@@ -3,12 +3,12 @@ import { getFirestore, initializeFirestore, Firestore } from 'firebase/firestore
 import { getAuth, signInAnonymously } from 'firebase/auth';
 
 export const firebaseConfig = {
-  apiKey: "AIzaSyA75WRNm38qmLq43NmdL3pcVG9GNSvNG-E",
-  authDomain: "samura-aa16d.firebaseapp.com",
-  projectId: "samura-aa16d",
-  storageBucket: "samura-aa16d.firebasestorage.app",
-  messagingSenderId: "799648587995",
-  appId: "1:799648587995:web:5a37e2b180727ea410acfe"
+  apiKey: "AIzaSyCCvWplyapy19Mt7XgD4YjXWyzn0uYE5as",
+  authDomain: "samura1.firebaseapp.com",
+  projectId: "samura1",
+  storageBucket: "samura1.firebasestorage.app",
+  messagingSenderId: "711394370951",
+  appId: "1:711394370951:web:ee05aed8fb926ab72bdf22"
 };
 
 const app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApp();

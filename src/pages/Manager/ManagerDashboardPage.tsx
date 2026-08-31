@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../auth/AuthContext';
-import { BusinessHealthItem, SaleDueRecord, UnitProduct, ManagerCustomer } from '../../types';
+import { BusinessHealthItem, SaleDueRecord, UnitProduct, ManagerCustomer, PendingApproval } from '../../types';
 import { ManagerSidebar, ManagerTab } from '../../components/layout/ManagerSidebar';
 import { ManagerHeader } from '../../components/layout/ManagerHeader';
 import { ManagerOverviewTab } from './tabs/ManagerOverviewTab';
@@ -24,7 +24,8 @@ import {
   deleteProductFromFirestore,
   saveCustomerToFirestore,
   deleteCustomerFromFirestore,
-  updateCustomerDueInFirestore
+  updateCustomerDueInFirestore,
+  saveApprovalToFirestore
 } from '../../services/firestoreService';
 
 interface ManagerDashboardPageProps {
@@ -54,19 +55,14 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
     manager: user?.name || 'Unit Manager'
   };
 
-  // 1. Products State with LocalStorage persistence & catalog synchronization
+  // 1. Products State with LocalStorage persistence
   const [products, setProducts] = useState<UnitProduct[]>(() => {
     try {
       const stored = localStorage.getItem('samura_unit_products_v2') || localStorage.getItem('samura_unit_products');
       if (stored) {
         const parsed: UnitProduct[] = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length >= 40) {
+        if (Array.isArray(parsed)) {
           return parsed;
-        } else if (Array.isArray(parsed)) {
-          // Merge missing initial products
-          const existingIds = new Set(parsed.map((p) => p.id));
-          const missing = INITIAL_PRODUCTS_DATA.filter((p) => !existingIds.has(p.id));
-          return [...parsed, ...missing];
         }
       }
     } catch (e) {
@@ -480,11 +476,45 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
   };
 
   const handleDeleteSaleRecord = async (id: string) => {
-    setSalesDueRecords((prev) => prev.filter((r) => r.id !== id));
+    const targetRecord = salesDueRecords.find((r) => r.id === id);
+    if (!targetRecord) return;
+
+    // 1. Mark sale record as void requested / Void Pending
+    const updatedRecord: SaleDueRecord = {
+      ...targetRecord,
+      status: 'Void Pending',
+      voidRequested: true
+    };
+
+    setSalesDueRecords((prev) =>
+      prev.map((r) => (r.id === id ? updatedRecord : r))
+    );
+
     try {
-      await deleteSaleRecordFromFirestore(id);
+      await saveSaleRecordToFirestore(updatedRecord);
     } catch (err) {
-      console.error('Failed to delete sale record from Firestore:', err);
+      console.error('Failed to update sale record void status in Firestore:', err);
+    }
+
+    // 2. Create a pending void approval request for Admin
+    const voidApproval: PendingApproval = {
+      id: `app-void-${id}-${Date.now()}`,
+      title: `Void Sale Request - ${targetRecord.invoiceNo}`,
+      description: `Manager ${user?.name || currentBusinessName} requested to void sale invoice ${targetRecord.invoiceNo} for ${targetRecord.customerName} (${targetRecord.productName}, ৳${targetRecord.amount.toLocaleString()}).`,
+      amount: `৳${targetRecord.amount.toLocaleString()}`,
+      type: 'void',
+      age: 'Just now',
+      requester: user?.name || currentBusinessName,
+      department: currentBusinessName,
+      status: 'pending',
+      business: currentBusinessName,
+      saleId: id
+    };
+
+    try {
+      await saveApprovalToFirestore(voidApproval);
+    } catch (err) {
+      console.error('Failed to save void request approval to Firestore:', err);
     }
   };
 

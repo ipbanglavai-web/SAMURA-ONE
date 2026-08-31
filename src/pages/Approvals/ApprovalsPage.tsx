@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { PendingApproval } from '../../types';
-import { ShieldCheck, CheckCircle2, XCircle, Filter, Search, Check, Clock, User, Building } from 'lucide-react';
+import { ShieldCheck, CheckCircle2, XCircle, Filter, Search, Check, Clock, User, Building, Trash2 } from 'lucide-react';
 
 interface ApprovalsPageProps {
   approvals: PendingApproval[];
@@ -15,7 +15,7 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({
   onReject,
   onSelectApproval
 }) => {
-  const [filterType, setFilterType] = useState<'all' | 'payment' | 'inventory' | 'credit'>('all');
+  const [filterType, setFilterType] = useState<'all' | 'payment' | 'inventory' | 'credit' | 'void'>('all');
   const [search, setSearch] = useState('');
 
   const filtered = approvals.filter(item => {
@@ -95,13 +95,24 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({
           </button>
           <button
             onClick={() => setFilterType('credit')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
               filterType === 'credit'
                 ? 'bg-[#0E5A4F] text-white'
                 : 'text-[#71807B] hover:bg-[#F6F8F7]'
             }`}
           >
             Credit Overrides
+          </button>
+          <button
+            id="filter-void-requests-btn"
+            onClick={() => setFilterType('void')}
+            className={`px-3 py-1.5 rounded-lg font-medium transition-colors cursor-pointer ${
+              filterType === 'void'
+                ? 'bg-[#0E5A4F] text-white'
+                : 'text-[#71807B] hover:bg-[#F6F8F7]'
+            }`}
+          >
+            Void Requests ({approvals.filter(a => a.type === 'void').length})
           </button>
         </div>
 
@@ -136,7 +147,15 @@ export const ApprovalsPage: React.FC<ApprovalsPageProps> = ({
               className="flex items-start gap-3.5 cursor-pointer min-w-0 flex-1"
             >
               <div className="w-10 h-10 rounded-xl bg-[#F6F8F7] border border-[#E5EAE8] flex items-center justify-center font-bold text-sm text-[#0E5A4F] shrink-0 mt-0.5">
-                {item.type === 'payment' ? '৳' : item.type === 'credit' ? '%' : '📦'}
+                {item.type === 'void' ? (
+                  <Trash2 className="w-5 h-5 text-red-500" />
+                ) : item.type === 'payment' ? (
+                  '৳'
+                ) : item.type === 'credit' ? (
+                  '%'
+                ) : (
+                  '📦'
+                )}
               </div>
               <div className="min-w-0">
                 <div className="flex items-center gap-2">

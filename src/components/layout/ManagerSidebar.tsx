@@ -55,14 +55,12 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
     {
       id: 'overview',
       name: 'Unit Overview',
-      banglaName: 'ওভারভিউ',
       icon: LayoutGrid,
       description: 'Summary & KPIs'
     },
     {
       id: 'sales_due',
-      name: 'SALES & DUE',
-      banglaName: 'বিক্রি ও বাকি খাতা',
+      name: 'Sales & Dues',
       icon: TrendingUp,
       badge: salesDueCount,
       description: 'Records & Vouchers'
@@ -70,15 +68,13 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
     {
       id: 'customers',
       name: 'Customer List',
-      banglaName: 'কাস্টমার তালিকা',
       icon: Users,
       badge: customerCount,
-      description: 'Profiles & Due Ledger'
+      description: 'Profiles & Ledger'
     },
     {
       id: 'products',
-      name: 'Products',
-      banglaName: 'পণ্য তালিকা',
+      name: 'Products & Inventory',
       icon: Package,
       badge: productCount,
       description: 'Inventory & Rates'
@@ -247,7 +243,7 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
               id="manager-sidebar-logout"
               onClick={logout}
               className="p-1.5 text-white/60 hover:text-red-300 hover:bg-red-500/20 rounded-md transition-colors cursor-pointer shrink-0"
-              title="Sign Out (লগআউট)"
+              title="Sign Out"
             >
               <LogOut className="w-4 h-4" />
             </button>

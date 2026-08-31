@@ -64,7 +64,7 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
       const deletedName = managerToDelete.name;
       onDeleteManager(managerToDelete.id);
       setManagerToDelete(null);
-      showToast(`ম্যানেজার "${deletedName}" সফলভাবে অপসারণ করা হয়েছে!`);
+      showToast(`Manager "${deletedName}" removed successfully.`);
     }
   };
 
@@ -104,11 +104,11 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
               <UserCheck className="w-5 h-5" />
             </div>
             <h2 className="text-base sm:text-lg font-bold text-[#18211F] tracking-tight">
-              Business Unit Managers (ম্যানেজার ব্যবস্থাপনা)
+              Business Unit Managers
             </h2>
           </div>
           <p className="text-xs text-[#71807B] mt-1">
-            ম্যানেজারদের নাম, মোবাইল নাম্বার, ইমেইল, পাসওয়ার্ড, এনআইডি ও দায়িত্বপ্রাপ্ত প্রতিষ্ঠান পরিচালনা করুন
+            Manage manager directory, credentials, assigned business units, contact details, and system security
           </p>
         </div>
 
@@ -145,7 +145,7 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
             className="px-3.5 py-1.5 bg-[#0E5A4F] hover:bg-[#073F37] text-white rounded-md text-xs font-bold flex items-center gap-1.5 shadow-2xs transition-colors cursor-pointer"
           >
             <UserPlus className="w-4 h-4" />
-            <span>+ Add Manager</span>
+            <span>Add Manager</span>
           </button>
         </div>
       </div>
@@ -196,7 +196,7 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
               Assigned Managers Directory ({filteredManagers.length} Officers)
             </h3>
             <p className="text-xs text-[#71807B] mt-0.5">
-              নিচে প্রতিটি নির্দিষ্ট বিজনেস ইউনিটের দায়িত্বরত ম্যানেজারের বিস্তারিত তথ্য প্রদর্শিত হচ্ছে
+              Comprehensive directory of assigned managers overseeing operational units
             </p>
           </div>
 
@@ -210,9 +210,9 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
         {filteredManagers.length === 0 ? (
           <div className="p-12 text-center text-[#71807B]">
             <AlertCircle className="w-9 h-9 mx-auto mb-2 opacity-40 text-[#71807B]" />
-            <p className="text-sm font-bold text-[#18211F]">কোনো ম্যানেজার পাওয়া যায়নি</p>
+            <p className="text-sm font-bold text-[#18211F]">No Managers Found</p>
             <p className="text-xs text-[#71807B] mt-1">
-              অনুগ্রহ করে সার্চ পরিবর্তন করুন অথবা নতুন ম্যানেজার যোগ করুন।
+              Try adjusting your search query or add a new manager.
             </p>
             <button
               onClick={() => setIsAddManagerModalOpen(true)}
@@ -227,10 +227,10 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#F6F8F7] text-[#71807B] font-bold border-b border-[#E5EAE8]">
-                  <th className="py-3 px-4">Manager Name (নাম)</th>
-                  <th className="py-3 px-4">Contact (ফোন ও ইমেইল)</th>
-                  <th className="py-3 px-4">NID No. (এনআইডি নম্বর)</th>
-                  <th className="py-3 px-4">Assigned Business (বিজনেস ইউনিট)</th>
+                  <th className="py-3 px-4">Manager Name</th>
+                  <th className="py-3 px-4">Contact</th>
+                  <th className="py-3 px-4">NID No.</th>
+                  <th className="py-3 px-4">Assigned Business</th>
                   <th className="py-3 px-4">Password & Access</th>
                   <th className="py-3 px-4 text-right">Actions</th>
                 </tr>
@@ -339,7 +339,7 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
         businesses={businesses}
         onAddManager={(newMgr) => {
           onAddManager(newMgr);
-          showToast(`ম্যানেজার "${newMgr.name}" "${newMgr.businessName}" ইউনিটের জন্য সফলভাবে যুক্ত হয়েছে!`);
+          showToast(`Manager "${newMgr.name}" assigned to "${newMgr.businessName}".`);
         }}
       />
 
@@ -353,7 +353,7 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
               </div>
               <div>
                 <h3 className="text-sm sm:text-base font-bold text-[#18211F]">
-                  ম্যানেজার অপসারণ করবেন?
+                  Remove Manager?
                 </h3>
                 <p className="text-xs text-[#71807B] mt-0.5">
                   Confirm Manager Removal
@@ -363,12 +363,12 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
 
             <div className="my-4 p-3.5 bg-red-50/80 border border-red-200 rounded-lg text-xs text-red-800 space-y-1.5">
               <p className="font-semibold text-red-900">
-                আপনি কি নিশ্চিত যে <strong className="font-bold underline">"{managerToDelete.name}"</strong> কে অপসারণ করতে চান?
+                Are you sure you want to remove <strong className="font-bold underline">"{managerToDelete.name}"</strong>?
               </p>
               <ul className="text-[11px] text-red-700 list-disc list-inside space-y-0.5 pt-1">
-                <li>দায়িত্বপ্রাপ্ত প্রতিষ্ঠান: <strong>{managerToDelete.businessName}</strong></li>
-                <li>জাতীয় পরিচয়পত্র (NID): <strong>{managerToDelete.nid}</strong></li>
-                <li>এই ম্যানেজারের লগইন এক্সেস নিষ্ক্রিয় হয়ে যাবে</li>
+                <li>Assigned Business: <strong>{managerToDelete.businessName}</strong></li>
+                <li>National ID (NID): <strong>{managerToDelete.nid}</strong></li>
+                <li>This manager's login access will be disabled immediately</li>
               </ul>
             </div>
 
@@ -378,7 +378,7 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
                 onClick={() => setManagerToDelete(null)}
                 className="px-4 py-2 bg-[#F6F8F7] hover:bg-[#E5EAE8] text-[#18211F] rounded-lg text-xs font-semibold transition-colors cursor-pointer"
               >
-                Cancel (বাতিল)
+                Cancel
               </button>
               <button
                 type="button"
@@ -387,7 +387,7 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
                 className="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg text-xs font-bold shadow-xs transition-colors cursor-pointer flex items-center gap-1.5"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                <span>Remove Manager (অপসারণ করুন)</span>
+                <span>Remove Manager</span>
               </button>
             </div>
           </div>

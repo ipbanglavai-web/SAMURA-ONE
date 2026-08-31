@@ -50,9 +50,9 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
               <AlertTriangle className="w-7 h-7" />
             </div>
             
-            <h2 className="text-xl font-bold tracking-tight mb-2">Notice</h2>
+            <h2 className="text-xl font-bold tracking-tight mb-2">System Notice</h2>
             <p className="text-xs text-[#A3B8B0] mb-5 leading-relaxed">
-              সিস্টেম রিলোড করার জন্য নিচের বাটনটি ব্যবহার করুন।
+              An unexpected runtime error occurred. Please use the options below to reload or reset the view.
             </p>
 
             {this.state.error && (
@@ -67,14 +67,14 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
                 className="flex-1 bg-[#0E5A4F] hover:bg-[#135E54] text-white font-semibold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition-all shadow-md"
               >
                 <RefreshCw className="w-4 h-4" />
-                <span>রিফ্রেশ করুন</span>
+                <span>Reload Page</span>
               </button>
               <button
                 onClick={this.handleReset}
                 className="flex-1 bg-white/10 hover:bg-white/15 text-white font-medium py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 cursor-pointer transition-all border border-white/10"
               >
                 <Home className="w-4 h-4" />
-                <span>রিসেট ড্যাশবোর্ড</span>
+                <span>Reset Dashboard</span>
               </button>
             </div>
           </div>

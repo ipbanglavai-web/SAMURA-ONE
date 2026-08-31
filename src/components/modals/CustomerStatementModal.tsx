@@ -58,7 +58,7 @@ export const CustomerStatementModal: React.FC<CustomerStatementModalProps> = ({
               {businessName} · CUSTOMER LEDGER STATEMENT
             </span>
             <h3 className="text-base font-bold text-white mt-0.5">
-              কাস্টমার খতিয়ান ও হিসাব বিবরণী (Customer Statement)
+              Customer Statement & Account Ledger
             </h3>
           </div>
 
@@ -69,7 +69,7 @@ export const CustomerStatementModal: React.FC<CustomerStatementModalProps> = ({
               title="Print Statement"
             >
               <Printer className="w-4 h-4" />
-              <span className="hidden sm:inline font-semibold">প্রিন্ট</span>
+              <span className="hidden sm:inline font-semibold">Print</span>
             </button>
             <button
               onClick={onClose}
@@ -94,7 +94,7 @@ export const CustomerStatementModal: React.FC<CustomerStatementModalProps> = ({
                       : 'bg-emerald-100 text-emerald-800 border border-emerald-200'
                   }`}
                 >
-                  {customer.dueAmount > 0 ? 'বকেয়া আছে' : 'পরিশোধিত'}
+                  {customer.dueAmount > 0 ? 'Due Outstanding' : 'Settled'}
                 </span>
               </div>
 
@@ -111,23 +111,23 @@ export const CustomerStatementModal: React.FC<CustomerStatementModalProps> = ({
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Building2 className="w-3.5 h-3.5 text-[#0E5A4F]" />
-                  <span>রেফারেন্স: <strong className="text-[#18211F]">{customer.reference}</strong></span>
+                  <span>Reference: <strong className="text-[#18211F]">{customer.reference}</strong></span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <Calendar className="w-3.5 h-3.5 text-[#0E5A4F]" />
-                  <span>সর্বশেষ লেনদেন: <strong className="text-[#18211F]">{customer.lastTransactionDate || 'N/A'}</strong></span>
+                  <span>Last Transaction: <strong className="text-[#18211F]">{customer.lastTransactionDate || 'N/A'}</strong></span>
                 </div>
               </div>
             </div>
 
             {/* Current Due Highlight Box */}
             <div className="bg-white p-3 rounded-xl border border-[#E5EAE8] shadow-2xs text-right shrink-0 min-w-[160px]">
-              <span className="text-[10px] font-bold uppercase text-[#71807B] block">বর্তমান মোট বকেয়া</span>
+              <span className="text-[10px] font-bold uppercase text-[#71807B] block">Current Due Balance</span>
               <span className="text-xl font-bold font-mono text-[#D9534F] block mt-0.5">
                 ৳ {customer.dueAmount.toLocaleString()}
               </span>
               <span className="text-[10px] text-[#71807B] block mt-0.5">
-                {customer.dueAmount > 0 ? 'পাওনা বাকি রয়েছে' : 'হিসাব সম্পন্ন'}
+                {customer.dueAmount > 0 ? 'Balance Pending' : 'Account Settled'}
               </span>
             </div>
           </div>
@@ -135,19 +135,19 @@ export const CustomerStatementModal: React.FC<CustomerStatementModalProps> = ({
           {/* Financial Summary Strip */}
           <div className="grid grid-cols-3 gap-3">
             <div className="p-3 bg-white border border-[#E5EAE8] rounded-xl text-center">
-              <span className="text-[10px] font-bold uppercase text-[#71807B] block">মোট বিক্রয় (Total Billed)</span>
+              <span className="text-[10px] font-bold uppercase text-[#71807B] block">Total Billed</span>
               <span className="text-sm sm:text-base font-bold font-mono text-[#18211F] mt-0.5 block">
                 ৳ {(totalBilled || customer.totalSales || 0).toLocaleString()}
               </span>
             </div>
             <div className="p-3 bg-white border border-[#E5EAE8] rounded-xl text-center">
-              <span className="text-[10px] font-bold uppercase text-[#71807B] block">মোট জমা (Total Paid)</span>
+              <span className="text-[10px] font-bold uppercase text-[#71807B] block">Total Paid</span>
               <span className="text-sm sm:text-base font-bold font-mono text-[#22A06B] mt-0.5 block">
                 ৳ {(totalPaid || customer.totalPaid || 0).toLocaleString()}
               </span>
             </div>
             <div className="p-3 bg-white border border-[#E5EAE8] rounded-xl text-center">
-              <span className="text-[10px] font-bold uppercase text-[#71807B] block">অবশিষ্ট বকেয়া (Due Balance)</span>
+              <span className="text-[10px] font-bold uppercase text-[#71807B] block">Due Balance</span>
               <span className="text-sm sm:text-base font-bold font-mono text-[#D9534F] mt-0.5 block">
                 ৳ {runningDue.toLocaleString()}
               </span>
@@ -157,24 +157,24 @@ export const CustomerStatementModal: React.FC<CustomerStatementModalProps> = ({
           {/* Transaction Table */}
           <div>
             <h5 className="text-xs font-bold text-[#18211F] uppercase tracking-wider mb-2">
-              লেনদেন বিবরণী (Transaction Ledger History)
+              Transaction Ledger History
             </h5>
 
             {customerRecords.length === 0 ? (
               <div className="p-6 bg-[#F6F8F7] border border-[#E5EAE8] rounded-xl text-center text-xs text-[#71807B]">
-                এই কাস্টমারের এখনও কোনো সেলস রেকর্ড যুক্ত হয়নি বা এটি নতুন প্রারম্ভিক হিসাব।
+                No sales or collection records found for this customer.
               </div>
             ) : (
               <div className="border border-[#E5EAE8] rounded-xl overflow-hidden shadow-2xs">
                 <table className="w-full text-left text-xs border-collapse">
                   <thead className="bg-[#F6F8F7] text-[#71807B] font-bold border-b border-[#E5EAE8]">
                     <tr>
-                      <th className="p-2.5">তারিখ ও ইনভয়েস</th>
-                      <th className="p-2.5">পণ্য ও পরিমাণ</th>
-                      <th className="p-2.5 text-right">বিক্রয় মূল্য</th>
-                      <th className="p-2.5 text-right">জমা (Paid)</th>
-                      <th className="p-2.5 text-right">অবশিষ্ট বকেয়া</th>
-                      <th className="p-2.5 text-center">স্ট্যাটাস</th>
+                      <th className="p-2.5">Date & Invoice</th>
+                      <th className="p-2.5">Product & Qty</th>
+                      <th className="p-2.5 text-right">Sale Amount</th>
+                      <th className="p-2.5 text-right">Paid Amount</th>
+                      <th className="p-2.5 text-right">Running Due</th>
+                      <th className="p-2.5 text-center">Status</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#E5EAE8] font-medium text-[#18211F]">
@@ -224,13 +224,13 @@ export const CustomerStatementModal: React.FC<CustomerStatementModalProps> = ({
         {/* Footer */}
         <div className="p-4 bg-[#F6F8F7] border-t border-[#E5EAE8] flex items-center justify-between shrink-0">
           <div className="text-[11px] text-[#71807B]">
-            মুদ্রণ সময়: {new Date().toLocaleDateString('bn-BD')} · AL SAMURA Group ERP
+            Print Date: {new Date().toLocaleDateString('en-US')} · AL SAMURA Group ERP
           </div>
           <button
             onClick={onClose}
             className="px-4 py-1.5 bg-[#0E5A4F] text-white rounded-lg text-xs font-bold hover:bg-[#073F37] transition-colors cursor-pointer"
           >
-            বন্ধ করুন (Close)
+            Close
           </button>
         </div>
       </div>

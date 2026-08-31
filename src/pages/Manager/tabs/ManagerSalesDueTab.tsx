@@ -153,7 +153,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
             className="px-4 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
           >
             <Plus className="w-4 h-4" />
-            <span>+ New Sale & Due Entry</span>
+            <span>New Sale & Due Entry</span>
           </button>
         </div>
       </div>
@@ -491,16 +491,18 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                           <div className="flex flex-col items-center gap-0.5">
                             <span
                               className={`text-[11px] font-bold px-2.5 py-0.5 rounded-full ${
-                                r.runningDue === 0
+                                r.voidRequested || r.status === 'Void Pending'
+                                  ? 'bg-purple-100 text-purple-800 border border-purple-200'
+                                  : r.runningDue === 0
                                   ? 'bg-[#E6F4ED] text-[#168051] border border-[#22A06B]/20'
                                   : isOverdue
                                   ? 'bg-red-50 text-[#C93B37] border border-red-200'
                                   : 'bg-amber-50 text-[#B45309] border border-amber-200'
                               }`}
                             >
-                              {r.runningDue === 0 ? 'Full Paid' : isOverdue ? 'Overdue' : 'Partial Due'}
+                              {r.voidRequested || r.status === 'Void Pending' ? 'Void Pending' : r.runningDue === 0 ? 'Full Paid' : isOverdue ? 'Overdue' : 'Partial Due'}
                             </span>
-                            {r.duePaymentDate && r.runningDue > 0 && (
+                            {r.duePaymentDate && r.runningDue > 0 && !r.voidRequested && r.status !== 'Void Pending' && (
                               <span className="text-[10px] text-[#71807B] flex items-center gap-1 font-mono mt-0.5">
                                 <Calendar className="w-2.5 h-2.5" />
                                 {r.duePaymentDate}
@@ -752,12 +754,12 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
       {recordToDelete && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fade-in">
           <div className="bg-white rounded-2xl max-w-sm w-full p-5 text-center shadow-2xl border border-[#E5EAE8]">
-            <div className="w-12 h-12 rounded-full bg-red-100 text-[#D9534F] flex items-center justify-center mx-auto mb-3">
+            <div className="w-12 h-12 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center mx-auto mb-3">
               <Trash2 className="w-6 h-6" />
             </div>
-            <h3 className="text-base font-bold text-[#18211F]">Confirm Sale Record Deletion</h3>
-            <p className="text-xs text-[#71807B] mt-1">
-              Are you sure you want to delete invoice <strong>{recordToDelete.invoiceNo}</strong> for <strong>{recordToDelete.customerName}</strong>?
+            <h3 className="text-base font-bold text-[#18211F]">Request Sale Void (Admin Approval)</h3>
+            <p className="text-xs text-[#71807B] mt-1.5 leading-relaxed">
+              Deleting invoice <strong>{recordToDelete.invoiceNo}</strong> for <strong>{recordToDelete.customerName}</strong> will send a <strong>Void Request</strong> to the Executive Admin panel for approval. The sale will be marked as 'Void Pending' until approved.
             </p>
             <div className="mt-5 flex items-center justify-center gap-2.5">
               <button
@@ -771,9 +773,9 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
                   onDeleteRecord(recordToDelete.id);
                   setRecordToDelete(null);
                 }}
-                className="px-4 py-2 rounded-xl bg-[#D9534F] hover:bg-red-700 text-white text-xs font-bold cursor-pointer shadow-xs"
+                className="px-4 py-2 rounded-xl bg-purple-700 hover:bg-purple-800 text-white text-xs font-bold cursor-pointer shadow-xs"
               >
-                Yes, Delete
+                Submit Void Request
               </button>
             </div>
           </div>

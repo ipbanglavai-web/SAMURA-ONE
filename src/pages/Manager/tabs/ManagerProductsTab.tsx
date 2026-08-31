@@ -36,7 +36,7 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
   const [productToDelete, setProductToDelete] = useState<UnitProduct | null>(null);
 
   // Extract unique categories
-  const categories = ['All', 'Dates (খেজুর)', 'Apple (আপেল)', 'Citrus & Orange', 'Grapes & Pomegranate', 'Nuts & Specialty'];
+  const categories = ['All', 'Dates', 'Apples', 'Citrus & Orange', 'Grapes & Pomegranate', 'Nuts & Specialty'];
 
   const filteredProducts = products.filter((p) => {
     const matchesSearch =
@@ -91,7 +91,7 @@ export const ManagerProductsTab: React.FC<ManagerProductsTabProps> = ({
           className="px-4 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
         >
           <Plus className="w-4 h-4" />
-          <span>+ Add Product</span>
+          <span>Add Product</span>
         </button>
       </div>
 

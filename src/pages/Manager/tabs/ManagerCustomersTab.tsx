@@ -164,7 +164,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             className="px-3.5 py-2 rounded-xl bg-white border border-[#E5EAE8] hover:bg-[#F6F8F7] text-[#18211F] text-xs font-semibold shadow-2xs transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <TrendingUp className="w-4 h-4 text-[#0E5A4F]" />
-            <span>+ New Sale Entry</span>
+            <span>New Sale Entry</span>
           </button>
 
           <button
@@ -173,7 +173,7 @@ export const ManagerCustomersTab: React.FC<ManagerCustomersTabProps> = ({
             className="px-4 py-2 rounded-xl bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold shadow-sm transition-all flex items-center gap-1.5 cursor-pointer"
           >
             <Plus className="w-4 h-4" />
-            <span>+ Add Customer</span>
+            <span>Add Customer</span>
           </button>
         </div>
       </div>

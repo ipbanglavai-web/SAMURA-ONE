@@ -43,10 +43,13 @@ export const Header: React.FC<HeaderProps> = ({
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [businessDropdownOpen, setBusinessDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(3);
 
   const dateRef = useRef<HTMLDivElement>(null);
   const businessRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -59,6 +62,9 @@ export const Header: React.FC<HeaderProps> = ({
       }
       if (userRef.current && !userRef.current.contains(event.target as Node)) {
         setUserDropdownOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setNotifDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -234,9 +240,87 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         {/* Notification Bell */}
-        <div className="w-8 h-8 rounded-full bg-[#F6F8F7] flex items-center justify-center text-xs text-[#71807B] border border-[#E5EAE8] cursor-pointer hover:text-[#18211F] hover:bg-[#E5EAE8] transition-colors relative">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#D9534F] rounded-full"></span>
+        <div className="relative" ref={notifRef}>
+          <button
+            id="header-notification-bell-btn"
+            onClick={() => {
+              setNotifDropdownOpen(!notifDropdownOpen);
+            }}
+            className="w-8 h-8 rounded-full bg-[#F6F8F7] flex items-center justify-center text-xs text-[#71807B] border border-[#E5EAE8] cursor-pointer hover:text-[#18211F] hover:bg-[#E5EAE8] transition-colors relative"
+            aria-label="System notifications"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-[#D9534F] rounded-full border border-white"></span>
+            )}
+          </button>
+
+          {notifDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-80 bg-white border border-[#E5EAE8] rounded-xl shadow-xl py-2 z-50 text-xs">
+              <div className="px-4 py-2 border-b border-[#E5EAE8] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-[#18211F]">System Notifications</span>
+                  {unreadCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-[#D9534F]/10 text-[#D9534F] text-[10px] font-bold">
+                      {unreadCount} new
+                    </span>
+                  )}
+                </div>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={() => setUnreadCount(0)}
+                    className="text-[11px] text-[#0E5A4F] hover:underline font-medium cursor-pointer"
+                  >
+                    Mark all as read
+                  </button>
+                )}
+              </div>
+
+              <div className="max-h-72 overflow-y-auto divide-y divide-[#E5EAE8]">
+                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                  <div className="w-2 h-2 rounded-full bg-[#D9534F] mt-1.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#18211F]">Cold Storage Alert</p>
+                    <p className="text-[#71807B] text-[11px] mt-0.5">Chamber 3 temp optimal at -18°C. Stock level 84% capacity.</p>
+                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">10 mins ago</span>
+                  </div>
+                </div>
+
+                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                  <div className="w-2 h-2 rounded-full bg-[#D9534F] mt-1.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#18211F]">Pending Approval Request</p>
+                    <p className="text-[#71807B] text-[11px] mt-0.5">Elenga Fruits manager submitted a ৳25,000 transport expense for review.</p>
+                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">1 hour ago</span>
+                  </div>
+                </div>
+
+                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                  <div className="w-2 h-2 rounded-full bg-[#D9534F] mt-1.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#18211F]">Due Payment Received</p>
+                    <p className="text-[#71807B] text-[11px] mt-0.5">Dhaka Maal Mahajan cleared ৳120,000 due payment via Bank Transfer.</p>
+                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">3 hours ago</span>
+                  </div>
+                </div>
+
+                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                  <div className="w-2 h-2 rounded-full bg-gray-300 mt-1.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#18211F]">Import Shipment Customs</p>
+                    <p className="text-[#71807B] text-[11px] mt-0.5">Shipment #SH-9042 cleared customs inspection at Chattogram port.</p>
+                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">Yesterday</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-[#E5EAE8] pt-2 px-3 text-center">
+                <span className="text-[11px] text-[#0E5A4F] font-semibold hover:underline cursor-pointer">
+                  View All Audit Logs & Notifications
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* User Profile Avatar with Dropdown */}

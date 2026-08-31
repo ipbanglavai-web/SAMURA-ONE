@@ -79,7 +79,8 @@ export interface SaleDueRecord {
   runningDue: number; // Running Due = (Payable due - Paid)
   duePaymentDate: string; // Due Payment Date
   notes?: string;
-  status: 'Full Paid' | 'Partial Due' | 'Overdue' | 'Unpaid';
+  status: 'Full Paid' | 'Partial Due' | 'Overdue' | 'Unpaid' | 'Void Pending';
+  voidRequested?: boolean;
   createdAt: string;
 }
 
@@ -147,12 +148,13 @@ export interface PendingApproval {
   title: string;
   description: string;
   amount?: string;
-  type: 'payment' | 'inventory' | 'credit';
+  type: 'payment' | 'inventory' | 'credit' | 'void';
   age: string;
   requester: string;
   department: string;
   status: 'pending' | 'approved' | 'rejected';
   business?: string;
+  saleId?: string;
 }
 
 export interface BankAccount {

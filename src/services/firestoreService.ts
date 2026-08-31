@@ -2,10 +2,12 @@ import {
   collection,
   doc,
   setDoc,
+  getDoc,
   deleteDoc,
   updateDoc,
   onSnapshot,
   query,
+  where,
   getDocs,
   writeBatch
 } from 'firebase/firestore';
@@ -37,9 +39,16 @@ const MANAGERS_COLLECTION = 'businessManagers';
 const ALERTS_COLLECTION = 'criticalAlerts';
 const APPROVALS_COLLECTION = 'pendingApprovals';
 
-// Seed initial dataset if Firestore collections are empty
+// Seed initial dataset if Firestore has never been initialized before
 export async function seedInitialFirestoreData() {
   try {
+    const seedStatusRef = doc(db, 'systemConfig', 'seedingStatus');
+    const seedDoc = await getDoc(seedStatusRef);
+    if (seedDoc.exists()) {
+      // System was already seeded previously. Do not re-seed when user deletes records.
+      return;
+    }
+
     const salesSnap = await getDocs(collection(db, SALES_COLLECTION));
     const bizSnap = await getDocs(collection(db, BUSINESSES_COLLECTION));
     
@@ -95,7 +104,11 @@ export async function seedInitialFirestoreData() {
         appBatch.set(ref, app);
       });
       await appBatch.commit();
+
+      await setDoc(seedStatusRef, { seeded: true, timestamp: new Date().toISOString() });
       console.log('Firestore successfully seeded with initial collections!');
+    } else {
+      await setDoc(seedStatusRef, { seeded: true, timestamp: new Date().toISOString() }, { merge: true });
     }
   } catch (err) {
     console.warn('Firestore seed warning (offline or permissions):', err);
@@ -254,6 +267,20 @@ export async function deleteSaleRecordFromFirestore(recordId: string) {
     await deleteDoc(ref);
   } catch (err) {
     console.warn('Failed to delete sale record from Firestore:', err);
+  }
+}
+
+export async function clearAllSalesForBusinessInFirestore(businessId: string) {
+  try {
+    const q = query(collection(db, SALES_COLLECTION), where('businessId', '==', businessId));
+    const snap = await getDocs(q);
+    const batch = writeBatch(db);
+    snap.forEach((d) => {
+      batch.delete(d.ref);
+    });
+    await batch.commit();
+  } catch (err) {
+    console.warn('Failed to clear business sales from Firestore:', err);
   }
 }
 

@@ -35,11 +35,14 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
   const { customLogo } = useLogo();
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(2);
   const [customDateInput, setCustomDateInput] = useState('');
   const [showCustomPicker, setShowCustomPicker] = useState(false);
 
   const dateRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
+  const notifRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -50,6 +53,9 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
       }
       if (userRef.current && !userRef.current.contains(event.target as Node)) {
         setUserDropdownOpen(false);
+      }
+      if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
+        setNotifDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -247,9 +253,67 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
         </div>
 
         {/* Notification Bell */}
-        <div className="w-8 h-8 rounded-full bg-[#F6F8F7] flex items-center justify-center text-xs text-[#4B5563] border border-[#E5EAE8] cursor-pointer hover:text-[#111827] hover:bg-[#E5EAE8] transition-colors relative">
-          <Bell className="w-4 h-4" />
-          <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 bg-[#22A06B] rounded-full"></span>
+        <div className="relative" ref={notifRef}>
+          <button
+            id="manager-header-notification-bell-btn"
+            onClick={() => setNotifDropdownOpen(!notifDropdownOpen)}
+            className="w-8 h-8 rounded-full bg-[#F6F8F7] flex items-center justify-center text-xs text-[#4B5563] border border-[#E5EAE8] cursor-pointer hover:text-[#111827] hover:bg-[#E5EAE8] transition-colors relative"
+            aria-label="Unit notifications"
+          >
+            <Bell className="w-4 h-4" />
+            {unreadCount > 0 && (
+              <span className="absolute top-1 right-1 w-2 h-2 bg-[#22A06B] rounded-full border border-white"></span>
+            )}
+          </button>
+
+          {notifDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-80 bg-white border border-[#E5EAE8] rounded-xl shadow-xl py-2 z-50 text-xs">
+              <div className="px-4 py-2 border-b border-[#E5EAE8] flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-[#111827]">{businessName} Notifications</span>
+                  {unreadCount > 0 && (
+                    <span className="px-1.5 py-0.5 rounded-full bg-[#22A06B]/10 text-[#22A06B] text-[10px] font-bold">
+                      {unreadCount} new
+                    </span>
+                  )}
+                </div>
+                {unreadCount > 0 && (
+                  <button
+                    onClick={() => setUnreadCount(0)}
+                    className="text-[11px] text-[#0E5A4F] hover:underline font-semibold cursor-pointer"
+                  >
+                    Mark read
+                  </button>
+                )}
+              </div>
+
+              <div className="max-h-72 overflow-y-auto divide-y divide-[#E5EAE8]">
+                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                  <div className="w-2 h-2 rounded-full bg-[#22A06B] mt-1.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#111827]">Voucher Approved</p>
+                    <p className="text-[#4B5563] text-[11px] mt-0.5">Head Office approved your transport voucher receipt.</p>
+                    <span className="text-[10px] text-[#9CA3AF] mt-1 block">25 mins ago</span>
+                  </div>
+                </div>
+
+                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                  <div className="w-2 h-2 rounded-full bg-[#22A06B] mt-1.5 shrink-0" />
+                  <div className="flex-1">
+                    <p className="font-semibold text-[#111827]">Due Payment Received</p>
+                    <p className="text-[#4B5563] text-[11px] mt-0.5">Customer submitted ৳50,000 partial payment entry.</p>
+                    <span className="text-[10px] text-[#9CA3AF] mt-1 block">2 hours ago</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="border-t border-[#E5EAE8] pt-2 px-3 text-center">
+                <span className="text-[11px] text-[#0E5A4F] font-bold hover:underline cursor-pointer">
+                  Unit Activity History
+                </span>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* User Profile Avatar with Dropdown */}

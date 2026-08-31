@@ -67,27 +67,27 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
 
     // Validations
     if (!name.trim()) {
-      setError('ম্যানেজারের নাম লিখুন (Manager name is required)');
+      setError('Manager name is required.');
       return;
     }
     if (!phone.trim()) {
-      setError('মোবাইল নাম্বার লিখুন (Phone number is required)');
+      setError('Phone number is required.');
       return;
     }
     if (!email.trim() || !email.includes('@')) {
-      setError('সঠিক ইমেইল এড্রেস লিখুন (Valid email address is required)');
+      setError('A valid email address is required.');
       return;
     }
     if (!password.trim() || password.length < 6) {
-      setError('পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে (Password must be at least 6 characters)');
+      setError('Password must be at least 6 characters.');
       return;
     }
     if (!nid.trim()) {
-      setError('জাতীয় পরিচয়পত্র (NID) নম্বর প্রদান করুন (NID number is required)');
+      setError('National ID (NID) number is required.');
       return;
     }
     if (!selectedBusinessId) {
-      setError('বিজনেস ইউনিট নির্বাচন করুন (Please select a business unit to assign)');
+      setError('Please select a business unit to assign.');
       return;
     }
 
@@ -124,10 +124,10 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-bold text-[#18211F] tracking-tight">
-                Add Business Manager (ম্যানেজার যুক্ত করুন)
+                Add Business Manager
               </h3>
               <p className="text-[11px] text-[#71807B]">
-                নির্দিষ্ট বিজনেস ইউনিটের জন্য দায়িত্বপ্রাপ্ত ম্যানেজার অ্যাসাইন করুন
+                Assign a dedicated manager to oversee daily operations for a business unit
               </p>
             </div>
           </div>
@@ -152,7 +152,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
           {/* 1. Manager Name */}
           <div>
             <label className="block text-xs font-semibold text-[#18211F] mb-1">
-              Manager Name (ম্যানেজারের নাম) <span className="text-red-500">*</span>
+              Manager Name <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <input
@@ -160,7 +160,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Md. Rafiqul Islam / তারিকুল হাসান"
+                placeholder="e.g. Tariqul Hasan"
                 className="w-full text-xs px-3 py-2 bg-[#F6F8F7] border border-[#E5EAE8] rounded-md text-[#18211F] focus:outline-none focus:border-[#0E5A4F]"
                 required
               />
@@ -171,7 +171,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-[#18211F] mb-1">
-                Phone Number (মোবাইল নম্বর) <span className="text-red-500">*</span>
+                Phone Number <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Phone className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
@@ -189,7 +189,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-[#18211F] mb-1">
-                Email Address (ইমেইল) <span className="text-red-500">*</span>
+                Email Address <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Mail className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
@@ -210,7 +210,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-[#18211F] mb-1">
-                Password (লগইন পাসওয়ার্ড) <span className="text-red-500">*</span>
+                Password <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Lock className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
@@ -235,7 +235,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-[#18211F] mb-1">
-                NID No. (জাতীয় পরিচয়পত্র নম্বর) <span className="text-red-500">*</span>
+                National ID (NID) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <CreditCard className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
@@ -255,7 +255,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
           {/* 6. Assign Business Unit */}
           <div>
             <label className="block text-xs font-semibold text-[#18211F] mb-1">
-              Assign Business Unit (বিজনেস ইউনিট অ্যাসাইন করুন) <span className="text-red-500">*</span>
+              Assign Business Unit <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <Building2 className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
@@ -275,7 +275,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
             </div>
             <p className="text-[10px] text-[#71807B] mt-1 flex items-center gap-1">
               <ShieldCheck className="w-3 h-3 text-[#0E5A4F]" />
-              ম্যানেজার শুধুমাত্র নির্বাচিত এই বিজনেস ইউনিটের অপারেশন ও তথ্য অ্যাক্সেস করতে পারবেন।
+              The assigned manager will only have access to operations and data for this unit.
             </p>
           </div>
 

@@ -94,7 +94,7 @@ export const ManagerOverviewTab: React.FC<ManagerOverviewTabProps> = ({
               className="px-4 py-2.5 rounded-xl bg-[#0E5A4F] hover:bg-[#135E54] text-white text-xs font-bold border border-[#22A06B]/30 transition-all flex items-center gap-1.5 cursor-pointer active:scale-95"
             >
               <Package className="w-4 h-4" />
-              <span>+ New Product</span>
+              <span>New Product</span>
             </button>
           </div>
         </div>

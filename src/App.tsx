@@ -46,7 +46,9 @@ import {
   saveManagerToFirestore,
   deleteManagerFromFirestore,
   updateAlertStatusInFirestore,
-  updateApprovalStatusInFirestore
+  updateApprovalStatusInFirestore,
+  deleteSaleRecordFromFirestore,
+  saveSaleRecordToFirestore
 } from './services/firestoreService';
 
 const MainApp: React.FC = () => {
@@ -364,6 +366,7 @@ const MainApp: React.FC = () => {
 
   // Approval Handlers
   const handleApprove = async (id: string, remarks?: string) => {
+    const targetApproval = approvals.find(a => a.id === id);
     setApprovals(prev =>
       prev.map(item =>
         item.id === id ? { ...item, status: 'approved' } : item
@@ -374,9 +377,30 @@ const MainApp: React.FC = () => {
     } catch (e) {
       console.error('Failed to update approval in Firestore:', e);
     }
+
+    // If it's a void request, delete the target sale record
+    if (targetApproval && (targetApproval.type === 'void' || targetApproval.saleId || id.startsWith('app-void-'))) {
+      const targetSaleId = targetApproval.saleId || (id.startsWith('app-void-') ? id.split('-')[2] || id.replace('app-void-', '') : null);
+      
+      let actualSaleId = targetSaleId;
+      if (!actualSaleId) {
+        const found = salesRecords.find(s => targetApproval.description.includes(s.invoiceNo) || targetApproval.title.includes(s.invoiceNo));
+        if (found) actualSaleId = found.id;
+      }
+
+      if (actualSaleId) {
+        setSalesRecords(prev => prev.filter(r => r.id !== actualSaleId));
+        try {
+          await deleteSaleRecordFromFirestore(actualSaleId);
+        } catch (e) {
+          console.error('Failed to delete voided sale record from Firestore:', e);
+        }
+      }
+    }
   };
 
   const handleReject = async (id: string, remarks?: string) => {
+    const targetApproval = approvals.find(a => a.id === id);
     setApprovals(prev =>
       prev.map(item =>
         item.id === id ? { ...item, status: 'rejected' } : item
@@ -386,6 +410,38 @@ const MainApp: React.FC = () => {
       await updateApprovalStatusInFirestore(id, 'rejected');
     } catch (e) {
       console.error('Failed to update approval in Firestore:', e);
+    }
+
+    // If it's a void request, unmark voidRequested on sale record
+    if (targetApproval && (targetApproval.type === 'void' || targetApproval.saleId || id.startsWith('app-void-'))) {
+      const targetSaleId = targetApproval.saleId || (id.startsWith('app-void-') ? id.split('-')[2] || id.replace('app-void-', '') : null);
+      
+      let actualSaleId = targetSaleId;
+      if (!actualSaleId) {
+        const found = salesRecords.find(s => targetApproval.description.includes(s.invoiceNo) || targetApproval.title.includes(s.invoiceNo));
+        if (found) actualSaleId = found.id;
+      }
+
+      if (actualSaleId) {
+        const targetSale = salesRecords.find(s => s.id === actualSaleId);
+        if (targetSale) {
+          const restoredStatus: SaleDueRecord['status'] =
+            targetSale.runningDue === 0 ? 'Full Paid' : targetSale.paid > 0 ? 'Partial Due' : 'Unpaid';
+          
+          const restoredSale: SaleDueRecord = {
+            ...targetSale,
+            status: restoredStatus,
+            voidRequested: false
+          };
+
+          setSalesRecords(prev => prev.map(s => s.id === actualSaleId ? restoredSale : s));
+          try {
+            await saveSaleRecordToFirestore(restoredSale);
+          } catch (e) {
+            console.error('Failed to restore sale record in Firestore:', e);
+          }
+        }
+      }
     }
   };
 
