@@ -19,262 +19,286 @@ function getCustomLogoImgTag(): string {
 }
 
 function triggerPrintOnHtml(title: string, bodyContent: string) {
-  // Try opening a popup window first for clean isolated printing
-  const printWindow = window.open('', '_blank', 'width=850,height=900');
-  const logoHeader = getCustomLogoImgTag();
-  
-  const htmlContent = `
-    <!DOCTYPE html>
-    <html lang="en">
-    <head>
-      <meta charset="UTF-8">
-      <title>${title}</title>
-      <link rel="preconnect" href="https://fonts.googleapis.com">
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
-      <style>
-        @page {
-          size: A4;
-          margin: 12mm 15mm;
-        }
-        * {
-          box-sizing: border-box;
-          margin: 0;
-          padding: 0;
-          -webkit-print-color-adjust: exact !important;
-          print-color-adjust: exact !important;
-        }
-        body {
-          font-family: 'Inter', -apple-system, sans-serif;
-          color: #111827;
-          background: #ffffff;
-          font-size: 12px;
-          line-height: 1.4;
-          padding: 10px;
-        }
-        .mono {
-          font-family: 'JetBrains Mono', monospace;
-        }
-        .header {
-          text-align: center;
-          border-bottom: 2px solid #0E5A4F;
-          padding-bottom: 12px;
-          margin-bottom: 16px;
-        }
-        .enterprise-title {
-          font-size: 10px;
-          text-transform: uppercase;
-          letter-spacing: 1.5px;
-          color: #0E5A4F;
-          font-weight: 700;
-        }
-        .business-title {
-          font-size: 20px;
-          font-weight: 800;
-          color: #073F37;
-          margin: 3px 0;
-        }
-        .sub-title {
-          font-size: 12px;
-          color: #4B5563;
-        }
-        .info-bar {
-          display: flex;
-          justify-content: space-between;
-          margin-top: 8px;
-          font-size: 11px;
-          color: #4B5563;
-          border-top: 1px dashed #D1D5DB;
-          padding-top: 6px;
-        }
-        .grid-2 {
-          display: grid;
-          grid-template-columns: 1fr 1fr;
-          gap: 12px;
-          margin-bottom: 16px;
-        }
-        .grid-3 {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 10px;
-          margin-bottom: 16px;
-        }
-        .grid-4 {
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr 1fr;
-          gap: 10px;
-          margin-bottom: 16px;
-        }
-        .card {
-          background: #F9FAFB;
-          border: 1px solid #E5E7EB;
-          border-radius: 8px;
-          padding: 10px 12px;
-        }
-        .card-stat {
-          text-align: center;
-          background: #F3F4F6;
-          border: 1px solid #E5E7EB;
-          border-radius: 8px;
-          padding: 8px;
-        }
-        .card-stat .label {
-          font-size: 10px;
-          color: #6B7280;
-          text-transform: uppercase;
-          font-weight: 600;
-        }
-        .card-stat .value {
-          font-size: 15px;
-          font-weight: 700;
-          color: #111827;
-          margin-top: 2px;
-        }
-        table {
-          width: 100%;
-          border-collapse: collapse;
-          margin-bottom: 16px;
-          font-size: 11px;
-        }
-        th {
-          background-color: #0E5A4F;
-          color: #ffffff;
-          text-align: left;
-          padding: 7px 10px;
-          font-weight: 600;
-          border: 1px solid #0E5A4F;
-        }
-        th.text-right, td.text-right {
-          text-align: right;
-        }
-        th.text-center, td.text-center {
-          text-align: center;
-        }
-        td {
-          padding: 7px 10px;
-          border: 1px solid #E5E7EB;
-          vertical-align: middle;
-        }
-        tr:nth-child(even) {
-          background-color: #F9FAFB;
-        }
-        .badge {
-          display: inline-block;
-          padding: 2px 6px;
-          border-radius: 4px;
-          font-size: 9px;
-          font-weight: 700;
-          text-transform: uppercase;
-        }
-        .badge-paid {
-          background-color: #DCFCE7;
-          color: #15803D;
-        }
-        .badge-due {
-          background-color: #FEF3C7;
-          color: #B45309;
-        }
-        .badge-overdue {
-          background-color: #FEE2E2;
-          color: #B91C1C;
-        }
-        .calc-box {
-          background: #F9FAFB;
-          border: 1px solid #D1D5DB;
-          border-radius: 8px;
-          padding: 12px;
-          margin-bottom: 16px;
-        }
-        .calc-row {
-          display: flex;
-          justify-content: space-between;
-          padding: 3px 0;
-          font-size: 11px;
-        }
-        .calc-row.total {
-          border-top: 1px solid #D1D5DB;
-          margin-top: 4px;
-          padding-top: 6px;
-          font-weight: 700;
-          font-size: 12px;
-        }
-        .calc-row.due {
-          border-top: 2px solid #0E5A4F;
-          margin-top: 4px;
-          padding-top: 6px;
-          font-weight: 800;
-          font-size: 14px;
-          color: #B91C1C;
-        }
-        .signatures {
-          margin-top: 40px;
-          display: grid;
-          grid-template-columns: 1fr 1fr 1fr;
-          gap: 20px;
-          text-align: center;
-          font-size: 11px;
-          color: #4B5563;
-        }
-        .sign-line {
-          border-top: 1px dashed #6B7280;
-          padding-top: 6px;
-          font-weight: 600;
-        }
-        .footer {
-          margin-top: 24px;
-          text-align: center;
-          font-size: 10px;
-          color: #9CA3AF;
-          border-top: 1px solid #E5E7EB;
-          padding-top: 8px;
-        }
-      </style>
-    </head>
-    <body>
-      ${logoHeader}
-      ${bodyContent}
-      <div class="footer">
-        Printed at: ${new Date().toLocaleString('en-US')} · AL SAMURA GROUP ERP · System Generated Report
-      </div>
-      <script>
-        window.onload = function() {
-          setTimeout(function() {
-            window.print();
-          }, 300);
-        };
-      </script>
-    </body>
-    </html>
-  `;
-
-  if (printWindow) {
-    printWindow.document.open();
-    printWindow.document.write(htmlContent);
-    printWindow.document.close();
-  } else {
-    // If pop-up is blocked by browser/iframe, use a hidden iframe to print
-    const hiddenIframe = document.createElement('iframe');
-    hiddenIframe.style.position = 'fixed';
-    hiddenIframe.style.top = '-9999px';
-    hiddenIframe.style.left = '-9999px';
-    hiddenIframe.style.width = '0';
-    hiddenIframe.style.height = '0';
-    hiddenIframe.style.border = '0';
-    document.body.appendChild(hiddenIframe);
-
-    const doc = hiddenIframe.contentWindow?.document;
-    if (doc) {
-      doc.open();
-      doc.write(htmlContent);
-      doc.close();
-      setTimeout(() => {
-        hiddenIframe.contentWindow?.focus();
-        hiddenIframe.contentWindow?.print();
-        setTimeout(() => {
-          document.body.removeChild(hiddenIframe);
-        }, 3000);
-      }, 500);
+  try {
+    const logoHeader = getCustomLogoImgTag();
+    const htmlContent = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>${title}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+  <style>
+    @page {
+      size: A4;
+      margin: 12mm 15mm;
     }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      -webkit-print-color-adjust: exact !important;
+      print-color-adjust: exact !important;
+    }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      color: #111827;
+      background: #ffffff;
+      font-size: 12px;
+      line-height: 1.4;
+      padding: 10px;
+    }
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .header {
+      text-align: center;
+      border-bottom: 2px solid #0E5A4F;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+    }
+    .enterprise-title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 1.5px;
+      color: #0E5A4F;
+      font-weight: 700;
+    }
+    .business-title {
+      font-size: 20px;
+      font-weight: 800;
+      color: #073F37;
+      margin: 3px 0;
+    }
+    .sub-title {
+      font-size: 12px;
+      color: #4B5563;
+    }
+    .info-bar {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+      font-size: 11px;
+      color: #4B5563;
+      border-top: 1px dashed #D1D5DB;
+      padding-top: 6px;
+    }
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .grid-4 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .card {
+      background: #F9FAFB;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .card-stat {
+      text-align: center;
+      background: #F3F4F6;
+      border: 1px solid #E5E7EB;
+      border-radius: 8px;
+      padding: 8px;
+    }
+    .card-stat .label {
+      font-size: 10px;
+      color: #6B7280;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .card-stat .value {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111827;
+      margin-top: 2px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 16px;
+      font-size: 11px;
+    }
+    th {
+      background-color: #0E5A4F;
+      color: #ffffff;
+      text-align: left;
+      padding: 7px 10px;
+      font-weight: 600;
+      border: 1px solid #0E5A4F;
+    }
+    th.text-right, td.text-right {
+      text-align: right;
+    }
+    th.text-center, td.text-center {
+      text-align: center;
+    }
+    td {
+      padding: 7px 10px;
+      border: 1px solid #E5E7EB;
+      vertical-align: middle;
+    }
+    tr:nth-child(even) {
+      background-color: #F9FAFB;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+    .badge-paid {
+      background-color: #DCFCE7;
+      color: #15803D;
+    }
+    .badge-due {
+      background-color: #FEF3C7;
+      color: #B45309;
+    }
+    .badge-overdue {
+      background-color: #FEE2E2;
+      color: #B91C1C;
+    }
+    .calc-box {
+      background: #F9FAFB;
+      border: 1px solid #D1D5DB;
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    .calc-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      font-size: 11px;
+    }
+    .calc-row.total {
+      border-top: 1px solid #D1D5DB;
+      margin-top: 4px;
+      padding-top: 6px;
+      font-weight: 700;
+      font-size: 12px;
+    }
+    .calc-row.due {
+      border-top: 2px solid #0E5A4F;
+      margin-top: 4px;
+      padding-top: 6px;
+      font-weight: 800;
+      font-size: 14px;
+      color: #B91C1C;
+    }
+    .signatures {
+      margin-top: 40px;
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 20px;
+      text-align: center;
+      font-size: 11px;
+      color: #4B5563;
+    }
+    .sign-line {
+      border-top: 1px dashed #6B7280;
+      padding-top: 6px;
+      font-weight: 600;
+    }
+    .footer {
+      margin-top: 24px;
+      text-align: center;
+      font-size: 10px;
+      color: #9CA3AF;
+      border-top: 1px solid #E5E7EB;
+      padding-top: 8px;
+    }
+  </style>
+</head>
+<body>
+  ${logoHeader}
+  ${bodyContent}
+  <div class="footer">
+    Printed at: ${new Date().toLocaleString('en-US')} · AL SAMURA GROUP ERP · System Generated Report
+  </div>
+</body>
+</html>`;
+
+    // 1. Remove existing iframe if present
+    const existingIframe = document.getElementById('al-samura-print-iframe');
+    if (existingIframe) {
+      existingIframe.remove();
+    }
+
+    // 2. Create isolated hidden print iframe
+    const iframe = document.createElement('iframe');
+    iframe.id = 'al-samura-print-iframe';
+    iframe.style.position = 'fixed';
+    iframe.style.top = '-10000px';
+    iframe.style.left = '-10000px';
+    iframe.style.width = '1000px';
+    iframe.style.height = '1000px';
+    iframe.style.border = 'none';
+    iframe.style.opacity = '0';
+    iframe.style.pointerEvents = 'none';
+    iframe.setAttribute('aria-hidden', 'true');
+    document.body.appendChild(iframe);
+
+    const frameDoc = iframe.contentWindow?.document || iframe.contentDocument;
+    if (frameDoc) {
+      frameDoc.open();
+      frameDoc.write(htmlContent);
+      frameDoc.close();
+
+      // Give fonts and styles time to paint, then trigger print safely on the iframe
+      setTimeout(() => {
+        try {
+          if (iframe.contentWindow) {
+            iframe.contentWindow.focus();
+            iframe.contentWindow.print();
+          }
+        } catch (iframeErr) {
+          console.warn('Iframe print failed, opening print window fallback:', iframeErr);
+          safeBlobPrintFallback(title, htmlContent);
+        }
+      }, 300);
+    } else {
+      safeBlobPrintFallback(title, htmlContent);
+    }
+  } catch (err) {
+    console.error('Print trigger error:', err);
+  }
+}
+
+/**
+ * Fallback print handler using Blob URL so it opens a clean dedicated tab without hijacking main app
+ */
+function safeBlobPrintFallback(title: string, htmlContent: string) {
+  try {
+    const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+    const blobUrl = URL.createObjectURL(blob);
+    const printTab = window.open(blobUrl, '_blank');
+    if (printTab) {
+      printTab.onload = () => {
+        printTab.focus();
+        printTab.print();
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
+      };
+    }
+  } catch (e) {
+    console.error('Blob print fallback failed:', e);
   }
 }
 
