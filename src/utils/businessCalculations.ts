@@ -12,23 +12,51 @@ export interface BusinessGrowthData {
   iconType: 'up' | 'down';
 }
 
-export function parseSalesToLakhs(salesStr: string): number {
-  if (!salesStr) return 0;
-  const clean = salesStr.replace(/[৳,\s]/g, '').trim();
-  if (clean.toLowerCase().endsWith('cr')) {
+export function parseSalesToLakhs(salesStr: string | number | undefined | null): number {
+  if (salesStr === undefined || salesStr === null || salesStr === '') return 0;
+  if (typeof salesStr === 'number') {
+    // If raw number >= 100 without suffix, it represents Taka (e.g. 24000 Tk -> 0.24 Lakhs)
+    if (salesStr >= 100) return salesStr / 100000;
+    return salesStr;
+  }
+
+  const str = String(salesStr).trim();
+  const lower = str.toLowerCase();
+  const clean = lower.replace(/[৳,\s]/g, '').trim();
+  if (!clean) return 0;
+
+  if (clean.endsWith('cr')) {
     const num = parseFloat(clean.slice(0, -2));
     return isNaN(num) ? 0 : num * 100;
   }
-  if (clean.toLowerCase().endsWith('l')) {
-    const num = parseFloat(clean.slice(0, -1));
+  if (clean.endsWith('l') || clean.endsWith('lac') || clean.endsWith('lakh') || clean.endsWith('lakhs')) {
+    const num = parseFloat(clean.replace(/(l|lac|lakh|lakhs)$/i, ''));
     return isNaN(num) ? 0 : num;
   }
-  if (clean.toLowerCase().endsWith('k')) {
+  if (clean.endsWith('k')) {
     const num = parseFloat(clean.slice(0, -1));
     return isNaN(num) ? 0 : num / 100;
   }
+  if (clean.endsWith('m')) {
+    const num = parseFloat(clean.slice(0, -1));
+    return isNaN(num) ? 0 : num * 10;
+  }
+  if (clean.endsWith('tk') || clean.endsWith('taka') || clean.endsWith('/=') || clean.endsWith('/-')) {
+    const num = parseFloat(clean.replace(/(tk|taka|\/=|\/-)$/i, ''));
+    return isNaN(num) ? 0 : num / 100000;
+  }
+
   const directNum = parseFloat(clean);
-  return isNaN(directNum) ? 0 : directNum;
+  if (isNaN(directNum)) return 0;
+
+  // If the string includes a comma (e.g. "৳ 24,000") or directNum >= 100,
+  // it is in TAKA, not Lakhs (24,000 Lakhs = 240 Crore!).
+  // 1 Lakh = 100,000 Taka.
+  if (str.includes(',') || directNum >= 100) {
+    return directNum / 100000;
+  }
+
+  return directNum;
 }
 
 export function formatLakhs(lakhs: number): string {
@@ -39,9 +67,10 @@ export function formatLakhs(lakhs: number): string {
   }
   if (lakhs < 1) {
     const taka = Math.round(lakhs * 100000);
-    if (taka >= 1000) {
+    if (taka > 0) {
       return `৳ ${taka.toLocaleString('en-IN')}`;
     }
+    return '৳ 0.0L';
   }
   return `৳ ${lakhs.toFixed(1)}L`;
 }
@@ -58,10 +87,17 @@ export function calculateDerivedBusinessData(
   totalReceivableFormatted: string;
   collectionRatio: string;
 } {
-  const totalSalesLakhs = businesses.reduce((sum, b) => sum + parseSalesToLakhs(b.sales), 0);
+  const totalSalesLakhs = businesses.reduce((sum, b) => {
+    if (typeof b.salesLakhs === 'number' && !isNaN(b.salesLakhs)) {
+      return sum + b.salesLakhs;
+    }
+    return sum + parseSalesToLakhs(b.sales);
+  }, 0);
   
   const totalCollectionLakhs = businesses.reduce((sum, b) => {
-    const s = parseSalesToLakhs(b.sales);
+    const s = typeof b.salesLakhs === 'number' && !isNaN(b.salesLakhs)
+      ? b.salesLakhs
+      : parseSalesToLakhs(b.sales);
     const rate = parseFloat(b.collectionRate?.replace('%', '') || '80') / 100;
     return sum + (s * (isNaN(rate) ? 0.8 : rate));
   }, 0);
@@ -239,6 +275,9 @@ export function computeDynamicBusinesses(
       return {
         ...b,
         sales: salesFormatted,
+        salesLakhs: currentLakhs,
+        totalSalesTaka: totalAmount,
+        totalPaidTaka: totalPaid,
         collectionRate: colRate,
         salesGrowth: growth,
         status
@@ -259,6 +298,9 @@ export function computeDynamicBusinesses(
       return {
         ...b,
         sales: '৳ 0.0L',
+        salesLakhs: 0,
+        totalSalesTaka: 0,
+        totalPaidTaka: 0,
         collectionRate: '0.0%',
         salesGrowth: -100.0,
         status: 'Critical'
@@ -273,6 +315,7 @@ export function getBusinessGrowthData(biz: {
   status?: string;
   salesGrowth?: number;
   sales?: string;
+  salesLakhs?: number;
   previousSales?: string;
 }): BusinessGrowthData {
   let growth = typeof biz.salesGrowth === 'number' ? biz.salesGrowth : undefined;
@@ -280,7 +323,9 @@ export function getBusinessGrowthData(biz: {
   // Derive if not explicitly defined
   if (growth === undefined) {
     if (biz.sales && biz.previousSales) {
-      const curr = parseSalesToLakhs(biz.sales);
+      const curr = typeof biz.salesLakhs === 'number' && !isNaN(biz.salesLakhs)
+        ? biz.salesLakhs
+        : parseSalesToLakhs(biz.sales);
       const prev = parseSalesToLakhs(biz.previousSales);
       if (prev > 0) {
         growth = ((curr - prev) / prev) * 100;

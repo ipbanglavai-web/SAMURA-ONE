@@ -33,6 +33,9 @@ interface BusinessesPageProps {
     nid: string;
     businessId: string;
     businessName: string;
+    managerType?: 'unit_manager' | 'general_manager';
+    assignedBusinessIds?: string[];
+    assignedBusinessNames?: string[];
   }) => void;
 }
 

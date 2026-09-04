@@ -33,6 +33,9 @@ interface ManagersPageProps {
     nid: string;
     businessId: string;
     businessName: string;
+    managerType?: 'unit_manager' | 'general_manager';
+    assignedBusinessIds?: string[];
+    assignedBusinessNames?: string[];
   }) => void;
   onDeleteManager: (id: string) => void;
   onNavigate?: (path: any) => void;
@@ -239,20 +242,38 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
                 {filteredManagers.map((mgr) => {
                   const isPasswordShown = showPasswordId === mgr.id;
                   const displayPassword = mgr.password || 'password123';
+                  const isGM =
+                    mgr.managerType === 'general_manager' ||
+                    mgr.businessId === 'all' ||
+                    mgr.name.toLowerCase().includes('general manager') ||
+                    mgr.name.toLowerCase().includes('(gm)');
 
                   return (
                     <tr key={mgr.id} className="hover:bg-[#F6F8F7]/60 transition-colors">
                       {/* Name & Role */}
                       <td className="py-3.5 px-4">
                         <div className="flex items-center gap-3">
-                          <div className="w-8 h-8 rounded-full bg-[#E6F4ED] text-[#0E5A4F] font-bold flex items-center justify-center text-xs shrink-0 border border-[#22A06B]/30 shadow-2xs">
+                          <div
+                            className={`w-8 h-8 rounded-full font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs ${
+                              isGM
+                                ? 'bg-[#0E5A4F] text-white border border-[#22A06B]'
+                                : 'bg-[#E6F4ED] text-[#0E5A4F] border border-[#22A06B]/30'
+                            }`}
+                          >
                             {mgr.name.charAt(0)}
                           </div>
                           <div>
-                            <span className="font-bold text-[#18211F] text-xs block">{mgr.name}</span>
+                            <div className="flex items-center gap-1.5">
+                              <span className="font-bold text-[#18211F] text-xs block">{mgr.name}</span>
+                              {isGM && (
+                                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#0E5A4F] text-[#E6F4ED]">
+                                  GM
+                                </span>
+                              )}
+                            </div>
                             <span className="text-[10px] text-[#71807B] flex items-center gap-1">
-                              <ShieldCheck className="w-2.5 h-2.5 text-[#22A06B]" />
-                              Unit Officer • {mgr.createdAt || 'Active'}
+                              <ShieldCheck className={`w-2.5 h-2.5 ${isGM ? 'text-[#0E5A4F]' : 'text-[#22A06B]'}`} />
+                              {isGM ? 'Executive General Manager' : 'Unit Manager'} • {mgr.createdAt || 'Active'}
                             </span>
                           </div>
                         </div>
@@ -288,10 +309,28 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
 
                       {/* Assigned Business */}
                       <td className="py-3.5 px-4">
-                        <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#E6F4ED] text-[#0E5A4F] border border-[#22A06B]/20">
-                          <Building2 className="w-3.5 h-3.5" />
-                          <span>{mgr.businessName}</span>
-                        </div>
+                        {isGM ? (
+                          <div className="space-y-1">
+                            <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#0E5A4F] text-white border border-[#22A06B]">
+                              <Building2 className="w-3.5 h-3.5 text-[#22A06B]" />
+                              <span>
+                                {mgr.assignedBusinessNames && mgr.assignedBusinessNames.length > 0
+                                  ? `All Assigned (${mgr.assignedBusinessNames.length} Units)`
+                                  : 'All Business Units'}
+                              </span>
+                            </div>
+                            {mgr.assignedBusinessNames && mgr.assignedBusinessNames.length > 0 && (
+                              <p className="text-[10px] text-[#71807B] truncate max-w-[200px]" title={mgr.assignedBusinessNames.join(', ')}>
+                                {mgr.assignedBusinessNames.join(', ')}
+                              </p>
+                            )}
+                          </div>
+                        ) : (
+                          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#E6F4ED] text-[#0E5A4F] border border-[#22A06B]/20">
+                            <Building2 className="w-3.5 h-3.5" />
+                            <span>{mgr.businessName}</span>
+                          </div>
+                        )}
                       </td>
 
                       {/* Password & Security Status */}

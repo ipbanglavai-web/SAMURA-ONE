@@ -1017,6 +1017,7 @@ export const BusinessUnitDetailsModal: React.FC<BusinessUnitDetailsModalProps> =
           businessName={business.name}
           products={unitProducts}
           customers={unitCustomers}
+          managers={managers}
           onAddRecord={handleAddRecord}
         />
       )}

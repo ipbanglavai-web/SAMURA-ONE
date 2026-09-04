@@ -20,6 +20,7 @@ import { ApprovalsPage } from './pages/Approvals/ApprovalsPage';
 import { AskSamuraPage } from './pages/AskSamura/AskSamuraPage';
 import { SettingsPage } from './pages/Settings/SettingsPage';
 import { ManagerDashboardPage } from './pages/Manager/ManagerDashboardPage';
+import { GeneralManagerBusinessSelectPage } from './pages/GeneralManager/GeneralManagerBusinessSelectPage';
 import { ApprovalDetailModal } from './components/modals/ApprovalDetailModal';
 import { AlertDetailModal } from './components/modals/AlertDetailModal';
 import { BusinessUnitDetailsModal } from './components/modals/BusinessUnitDetailsModal';
@@ -52,7 +53,7 @@ import {
 } from './services/firestoreService';
 
 const MainApp: React.FC = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, selectBusiness, clearSelectedBusiness } = useAuth();
   
   // Navigation Route State
   const [currentPath, setCurrentPath] = useState<RoutePath>(() => {
@@ -297,6 +298,9 @@ const MainApp: React.FC = () => {
     nid: string;
     businessId: string;
     businessName: string;
+    managerType?: 'unit_manager' | 'general_manager';
+    assignedBusinessIds?: string[];
+    assignedBusinessNames?: string[];
   }) => {
     const newManager: BusinessManager = {
       id: `mgr-${Date.now()}`,
@@ -312,14 +316,16 @@ const MainApp: React.FC = () => {
       console.error('Failed to save manager to Firestore:', e);
     }
 
-    // Update business's assigned manager field
-    setRawBusinesses(prev =>
-      prev.map(b =>
-        b.id === newMgrData.businessId || b.name.toLowerCase() === newMgrData.businessName.toLowerCase()
-          ? { ...b, manager: newMgrData.name }
-          : b
-      )
-    );
+    // If unit manager, update the business's assigned manager field
+    if (newMgrData.managerType !== 'general_manager' && newMgrData.businessId !== 'all') {
+      setRawBusinesses(prev =>
+        prev.map(b =>
+          b.id === newMgrData.businessId || b.name.toLowerCase() === newMgrData.businessName.toLowerCase()
+            ? { ...b, manager: newMgrData.name }
+            : b
+        )
+      );
+    }
   };
 
   const handleDeleteManager = async (id: string) => {
@@ -474,9 +480,36 @@ const MainApp: React.FC = () => {
     return <LoginPage onLoginSuccess={() => handleNavigate('/dashboard')} />;
   }
 
+  // General Manager Role -> First show assigned business selection page, then unit dashboard upon selection
+  if (user?.userType === 'general_manager') {
+    if (!user.selectedBusinessId) {
+      return (
+        <GeneralManagerBusinessSelectPage
+          businesses={businesses}
+          onSelectBusiness={(businessId, businessName) => {
+            selectBusiness(businessId, businessName);
+          }}
+        />
+      );
+    }
+
+    return (
+      <ManagerDashboardPage
+        businesses={businesses}
+        managers={managers}
+        onReturnToBusinessSelect={() => {
+          clearSelectedBusiness();
+        }}
+        onSelectBusiness={(businessId, businessName) => {
+          selectBusiness(businessId, businessName);
+        }}
+      />
+    );
+  }
+
   // Manager Role -> Render the dedicated Manager Portal Dashboard for their assigned unit
   if (user?.userType === 'manager') {
-    return <ManagerDashboardPage businesses={businesses} />;
+    return <ManagerDashboardPage businesses={businesses} managers={managers} />;
   }
 
   const pendingApprovalsCount = approvals.filter(a => a.status === 'pending').length;

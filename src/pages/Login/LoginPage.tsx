@@ -151,7 +151,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               }`}
             >
               <UserCheck className="w-3.5 h-3.5 text-[#22A06B]" />
-              <span>Login As Manager</span>
+              <span>Manager / GM</span>
             </button>
           </div>
 
@@ -176,8 +176,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
               </div>
             )}
             <h2 className="text-xl sm:text-2xl font-bold text-white tracking-tight">
-              {loginRole === 'admin' ? 'Executive Admin Portal' : 'Business Unit Manager Login'}
+              {loginRole === 'admin' ? 'Executive Admin Portal' : 'Manager / General Manager Login'}
             </h2>
+            <p className="text-xs text-[#A3B8B0] mt-1.5">
+              {loginRole === 'admin'
+                ? 'Authorized access for Group Managing Director & Chairman'
+                : 'Sign in as Unit Manager or General Manager to access assigned businesses'}
+            </p>
             <p className="text-xs sm:text-sm text-[#A3B8B0] mt-1">
               {loginRole === 'admin'
                 ? 'Sign in to access the Group Command Dashboard'
@@ -308,6 +313,21 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                 </button>
               ) : (
                 <>
+                  <button
+                    id="fill-gm-demo-btn"
+                    type="button"
+                    onClick={() => handleFillManagerDemo('gm@alsamura.com')}
+                    className="text-xs text-[#E6F4ED] hover:text-white flex items-center justify-between py-1.5 px-3 rounded-lg bg-[#0E5A4F]/40 border border-[#22A06B]/50 hover:bg-[#0E5A4F]/70 transition-all cursor-pointer group"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Briefcase className="w-3.5 h-3.5 text-[#22A06B]" />
+                      <span className="font-bold text-[#E6F4ED]">General Manager (Kabir Ahmed - GM)</span>
+                    </div>
+                    <span className="text-[10px] text-[#A3B8B0] group-hover:text-white font-mono">
+                      gm@alsamura.com
+                    </span>
+                  </button>
+
                   <button
                     id="fill-elenga-manager-demo-btn"
                     type="button"

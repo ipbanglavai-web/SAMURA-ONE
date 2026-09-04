@@ -312,6 +312,21 @@ export const IMPORT_SHIPMENTS_DATA: ImportShipment[] = [
 
 export const INITIAL_MANAGERS_DATA: import('../types').BusinessManager[] = [
   {
+    id: 'mgr-gm-1',
+    name: 'Kabir Ahmed',
+    phone: '01712-998877',
+    email: 'gm@alsamura.com',
+    password: 'password123',
+    nid: '19822699887766554',
+    businessId: 'all',
+    businessName: 'All Businesses',
+    status: 'Active',
+    createdAt: '2026-03-01',
+    managerType: 'general_manager',
+    assignedBusinessIds: ['bh-1', 'bh-2', 'bh-3', 'bh-4', 'bh-5', 'bh-6'],
+    assignedBusinessNames: ['Elenga Fruits', 'Mourin Fruits', 'Zaafran', 'Dhaka Mad', 'Samura Cold Storage', 'Al Samura Agro']
+  },
+  {
     id: 'mgr-1',
     name: 'Md. Rafiqul Islam',
     phone: '01711-234567',

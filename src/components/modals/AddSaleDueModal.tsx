@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { SaleDueRecord, UnitProduct, ManagerCustomer } from '../../types';
+import { SaleDueRecord, UnitProduct, ManagerCustomer, BusinessManager } from '../../types';
 import {
   FileText,
   X,
@@ -16,8 +16,11 @@ import {
   Plus,
   Users,
   UserCheck,
-  Sparkles
+  Sparkles,
+  ChevronDown
 } from 'lucide-react';
+import { subscribeToManagers } from '../../services/firestoreService';
+import { INITIAL_MANAGERS_DATA } from '../../data/mockData';
 
 interface AddSaleDueModalProps {
   isOpen: boolean;
@@ -26,6 +29,7 @@ interface AddSaleDueModalProps {
   businessName: string;
   products: UnitProduct[];
   customers?: ManagerCustomer[];
+  managers?: BusinessManager[];
   onAddRecord: (record: Omit<SaleDueRecord, 'id' | 'invoiceNo'>) => void;
   onOpenAddProductModal?: () => void;
 }
@@ -37,6 +41,7 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
   businessName,
   products,
   customers = [],
+  managers,
   onAddRecord,
   onOpenAddProductModal
 }) => {
@@ -47,6 +52,52 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
   const [selectedCustomerId, setSelectedCustomerId] = useState<string>('');
   const [customerSearchTerm, setCustomerSearchTerm] = useState('');
   const [isCustomerDropdownOpen, setIsCustomerDropdownOpen] = useState(false);
+
+  // Managers added by Admin
+  const [adminManagers, setAdminManagers] = useState<BusinessManager[]>(() => {
+    if (managers && managers.length > 0) return managers;
+    try {
+      const stored = localStorage.getItem('samura_managers_data');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error('Failed to load managers in AddSaleDueModal', e);
+    }
+    return INITIAL_MANAGERS_DATA;
+  });
+
+  useEffect(() => {
+    if (managers && managers.length > 0) {
+      setAdminManagers(managers);
+    }
+  }, [managers]);
+
+  useEffect(() => {
+    const unsub = subscribeToManagers((remoteMgrs) => {
+      if (remoteMgrs && remoteMgrs.length > 0) {
+        setAdminManagers(remoteMgrs);
+      }
+    });
+    return () => unsub();
+  }, []);
+
+  // Sorted list of managers:
+  // 1. Current business unit manager first
+  // 2. General Managers
+  // 3. Other unit managers
+  const sortedManagers = [...adminManagers].sort((a, b) => {
+    const aCurrent = a.businessId === businessId || a.businessName?.toLowerCase() === businessName?.toLowerCase();
+    const bCurrent = b.businessId === businessId || b.businessName?.toLowerCase() === businessName?.toLowerCase();
+    if (aCurrent && !bCurrent) return -1;
+    if (!aCurrent && bCurrent) return 1;
+    const aGM = a.managerType === 'general_manager' || a.businessId === 'all';
+    const bGM = b.managerType === 'general_manager' || b.businessId === 'all';
+    if (aGM && !bGM) return -1;
+    if (!aGM && bGM) return 1;
+    return a.name.localeCompare(b.name);
+  });
 
   // Form fields
   const [customerName, setCustomerName] = useState('');
@@ -100,10 +151,27 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
     setCustomerMode('new');
     setSelectedCustomerId('');
     setCustomerName('');
-    setCustomerOf('');
+    const defaultMgr = sortedManagers.find(
+      (m) => m.businessId === businessId || m.businessName?.toLowerCase() === businessName?.toLowerCase()
+    );
+    setCustomerOf(defaultMgr ? defaultMgr.name : (sortedManagers[0]?.name || ''));
     setAddress('');
     setExDue('0');
   };
+
+  // Auto-select manager on open if empty
+  useEffect(() => {
+    if (isOpen && !customerOf && sortedManagers.length > 0) {
+      const defaultMgr = sortedManagers.find(
+        (m) => m.businessId === businessId || m.businessName?.toLowerCase() === businessName?.toLowerCase()
+      );
+      if (defaultMgr) {
+        setCustomerOf(defaultMgr.name);
+      } else if (sortedManagers[0]) {
+        setCustomerOf(sortedManagers[0].name);
+      }
+    }
+  }, [isOpen, businessId, businessName, sortedManagers, customerOf]);
 
   // Switch to existing customer mode
   const handleSwitchToExistingCustomer = () => {
@@ -430,18 +498,45 @@ export const AddSaleDueModal: React.FC<AddSaleDueModalProps> = ({
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-[#556963] mb-1.5">
-                  Market / Reference / Customer of <span className="text-red-500">*</span>
-                </label>
-                <input
-                  id="sale-customer-of"
-                  type="text"
-                  required
-                  value={customerOf}
-                  onChange={(e) => setCustomerOf(e.target.value)}
-                  placeholder="e.g. Kawran Bazar / Badamtoli"
-                  className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] placeholder:text-[#9CA3AF] focus:border-[#0E5A4F] focus:outline-none transition-colors"
-                />
+                <div className="flex items-center justify-between mb-1.5">
+                  <label htmlFor="sale-customer-of" className="block text-xs font-semibold text-[#556963]">
+                    Customer of (Assigned Manager) <span className="text-red-500">*</span>
+                  </label>
+                  <span className="text-[10px] text-[#0E5A4F] font-bold bg-[#E6F4ED] px-1.5 py-0.5 rounded border border-[#22A06B]/30">
+                    Admin Managed
+                  </span>
+                </div>
+                <div className="relative">
+                  <select
+                    id="sale-customer-of"
+                    required
+                    value={customerOf}
+                    onChange={(e) => setCustomerOf(e.target.value)}
+                    className="w-full px-3.5 py-2.5 rounded-xl border border-[#E5EAE8] bg-white text-xs font-semibold text-[#18211F] focus:border-[#0E5A4F] focus:ring-1 focus:ring-[#0E5A4F] focus:outline-none transition-colors appearance-none cursor-pointer pr-9 shadow-2xs"
+                  >
+                    <option value="" disabled>-- Select Manager Added by Admin --</option>
+                    {customerOf && !sortedManagers.some((m) => m.name === customerOf) && (
+                      <option value={customerOf}>
+                        {customerOf} (Current Reference)
+                      </option>
+                    )}
+                    {sortedManagers.map((mgr) => {
+                      const isGM = mgr.managerType === 'general_manager' || mgr.businessId === 'all';
+                      const isCurrentUnit = mgr.businessId === businessId || mgr.businessName?.toLowerCase() === businessName?.toLowerCase();
+                      return (
+                        <option key={mgr.id} value={mgr.name}>
+                          {mgr.name} — {isGM ? 'General Manager' : mgr.businessName} {isCurrentUnit ? '(This Unit)' : ''}
+                        </option>
+                      );
+                    })}
+                  </select>
+                  <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#71807B]">
+                    <ChevronDown className="w-4 h-4" />
+                  </div>
+                </div>
+                <p className="text-[10px] text-[#71807B] mt-1">
+                  Sales manager authorized by Executive Admin
+                </p>
               </div>
             </div>
 

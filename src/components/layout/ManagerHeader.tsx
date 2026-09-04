@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { useLogo } from '../../context/LogoContext';
 import { ManagerTab } from './ManagerSidebar';
+import { BusinessHealthItem } from '../../types';
 import {
   Menu,
   Building,
@@ -13,7 +14,10 @@ import {
   Calendar,
   ChevronDown,
   Clock,
-  CalendarDays
+  CalendarDays,
+  Briefcase,
+  ArrowLeftRight,
+  ArrowLeft
 } from 'lucide-react';
 
 interface ManagerHeaderProps {
@@ -22,6 +26,10 @@ interface ManagerHeaderProps {
   businessName: string;
   selectedDate: string;
   onSelectDate: (date: string) => void;
+  isGeneralManager?: boolean;
+  assignedBusinesses?: BusinessHealthItem[];
+  onSwitchBusiness?: (businessId: string, businessName: string) => void;
+  onReturnToBusinessSelect?: () => void;
 }
 
 export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
@@ -29,13 +37,18 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
   onOpenMobileMenu,
   businessName,
   selectedDate,
-  onSelectDate
+  onSelectDate,
+  isGeneralManager = false,
+  assignedBusinesses = [],
+  onSwitchBusiness,
+  onReturnToBusinessSelect
 }) => {
   const { user, logout } = useAuth();
   const { customLogo } = useLogo();
   const [dateDropdownOpen, setDateDropdownOpen] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [notifDropdownOpen, setNotifDropdownOpen] = useState(false);
+  const [bizSwitchDropdownOpen, setBizSwitchDropdownOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(2);
   const [customDateInput, setCustomDateInput] = useState('');
   const [showCustomPicker, setShowCustomPicker] = useState(false);
@@ -43,6 +56,7 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
   const dateRef = useRef<HTMLDivElement>(null);
   const userRef = useRef<HTMLDivElement>(null);
   const notifRef = useRef<HTMLDivElement>(null);
+  const bizSwitchRef = useRef<HTMLDivElement>(null);
 
   // Close dropdowns on outside click
   useEffect(() => {
@@ -56,6 +70,9 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
       }
       if (notifRef.current && !notifRef.current.contains(event.target as Node)) {
         setNotifDropdownOpen(false);
+      }
+      if (bizSwitchRef.current && !bizSwitchRef.current.contains(event.target as Node)) {
+        setBizSwitchDropdownOpen(false);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -246,11 +263,102 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
           )}
         </div>
 
-        {/* Assigned Business Unit Badge */}
-        <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#E6F4ED] border border-[#22A06B]/30 rounded-md text-xs font-bold text-[#0E5A4F]">
-          <Building2 className="w-3.5 h-3.5 text-[#22A06B]" />
-          <span className="truncate max-w-[140px]">{businessName}</span>
-        </div>
+        {/* Assigned Business Unit Badge or General Manager Business Switcher */}
+        {isGeneralManager ? (
+          <div className="relative" ref={bizSwitchRef}>
+            <div className="flex items-center gap-1.5">
+              <button
+                type="button"
+                id="gm-switch-unit-dropdown-btn"
+                onClick={() => setBizSwitchDropdownOpen(!bizSwitchDropdownOpen)}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-[#0E5A4F] text-white hover:bg-[#073F37] border border-[#22A06B]/40 rounded-md text-xs font-bold transition-all shadow-xs cursor-pointer"
+                title="Click to switch business unit"
+              >
+                <Briefcase className="w-3.5 h-3.5 text-[#22A06B]" />
+                <span className="truncate max-w-[130px]">{businessName}</span>
+                <ChevronDown className="w-3.5 h-3.5 text-[#A3B8B0]" />
+              </button>
+
+              {onReturnToBusinessSelect && (
+                <button
+                  type="button"
+                  id="gm-return-to-selection-btn"
+                  onClick={onReturnToBusinessSelect}
+                  className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 bg-[#E6F4ED] hover:bg-[#d5eee2] text-[#0E5A4F] border border-[#22A06B]/30 rounded-md text-xs font-semibold transition-colors cursor-pointer"
+                  title="Return to Business Selection Portal"
+                >
+                  <ArrowLeft className="w-3.5 h-3.5" />
+                  <span className="hidden md:inline">Change Business</span>
+                </button>
+              )}
+            </div>
+
+            {bizSwitchDropdownOpen && (
+              <div className="absolute right-0 mt-2 w-72 bg-white border border-[#E5EAE8] rounded-xl shadow-xl py-2 z-50 text-xs">
+                <div className="px-3.5 py-2 border-b border-[#E5EAE8] flex items-center justify-between">
+                  <div>
+                    <span className="font-bold text-[#18211F] block">Switch Business Unit</span>
+                    <span className="text-[10px] text-[#71807B]">Executive General Manager Access</span>
+                  </div>
+                  <span className="px-1.5 py-0.5 rounded bg-[#E6F4ED] text-[#0E5A4F] text-[10px] font-bold">
+                    GM View
+                  </span>
+                </div>
+
+                <div className="max-h-60 overflow-y-auto py-1">
+                  {assignedBusinesses.map((biz) => {
+                    const isCurrent = biz.name === businessName;
+                    return (
+                      <button
+                        key={biz.id}
+                        type="button"
+                        onClick={() => {
+                          setBizSwitchDropdownOpen(false);
+                          if (onSwitchBusiness) {
+                            onSwitchBusiness(biz.id, biz.name);
+                          }
+                        }}
+                        className={`w-full text-left px-3.5 py-2 flex items-center justify-between transition-colors cursor-pointer ${
+                          isCurrent
+                            ? 'bg-[#E6F4ED] text-[#0E5A4F] font-bold'
+                            : 'hover:bg-[#F6F8F7] text-[#18211F]'
+                        }`}
+                      >
+                        <div className="flex items-center gap-2">
+                          <Building2 className={`w-3.5 h-3.5 ${isCurrent ? 'text-[#0E5A4F]' : 'text-[#71807B]'}`} />
+                          <span>{biz.name}</span>
+                        </div>
+                        {isCurrent && <Check className="w-3.5 h-3.5 text-[#0E5A4F]" />}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {onReturnToBusinessSelect && (
+                  <div className="border-t border-[#E5EAE8] pt-1 mt-1 px-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setBizSwitchDropdownOpen(false);
+                        onReturnToBusinessSelect();
+                      }}
+                      className="w-full text-left px-3 py-1.5 rounded text-xs font-semibold text-[#0E5A4F] hover:bg-[#E6F4ED] flex items-center gap-1.5 transition-colors cursor-pointer"
+                    >
+                      <ArrowLeft className="w-3.5 h-3.5" />
+                      <span>All Assigned Businesses Portal</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        ) : (
+          /* Unit Manager static badge */
+          <div className="hidden md:flex items-center gap-1.5 px-3 py-1.5 bg-[#E6F4ED] border border-[#22A06B]/30 rounded-md text-xs font-bold text-[#0E5A4F]">
+            <Building2 className="w-3.5 h-3.5 text-[#22A06B]" />
+            <span className="truncate max-w-[140px]">{businessName}</span>
+          </div>
+        )}
 
         {/* Notification Bell */}
         <div className="relative" ref={notifRef}>
@@ -331,10 +439,10 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
             <div className="absolute right-0 mt-2 w-64 bg-white border border-[#E5EAE8] rounded-xl shadow-xl py-2 z-50 text-xs">
               {/* User info */}
               <div className="px-4 py-2 border-b border-[#E5EAE8]">
-                <p className="font-semibold text-sm text-[#111827]">{user?.name || 'Unit Manager'}</p>
+                <p className="font-semibold text-sm text-[#111827]">{user?.name || (isGeneralManager ? 'General Manager' : 'Unit Manager')}</p>
                 <div className="flex items-center gap-1.5 mt-0.5">
                   <span className="text-[11px] text-[#0E5A4F] font-bold">{businessName}</span>
-                  <span className="text-[10px] text-[#4B5563]">· In-Charge</span>
+                  <span className="text-[10px] text-[#4B5563]">· {isGeneralManager ? 'Executive Oversight' : 'In-Charge'}</span>
                 </div>
                 <p className="text-[11px] text-[#4B5563] font-mono mt-0.5">{user?.email}</p>
               </div>
@@ -342,13 +450,29 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               <div className="py-1">
                 <div className="px-4 py-1.5 flex items-center gap-2 text-[#4B5563]">
                   <Shield className="w-3.5 h-3.5 text-[#22A06B]" />
-                  <span>Role: Business Unit Manager</span>
+                  <span>Role: {isGeneralManager ? 'General Manager (All Assigned Units)' : 'Business Unit Manager'}</span>
                 </div>
                 <div className="px-4 py-1.5 flex items-center gap-2 text-[#4B5563]">
                   <Building className="w-3.5 h-3.5 text-[#0E5A4F]" />
-                  <span>Enterprise: {businessName}</span>
+                  <span>Active Unit: {businessName}</span>
                 </div>
               </div>
+
+              {isGeneralManager && onReturnToBusinessSelect && (
+                <div className="border-t border-[#E5EAE8] pt-1 mt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      onReturnToBusinessSelect();
+                    }}
+                    className="w-full text-left px-4 py-2 text-[#0E5A4F] hover:bg-[#E6F4ED] flex items-center gap-2 font-semibold transition-colors cursor-pointer"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span>Business Selection Portal</span>
+                  </button>
+                </div>
+              )}
 
               <div className="border-t border-[#E5EAE8] pt-1 mt-1">
                 <button

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../../auth/AuthContext';
-import { BusinessHealthItem, SaleDueRecord, UnitProduct, ManagerCustomer, PendingApproval } from '../../types';
+import { BusinessHealthItem, SaleDueRecord, UnitProduct, ManagerCustomer, PendingApproval, BusinessManager } from '../../types';
 import { ManagerSidebar, ManagerTab } from '../../components/layout/ManagerSidebar';
 import { ManagerHeader } from '../../components/layout/ManagerHeader';
 import { ManagerOverviewTab } from './tabs/ManagerOverviewTab';
@@ -30,12 +30,19 @@ import {
 
 interface ManagerDashboardPageProps {
   businesses?: BusinessHealthItem[];
+  managers?: BusinessManager[];
+  onReturnToBusinessSelect?: () => void;
+  onSelectBusiness?: (businessId: string, businessName: string) => void;
 }
 
 export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
-  businesses = BUSINESS_HEALTH_DATA
+  businesses = BUSINESS_HEALTH_DATA,
+  managers,
+  onReturnToBusinessSelect,
+  onSelectBusiness
 }) => {
   const { user } = useAuth();
+  const isGeneralManager = user?.userType === 'general_manager';
 
   // Active Tab state
   const [activeTab, setActiveTab] = useState<ManagerTab>('overview');
@@ -43,8 +50,8 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
   const [selectedDate, setSelectedDate] = useState('Today');
 
   // Business context
-  const currentBusinessId = user?.businessId || 'biz-1';
-  const currentBusinessName = user?.businessName || 'Elenga Fruits';
+  const currentBusinessId = user?.selectedBusinessId || user?.businessId || 'bh-1';
+  const currentBusinessName = user?.selectedBusinessName || user?.businessName || 'Elenga Fruits';
   const currentBusiness: BusinessHealthItem = businesses.find((b) => b.id === currentBusinessId) || {
     id: currentBusinessId,
     name: currentBusinessName,
@@ -52,8 +59,16 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
     status: 'Healthy',
     collectionRate: '94%',
     margin: '18.2%',
-    manager: user?.name || 'Unit Manager'
+    manager: user?.name || (isGeneralManager ? 'General Manager' : 'Unit Manager')
   };
+
+  // Assigned businesses for GM switcher
+  const assignedIds = user?.assignedBusinessIds || [];
+  const isAllAssigned = assignedIds.length === 0 || assignedIds.includes('all') || assignedIds.length >= businesses.length;
+  const assignedBusinessesList = businesses.filter((b) => {
+    if (isAllAssigned) return true;
+    return assignedIds.includes(b.id) || (user?.assignedBusinessNames && user.assignedBusinessNames.includes(b.name));
+  });
 
   // 1. Products State with LocalStorage persistence
   const [products, setProducts] = useState<UnitProduct[]>(() => {
@@ -541,6 +556,10 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
           businessName={currentBusinessName}
           selectedDate={selectedDate}
           onSelectDate={setSelectedDate}
+          isGeneralManager={isGeneralManager}
+          assignedBusinesses={assignedBusinessesList}
+          onSwitchBusiness={onSelectBusiness}
+          onReturnToBusinessSelect={onReturnToBusinessSelect}
         />
 
         {/* Dynamic Route/Tab View */}
@@ -619,6 +638,7 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
         businessName={currentBusinessName}
         products={unitProducts}
         customers={unitCustomers}
+        managers={managers}
         onAddRecord={handleAddSaleRecord}
         onOpenAddProductModal={() => {
           setIsAddSaleModalOpen(false);

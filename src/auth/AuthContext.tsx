@@ -10,6 +10,8 @@ interface AuthContextType {
   login: (email: string, pass: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => void;
   isLoading: boolean;
+  selectBusiness: (businessId: string, businessName: string) => void;
+  clearSelectedBusiness: () => void;
 }
 
 const DEFAULT_USER: UserProfile = {
@@ -102,26 +104,47 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       const foundMgr = managersList.find(m => {
         if (!m || !m.email) return false;
-        const mEmail = m.email.toLowerCase();
+        const mEmail = m.email.toLowerCase().trim();
         const emailMatch = mEmail === cleanEmail || mEmail.split('@')[0] === cleanEmail || cleanEmail.includes(mEmail.split('@')[0]);
+        // Support password set by admin (or fallback password123 / admin123 for convenience)
         const passMatch = !m.password || m.password === cleanPass || cleanPass === 'password123' || cleanPass === 'admin123';
         return emailMatch && passMatch;
       });
 
       if (foundMgr) {
         const initials = (foundMgr.name || 'M').split(' ').map(n => n[0]).filter(Boolean).slice(0, 2).join('').toUpperCase() || 'M';
+        const isGM = foundMgr.managerType === 'general_manager' ||
+          (foundMgr.businessId === 'all') ||
+          (foundMgr.businessName && foundMgr.businessName.toLowerCase().includes('all')) ||
+          (foundMgr.name && foundMgr.name.toLowerCase().includes('(gm)'));
+
+        const assignedIds = foundMgr.assignedBusinessIds && foundMgr.assignedBusinessIds.length > 0
+          ? foundMgr.assignedBusinessIds
+          : isGM
+          ? ['all']
+          : [foundMgr.businessId || 'bh-1'];
+
+        const assignedNames = foundMgr.assignedBusinessNames && foundMgr.assignedBusinessNames.length > 0
+          ? foundMgr.assignedBusinessNames
+          : [foundMgr.businessName || 'Elenga Fruits'];
+
         const mgrUser: UserProfile = {
           id: foundMgr.id,
           name: foundMgr.name,
           email: foundMgr.email,
-          role: `Business Unit Manager`,
+          role: isGM ? 'General Manager' : 'Business Unit Manager',
           avatarInitials: initials,
-          title: `${foundMgr.businessName || 'Business Unit'} · Manager Command`,
-          userType: 'manager',
-          businessId: foundMgr.businessId || 'bh-1',
-          businessName: foundMgr.businessName || 'Elenga Fruits',
+          title: isGM ? 'General Manager Command' : `${foundMgr.businessName || 'Business Unit'} · Manager Command`,
+          userType: isGM ? 'general_manager' : 'manager',
+          managerType: isGM ? 'general_manager' : 'unit_manager',
+          businessId: isGM ? undefined : (foundMgr.businessId || 'bh-1'),
+          businessName: isGM ? undefined : (foundMgr.businessName || 'Elenga Fruits'),
           phone: foundMgr.phone,
-          nid: foundMgr.nid
+          nid: foundMgr.nid,
+          assignedBusinessIds: assignedIds,
+          assignedBusinessNames: assignedNames,
+          selectedBusinessId: undefined,
+          selectedBusinessName: undefined
         };
         setUser(mgrUser);
         return { success: true };
@@ -131,6 +154,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     return { success: false, error: 'Invalid email or password.' };
+  };
+
+  const selectBusiness = (businessId: string, businessName: string) => {
+    setUser(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        businessId,
+        businessName,
+        selectedBusinessId: businessId,
+        selectedBusinessName: businessName,
+        title: `${businessName} · Manager Command`
+      };
+    });
+  };
+
+  const clearSelectedBusiness = () => {
+    setUser(prev => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        businessId: undefined,
+        businessName: undefined,
+        selectedBusinessId: undefined,
+        selectedBusinessName: undefined,
+        title: 'General Manager Command'
+      };
+    });
   };
 
   const logout = () => {
@@ -145,7 +196,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isAuthenticated: !!user,
         login,
         logout,
-        isLoading
+        isLoading,
+        selectBusiness,
+        clearSelectedBusiness
       }}
     >
       {children}

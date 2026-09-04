@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BusinessHealthItem, BusinessManager } from '../../types';
+import { BusinessHealthItem } from '../../types';
 import {
   UserCheck,
   X,
@@ -11,7 +11,10 @@ import {
   Eye,
   EyeOff,
   AlertTriangle,
-  ShieldCheck
+  ShieldCheck,
+  Briefcase,
+  CheckSquare,
+  Square
 } from 'lucide-react';
 
 interface AddManagerModalProps {
@@ -26,6 +29,9 @@ interface AddManagerModalProps {
     nid: string;
     businessId: string;
     businessName: string;
+    managerType?: 'unit_manager' | 'general_manager';
+    assignedBusinessIds?: string[];
+    assignedBusinessNames?: string[];
   }) => void;
   defaultBusinessId?: string;
 }
@@ -37,6 +43,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
   onAddManager,
   defaultBusinessId
 }) => {
+  const [managerType, setManagerType] = useState<'unit_manager' | 'general_manager'>('unit_manager');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -46,6 +53,8 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
   const [selectedBusinessId, setSelectedBusinessId] = useState(
     defaultBusinessId || (businesses.length > 0 ? businesses[0].id : '')
   );
+  // General Manager multi-business selection
+  const [assignedGmBizIds, setAssignedGmBizIds] = useState<string[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -55,11 +64,27 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
       } else if (businesses.length > 0) {
         setSelectedBusinessId(businesses[0].id);
       }
+      // By default assign all businesses when General Manager is selected
+      setAssignedGmBizIds(businesses.map((b) => b.id));
       setError(null);
     }
   }, [isOpen, defaultBusinessId, businesses]);
 
   if (!isOpen) return null;
+
+  const handleToggleGmBiz = (bizId: string) => {
+    setAssignedGmBizIds((prev) =>
+      prev.includes(bizId) ? prev.filter((id) => id !== bizId) : [...prev, bizId]
+    );
+  };
+
+  const handleSelectAllGmBusinesses = () => {
+    if (assignedGmBizIds.length === businesses.length) {
+      setAssignedGmBizIds([]);
+    } else {
+      setAssignedGmBizIds(businesses.map((b) => b.id));
+    }
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -86,23 +111,50 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
       setError('National ID (NID) number is required.');
       return;
     }
-    if (!selectedBusinessId) {
-      setError('Please select a business unit to assign.');
-      return;
+
+    if (managerType === 'unit_manager') {
+      if (!selectedBusinessId) {
+        setError('Please select a business unit to assign.');
+        return;
+      }
+      const assignedBiz = businesses.find((b) => b.id === selectedBusinessId);
+      const businessName = assignedBiz ? assignedBiz.name : 'General Business';
+
+      onAddManager({
+        name: name.trim(),
+        phone: phone.trim(),
+        email: email.trim().toLowerCase(),
+        password: password.trim(),
+        nid: nid.trim(),
+        businessId: selectedBusinessId,
+        businessName,
+        managerType: 'unit_manager',
+        assignedBusinessIds: [selectedBusinessId],
+        assignedBusinessNames: [businessName]
+      });
+    } else {
+      // General Manager
+      if (assignedGmBizIds.length === 0) {
+        setError('Please assign at least one business to the General Manager (or select all).');
+        return;
+      }
+      const assignedBizObjects = businesses.filter((b) => assignedGmBizIds.includes(b.id));
+      const assignedNames = assignedBizObjects.map((b) => b.name);
+      const isAll = assignedGmBizIds.length === businesses.length;
+
+      onAddManager({
+        name: name.trim(),
+        phone: phone.trim(),
+        email: email.trim().toLowerCase(),
+        password: password.trim(),
+        nid: nid.trim(),
+        businessId: 'all',
+        businessName: isAll ? 'All Group Businesses' : `${assignedGmBizIds.length} Businesses Assigned`,
+        managerType: 'general_manager',
+        assignedBusinessIds: assignedGmBizIds,
+        assignedBusinessNames: assignedNames
+      });
     }
-
-    const assignedBiz = businesses.find((b) => b.id === selectedBusinessId);
-    const businessName = assignedBiz ? assignedBiz.name : 'General Business';
-
-    onAddManager({
-      name: name.trim(),
-      phone: phone.trim(),
-      email: email.trim().toLowerCase(),
-      password: password.trim(),
-      nid: nid.trim(),
-      businessId: selectedBusinessId,
-      businessName
-    });
 
     // Reset & Close
     setName('');
@@ -110,24 +162,27 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
     setEmail('');
     setPassword('');
     setNid('');
+    setManagerType('unit_manager');
     onClose();
   };
 
+  const isAllGmSelected = assignedGmBizIds.length === businesses.length && businesses.length > 0;
+
   return (
     <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
-      <div className="bg-white rounded-xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#E5EAE8] relative animate-scale-in my-8">
+      <div className="bg-white rounded-xl max-w-lg w-full p-5 sm:p-6 shadow-2xl border border-[#E5EAE8] relative animate-scale-in my-8 max-h-[90vh] flex flex-col">
         {/* Modal Header */}
-        <div className="flex items-center justify-between pb-3.5 border-b border-[#E5EAE8]">
+        <div className="flex items-center justify-between pb-3.5 border-b border-[#E5EAE8] shrink-0">
           <div className="flex items-center gap-2.5">
             <div className="p-2 bg-[#E6F4ED] rounded-lg text-[#0E5A4F]">
               <UserCheck className="w-5 h-5" />
             </div>
             <div>
               <h3 className="text-base sm:text-lg font-bold text-[#18211F] tracking-tight">
-                Add Business Manager
+                Add Manager / General Manager
               </h3>
               <p className="text-[11px] text-[#71807B]">
-                Assign a dedicated manager to oversee daily operations for a business unit
+                Register manager credentials and configure assigned business subsidiaries
               </p>
             </div>
           </div>
@@ -141,18 +196,63 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
 
         {/* Error Alert */}
         {error && (
-          <div className="mt-3.5 p-2.5 bg-red-50 border border-red-200 rounded-md text-red-700 text-xs flex items-center gap-2">
+          <div className="mt-3.5 p-2.5 bg-red-50 border border-red-200 rounded-md text-red-700 text-xs flex items-center gap-2 shrink-0">
             <AlertTriangle className="w-4 h-4 shrink-0 text-red-500" />
             <span>{error}</span>
           </div>
         )}
 
-        {/* Modal Form */}
-        <form onSubmit={handleSubmit} className="mt-4 space-y-3.5">
+        {/* Modal Form Scrollable */}
+        <form onSubmit={handleSubmit} className="mt-4 space-y-3.5 overflow-y-auto pr-1">
+          {/* Manager Role / Type Switcher */}
+          <div>
+            <label className="block text-xs font-semibold text-[#18211F] mb-1.5">
+              Manager Role & Privilege Scope <span className="text-red-500">*</span>
+            </label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-[#F6F8F7] rounded-lg border border-[#E5EAE8]">
+              <button
+                type="button"
+                id="select-unit-manager-type"
+                onClick={() => setManagerType('unit_manager')}
+                className={`py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  managerType === 'unit_manager'
+                    ? 'bg-[#0E5A4F] text-white shadow-xs'
+                    : 'text-[#71807B] hover:text-[#18211F] hover:bg-white'
+                }`}
+              >
+                <Building2 className="w-3.5 h-3.5" />
+                <span>Unit Manager</span>
+              </button>
+
+              <button
+                type="button"
+                id="select-general-manager-type"
+                onClick={() => {
+                  setManagerType('general_manager');
+                  setAssignedGmBizIds(businesses.map((b) => b.id));
+                }}
+                className={`py-2 px-3 rounded-md text-xs font-semibold flex items-center justify-center gap-1.5 transition-all cursor-pointer ${
+                  managerType === 'general_manager'
+                    ? 'bg-[#0E5A4F] text-white shadow-xs'
+                    : 'text-[#71807B] hover:text-[#18211F] hover:bg-white'
+                }`}
+              >
+                <Briefcase className="w-3.5 h-3.5" />
+                <span>General Manager (GM)</span>
+              </button>
+            </div>
+            <p className="text-[10px] text-[#71807B] mt-1.5">
+              {managerType === 'general_manager'
+                ? '⭐ General Manager can oversee multiple or all businesses. Upon login, a business selection page will let them enter any assigned unit dashboard.'
+                : 'Unit Manager is assigned to a single subsidiary and manages daily unit operations.'}
+            </p>
+          </div>
+
           {/* 1. Manager Name */}
           <div>
             <label className="block text-xs font-semibold text-[#18211F] mb-1">
-              Manager Name <span className="text-red-500">*</span>
+              {managerType === 'general_manager' ? 'General Manager Name' : 'Manager Name'}{' '}
+              <span className="text-red-500">*</span>
             </label>
             <div className="relative">
               <input
@@ -160,7 +260,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
                 type="text"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="e.g. Tariqul Hasan"
+                placeholder={managerType === 'general_manager' ? 'e.g. Md. Kabir Ahmed (GM)' : 'e.g. Tariqul Hasan'}
                 className="w-full text-xs px-3 py-2 bg-[#F6F8F7] border border-[#E5EAE8] rounded-md text-[#18211F] focus:outline-none focus:border-[#0E5A4F]"
                 required
               />
@@ -189,7 +289,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
 
             <div>
               <label className="block text-xs font-semibold text-[#18211F] mb-1">
-                Email Address <span className="text-red-500">*</span>
+                Login Email Address <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Mail className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
@@ -198,7 +298,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="manager@alsamura.com"
+                  placeholder={managerType === 'general_manager' ? 'gm@alsamura.com' : 'manager@alsamura.com'}
                   className="w-full text-xs pl-8 pr-3 py-2 bg-[#F6F8F7] border border-[#E5EAE8] rounded-md text-[#18211F] focus:outline-none focus:border-[#0E5A4F]"
                   required
                 />
@@ -210,7 +310,7 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs font-semibold text-[#18211F] mb-1">
-                Password <span className="text-red-500">*</span>
+                Login Password (Set by Admin) <span className="text-red-500">*</span>
               </label>
               <div className="relative">
                 <Lock className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
@@ -219,14 +319,14 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
                   type={showPassword ? 'text' : 'password'}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Min. 6 characters"
+                  placeholder="Password set by admin"
                   className="w-full text-xs pl-8 pr-8 py-2 bg-[#F6F8F7] border border-[#E5EAE8] rounded-md text-[#18211F] focus:outline-none focus:border-[#0E5A4F]"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71807B] hover:text-[#18211F] p-0.5"
+                  className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#71807B] hover:text-[#18211F] p-0.5 cursor-pointer"
                 >
                   {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                 </button>
@@ -252,35 +352,101 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
             </div>
           </div>
 
-          {/* 6. Assign Business Unit */}
-          <div>
-            <label className="block text-xs font-semibold text-[#18211F] mb-1">
-              Assign Business Unit <span className="text-red-500">*</span>
-            </label>
-            <div className="relative">
-              <Building2 className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
-              <select
-                id="manager-business-select"
-                value={selectedBusinessId}
-                onChange={(e) => setSelectedBusinessId(e.target.value)}
-                className="w-full text-xs pl-8 pr-3 py-2 bg-[#F6F8F7] border border-[#E5EAE8] rounded-md text-[#18211F] focus:outline-none focus:border-[#0E5A4F] cursor-pointer font-medium"
-                required
-              >
-                {businesses.map((biz) => (
-                  <option key={biz.id} value={biz.id}>
-                    {biz.name} (Current: {biz.manager || 'Not Assigned'})
-                  </option>
-                ))}
-              </select>
+          {/* 6. Business Assignment Section */}
+          {managerType === 'unit_manager' ? (
+            <div>
+              <label className="block text-xs font-semibold text-[#18211F] mb-1">
+                Assign Single Business Unit <span className="text-red-500">*</span>
+              </label>
+              <div className="relative">
+                <Building2 className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-[#71807B]" />
+                <select
+                  id="manager-business-select"
+                  value={selectedBusinessId}
+                  onChange={(e) => setSelectedBusinessId(e.target.value)}
+                  className="w-full text-xs pl-8 pr-3 py-2 bg-[#F6F8F7] border border-[#E5EAE8] rounded-md text-[#18211F] focus:outline-none focus:border-[#0E5A4F] cursor-pointer font-medium"
+                  required
+                >
+                  {businesses.map((biz) => (
+                    <option key={biz.id} value={biz.id}>
+                      {biz.name} (Current: {biz.manager || 'Not Assigned'})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <p className="text-[10px] text-[#71807B] mt-1 flex items-center gap-1">
+                <ShieldCheck className="w-3 h-3 text-[#0E5A4F]" />
+                The assigned manager will only have access to operations and data for this unit.
+              </p>
             </div>
-            <p className="text-[10px] text-[#71807B] mt-1 flex items-center gap-1">
-              <ShieldCheck className="w-3 h-3 text-[#0E5A4F]" />
-              The assigned manager will only have access to operations and data for this unit.
-            </p>
-          </div>
+          ) : (
+            /* General Manager Multi-Business Assignment */
+            <div className="p-3 bg-[#F6F8F7] rounded-lg border border-[#E5EAE8] space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="block text-xs font-bold text-[#18211F]">
+                    Assign Businesses to General Manager <span className="text-red-500">*</span>
+                  </span>
+                  <span className="text-[10px] text-[#71807B]">
+                    {assignedGmBizIds.length} of {businesses.length} subsidiaries assigned
+                  </span>
+                </div>
+                <button
+                  type="button"
+                  id="toggle-all-businesses-btn"
+                  onClick={handleSelectAllGmBusinesses}
+                  className="text-xs text-[#0E5A4F] hover:text-[#073F37] font-bold px-2 py-1 rounded bg-white border border-[#E5EAE8] hover:border-[#0E5A4F] transition-colors cursor-pointer flex items-center gap-1"
+                >
+                  {isAllGmSelected ? (
+                    <>
+                      <CheckSquare className="w-3.5 h-3.5 text-[#0E5A4F]" />
+                      <span>All Businesses Assigned</span>
+                    </>
+                  ) : (
+                    <>
+                      <Square className="w-3.5 h-3.5" />
+                      <span>Assign All Businesses</span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Grid of Business Checkboxes */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-1.5 max-h-40 overflow-y-auto p-1 bg-white rounded-md border border-[#E5EAE8]">
+                {businesses.map((biz) => {
+                  const isChecked = assignedGmBizIds.includes(biz.id);
+                  return (
+                    <label
+                      key={biz.id}
+                      className={`flex items-center gap-2 p-2 rounded text-xs cursor-pointer transition-colors ${
+                        isChecked
+                          ? 'bg-[#E6F4ED] text-[#0E5A4F] font-semibold'
+                          : 'hover:bg-[#F6F8F7] text-[#18211F]'
+                      }`}
+                    >
+                      <input
+                        type="checkbox"
+                        checked={isChecked}
+                        onChange={() => handleToggleGmBiz(biz.id)}
+                        className="rounded border-[#E5EAE8] text-[#0E5A4F] focus:ring-[#0E5A4F] w-3.5 h-3.5"
+                      />
+                      <span className="truncate">{biz.name}</span>
+                    </label>
+                  );
+                })}
+              </div>
+
+              <div className="text-[10px] text-[#0E5A4F] bg-[#E6F4ED] p-2 rounded-md flex items-center gap-1.5">
+                <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                <span>
+                  The General Manager can log in with this password and will see a business selection page displaying all assigned subsidiaries.
+                </span>
+              </div>
+            </div>
+          )}
 
           {/* Form Actions */}
-          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E5EAE8]">
+          <div className="flex items-center justify-end gap-2.5 pt-3 border-t border-[#E5EAE8] shrink-0">
             <button
               type="button"
               onClick={onClose}
@@ -294,7 +460,9 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
               className="px-4 py-1.5 bg-[#0E5A4F] hover:bg-[#073F37] text-white text-xs font-bold rounded-md shadow-2xs transition-colors cursor-pointer flex items-center gap-1.5"
             >
               <UserCheck className="w-4 h-4" />
-              <span>Save & Assign Manager</span>
+              <span>
+                {managerType === 'general_manager' ? 'Save General Manager' : 'Save & Assign Manager'}
+              </span>
             </button>
           </div>
         </form>
@@ -302,3 +470,4 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
     </div>
   );
 };
+

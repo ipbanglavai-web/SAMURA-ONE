@@ -21,11 +21,16 @@ export interface UserProfile {
   role: string;
   avatarInitials: string;
   title: string;
-  userType?: 'admin' | 'manager';
+  userType?: 'admin' | 'manager' | 'general_manager';
+  managerType?: 'unit_manager' | 'general_manager';
   businessId?: string;
   businessName?: string;
   phone?: string;
   nid?: string;
+  assignedBusinessIds?: string[];
+  assignedBusinessNames?: string[];
+  selectedBusinessId?: string;
+  selectedBusinessName?: string;
 }
 
 export type ManagerNavTab = 'overview' | 'sales-due' | 'products' | 'customers';
@@ -121,6 +126,9 @@ export interface BusinessHealthItem {
   manager?: string;
   salesGrowth?: number; // % growth difference, positive for up e.g. 14.5, negative for down e.g. -6.2
   previousSales?: string;
+  salesLakhs?: number;
+  totalSalesTaka?: number;
+  totalPaidTaka?: number;
 }
 
 export interface BusinessManager {
@@ -134,6 +142,9 @@ export interface BusinessManager {
   businessName: string;
   status: 'Active' | 'Inactive';
   createdAt: string;
+  managerType?: 'unit_manager' | 'general_manager';
+  assignedBusinessIds?: string[];
+  assignedBusinessNames?: string[];
 }
 
 export interface ReceivableAgingItem {
