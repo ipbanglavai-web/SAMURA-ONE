@@ -55,6 +55,7 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
   const [sortBy, setSortBy] = useState<'date_desc' | 'due_desc' | 'amount_desc' | 'name_asc'>('date_desc');
   const [expandedRowId, setExpandedRowId] = useState<string | null>(null);
   const [recordToDelete, setRecordToDelete] = useState<SaleDueRecord | null>(null);
+  const [isPrintingLedger, setIsPrintingLedger] = useState(false);
 
   // Aggregate metrics
   const totalSales = records.reduce((acc, curr) => acc + curr.amount, 0);
@@ -127,24 +128,33 @@ export const ManagerSalesDueTab: React.FC<ManagerSalesDueTabProps> = ({
         <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
           <button
             id="print-ledger-btn"
-            onClick={() =>
-              printSalesDueLedger(
-                processedRecords,
-                business.name,
-                filterStatus === 'all'
-                  ? 'All Records'
-                  : filterStatus === 'has_due'
-                  ? 'Due Records'
-                  : filterStatus === 'Full Paid'
-                  ? 'Paid Records'
-                  : 'Overdue Records'
-              )
-            }
-            className="px-3.5 py-2.5 rounded-xl bg-white border border-[#E5EAE8] text-[#18211F] hover:bg-[#F6F8F7] hover:border-[#0E5A4F]/40 text-xs font-bold shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98"
+            type="button"
+            disabled={isPrintingLedger}
+            onClick={() => {
+              setIsPrintingLedger(true);
+              try {
+                printSalesDueLedger(
+                  processedRecords,
+                  business?.name || 'AL SAMURA GROUP',
+                  filterStatus === 'all'
+                    ? 'All Records'
+                    : filterStatus === 'has_due'
+                    ? 'Due Records'
+                    : filterStatus === 'Full Paid'
+                    ? 'Paid Records'
+                    : 'Overdue Records'
+                );
+              } catch (err) {
+                console.error('Print ledger invocation error:', err);
+              } finally {
+                setTimeout(() => setIsPrintingLedger(false), 400);
+              }
+            }}
+            className="px-3.5 py-2.5 rounded-xl bg-white border border-[#E5EAE8] text-[#18211F] hover:bg-[#F6F8F7] hover:border-[#0E5A4F]/40 text-xs font-bold shadow-2xs transition-all flex items-center justify-center gap-1.5 cursor-pointer active:scale-98 disabled:opacity-75"
             title="Print Filtered Ledger"
           >
-            <Printer className="w-4 h-4 text-[#0E5A4F]" />
-            <span>Print Ledger ({processedRecords.length})</span>
+            <Printer className={`w-4 h-4 text-[#0E5A4F] ${isPrintingLedger ? 'animate-spin' : ''}`} />
+            <span>{isPrintingLedger ? 'Opening Print System...' : `Print Ledger (${processedRecords.length})`}</span>
           </button>
 
           <button

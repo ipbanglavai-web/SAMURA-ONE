@@ -382,7 +382,11 @@ export const BusinessUnitDetailsModal: React.FC<BusinessUnitDetailsModalProps> =
   };
 
   const handlePrintLedger = () => {
-    printSalesDueLedger(filteredRecords, business.name);
+    printSalesDueLedger(
+      filteredRecords,
+      business.name,
+      `${dateFilter} · ${statusFilter === 'all' ? 'All Records' : statusFilter}`
+    );
   };
 
   return (

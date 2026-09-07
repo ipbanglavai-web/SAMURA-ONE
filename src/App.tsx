@@ -24,6 +24,7 @@ import { GeneralManagerBusinessSelectPage } from './pages/GeneralManager/General
 import { ApprovalDetailModal } from './components/modals/ApprovalDetailModal';
 import { AlertDetailModal } from './components/modals/AlertDetailModal';
 import { BusinessUnitDetailsModal } from './components/modals/BusinessUnitDetailsModal';
+import { UniversalPrintModal } from './components/modals/UniversalPrintModal';
 import { calculateDerivedBusinessData, computeDynamicBusinesses } from './utils/businessCalculations';
 import {
   KPI_DATA,
@@ -59,9 +60,25 @@ const MainApp: React.FC = () => {
   
   // Navigation Route State
   const [currentPath, setCurrentPath] = useState<RoutePath>(() => {
-    const hash = window.location.hash.replace('#', '') as RoutePath;
-    if (hash && hash.startsWith('/')) {
-      return hash;
+    const rawHash = window.location.hash.replace('#', '');
+    const validRoutes: RoutePath[] = [
+      '/dashboard',
+      '/businesses',
+      '/managers',
+      '/finance',
+      '/sales-collection',
+      '/inventory',
+      '/dhaka-maal-mahajan',
+      '/import-shipments',
+      '/cold-storage',
+      '/packaging',
+      '/hospital-summary',
+      '/approvals',
+      '/ask-samura',
+      '/settings'
+    ];
+    if (validRoutes.includes(rawHash as RoutePath)) {
+      return rawHash as RoutePath;
     }
     return '/dashboard';
   });
@@ -708,6 +725,7 @@ export default function App() {
     <AuthProvider>
       <LogoProvider>
         <MainApp />
+        <UniversalPrintModal />
       </LogoProvider>
     </AuthProvider>
   );
