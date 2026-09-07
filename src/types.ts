@@ -97,6 +97,8 @@ export interface KpiItem {
   trend?: 'up' | 'down' | 'neutral';
   isAlert?: boolean;
   iconName: 'sales' | 'collection' | 'bank' | 'receivable' | 'inventory';
+  badge?: string;
+  badgeColor?: string;
 }
 
 export interface ChartDataPoint {
@@ -129,6 +131,7 @@ export interface BusinessHealthItem {
   salesLakhs?: number;
   totalSalesTaka?: number;
   totalPaidTaka?: number;
+  todaySalesTaka?: number;
 }
 
 export interface BusinessManager {

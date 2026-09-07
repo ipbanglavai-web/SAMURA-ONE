@@ -7,17 +7,19 @@ import { ManagerOverviewTab } from './tabs/ManagerOverviewTab';
 import { ManagerSalesDueTab } from './tabs/ManagerSalesDueTab';
 import { ManagerProductsTab } from './tabs/ManagerProductsTab';
 import { ManagerCustomersTab } from './tabs/ManagerCustomersTab';
+import { ManagerNotificationsTab } from './tabs/ManagerNotificationsTab';
 import { AddSaleDueModal } from '../../components/modals/AddSaleDueModal';
 import { AddProductModal } from '../../components/modals/AddProductModal';
 import { AddCustomerModal } from '../../components/modals/AddCustomerModal';
 import { SaleVoucherModal } from '../../components/modals/SaleVoucherModal';
 import { PayDueModal } from '../../components/modals/PayDueModal';
-import { INITIAL_PRODUCTS_DATA, INITIAL_SALES_DUE_DATA, INITIAL_CUSTOMERS_DATA, BUSINESS_HEALTH_DATA } from '../../data/mockData';
+import { INITIAL_PRODUCTS_DATA, INITIAL_SALES_DUE_DATA, INITIAL_CUSTOMERS_DATA, PENDING_APPROVALS_DATA, BUSINESS_HEALTH_DATA, getYesterdayIso, getDaysAgoIso } from '../../data/mockData';
 import {
   seedInitialFirestoreData,
   subscribeToSalesRecords,
   subscribeToProducts,
   subscribeToCustomers,
+  subscribeToApprovals,
   saveSaleRecordToFirestore,
   deleteSaleRecordFromFirestore,
   saveProductToFirestore,
@@ -25,7 +27,9 @@ import {
   saveCustomerToFirestore,
   deleteCustomerFromFirestore,
   updateCustomerDueInFirestore,
-  saveApprovalToFirestore
+  saveApprovalToFirestore,
+  deleteApprovalFromFirestore,
+  clearAllApprovalsForBusinessInFirestore
 } from '../../services/firestoreService';
 
 interface ManagerDashboardPageProps {
@@ -89,11 +93,32 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
   // 2. Sales & Due State with LocalStorage persistence
   const [salesDueRecords, setSalesDueRecords] = useState<SaleDueRecord[]>(() => {
     try {
-      const stored = localStorage.getItem('samura_sales_due_records_v2') || localStorage.getItem('samura_sales_due_records');
+      const stored =
+        localStorage.getItem('samura_sales_due_records_v4') ||
+        localStorage.getItem('samura_sales_due_records_v3') ||
+        localStorage.getItem('samura_sales_due_records_v2') ||
+        localStorage.getItem('samura_sales_due_records');
       if (stored !== null) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) {
-          return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((r: SaleDueRecord) => {
+            if (r.id === 'sd-ef-today-1' || r.id === 'sd-ef-hist-1') {
+              return { ...r, id: 'sd-ef-hist-1', date: getYesterdayIso(), createdAt: getYesterdayIso() };
+            }
+            if (r.id === 'sd-ef-today-2' || r.id === 'sd-ef-hist-2') {
+              return { ...r, id: 'sd-ef-hist-2', date: getDaysAgoIso(2), createdAt: getDaysAgoIso(2) };
+            }
+            if (r.id === 'sd-ef-today-3' || r.id === 'sd-ef-hist-3') {
+              return { ...r, id: 'sd-ef-hist-3', date: getDaysAgoIso(2), duePaymentDate: getDaysAgoIso(2), createdAt: getDaysAgoIso(2) };
+            }
+            if (r.id === 'sd-ef-today-4' || r.id === 'sd-ef-hist-4') {
+              return { ...r, id: 'sd-ef-hist-4', date: getDaysAgoIso(3), createdAt: getDaysAgoIso(3) };
+            }
+            if (r.id === 'sd-mf-today-1' || r.id === 'sd-mf-hist-1') {
+              return { ...r, id: 'sd-mf-hist-1', date: getYesterdayIso(), createdAt: getYesterdayIso() };
+            }
+            return r;
+          });
         }
       }
     } catch (e) {
@@ -118,6 +143,20 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
     return INITIAL_CUSTOMERS_DATA;
   });
 
+  // 4. Approvals State for Admin Decisions
+  const [approvals, setApprovals] = useState<PendingApproval[]>(() => {
+    try {
+      const stored = localStorage.getItem('samura_approvals_data');
+      if (stored) {
+        const parsed = JSON.parse(stored);
+        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+      }
+    } catch (e) {
+      console.error('Failed to load approvals from storage', e);
+    }
+    return PENDING_APPROVALS_DATA;
+  });
+
   // Realtime Firestore listeners & initial seeding
   useEffect(() => {
     // Seed initial dataset if database is fresh
@@ -136,10 +175,17 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
       setCustomers(remoteCustomers);
     });
 
+    const unsubApprovals = subscribeToApprovals((remoteApprovals) => {
+      if (remoteApprovals && remoteApprovals.length > 0) {
+        setApprovals(remoteApprovals);
+      }
+    });
+
     return () => {
       unsubSales();
       unsubProducts();
       unsubCustomers();
+      unsubApprovals();
     };
   }, []);
 
@@ -155,6 +201,7 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
 
   useEffect(() => {
     try {
+      localStorage.setItem('samura_sales_due_records_v4', JSON.stringify(salesDueRecords));
       localStorage.setItem('samura_sales_due_records_v2', JSON.stringify(salesDueRecords));
       localStorage.setItem('samura_sales_due_records', JSON.stringify(salesDueRecords));
     } catch (e) {
@@ -170,6 +217,14 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
       console.error('Failed to save customers', e);
     }
   }, [customers]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('samura_approvals_data', JSON.stringify(approvals));
+    } catch (e) {
+      console.error('Failed to save approvals', e);
+    }
+  }, [approvals]);
 
   // Filter items for current business
   const unitProducts = products.filter((p) => p.businessId === currentBusinessId);
@@ -533,6 +588,51 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
     }
   };
 
+  const handleClearAllNotifications = async () => {
+    setApprovals((prev) =>
+      prev.filter((a) => {
+        if (!a.business) return false;
+        const bName = a.business.toLowerCase();
+        const currName = currentBusinessName.toLowerCase();
+        return !(bName.includes(currName) || currName.includes(bName));
+      })
+    );
+    try {
+      await clearAllApprovalsForBusinessInFirestore(currentBusinessName);
+    } catch (e) {
+      console.error('Failed to clear approvals from Firestore:', e);
+    }
+  };
+
+  const handleDeleteApprovalNotification = async (id: string) => {
+    setApprovals((prev) => prev.filter((a) => a.id !== id));
+    try {
+      await deleteApprovalFromFirestore(id);
+    } catch (e) {
+      console.error('Failed to delete approval notification from Firestore:', e);
+    }
+  };
+
+  // Filter approvals and overdues for notification count badge
+  const unitApprovalsList = useMemo(() => {
+    return approvals.filter((a) => {
+      if (!a.business) return true;
+      const bName = a.business.toLowerCase();
+      const currName = currentBusinessName.toLowerCase();
+      return bName.includes(currName) || currName.includes(bName) || a.department === 'Unit Manager';
+    });
+  }, [approvals, currentBusinessName]);
+
+  const overdueUnitRecordsCount = useMemo(() => {
+    return unitRecords.filter(
+      (r) =>
+        r.runningDue > 0 &&
+        ((r.duePaymentDate && r.duePaymentDate < todayStr) || r.status === 'Overdue' || r.status === 'Unpaid')
+    ).length;
+  }, [unitRecords, todayStr]);
+
+  const totalNotificationBadgeCount = unitApprovalsList.length + overdueUnitRecordsCount;
+
   return (
     <div className="min-h-screen bg-[#F6F8F7] text-[#18211F] flex font-['Inter',sans-serif]">
       {/* 1. Dark Emerald Persistent Manager Sidebar - Matching Admin Sidebar exactly */}
@@ -545,6 +645,7 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
         salesDueCount={unitRecords.length}
         productCount={unitProducts.length}
         customerCount={unitCustomers.length}
+        notificationCount={totalNotificationBadgeCount}
       />
 
       {/* 2. Main Content Area */}
@@ -560,6 +661,7 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
           assignedBusinesses={assignedBusinessesList}
           onSwitchBusiness={onSelectBusiness}
           onReturnToBusinessSelect={onReturnToBusinessSelect}
+          onSelectTab={(tab) => setActiveTab(tab)}
         />
 
         {/* Dynamic Route/Tab View */}
@@ -574,6 +676,23 @@ export const ManagerDashboardPage: React.FC<ManagerDashboardPageProps> = ({
               onNavigateToSalesDue={() => setActiveTab('sales_due')}
               onNavigateToProducts={() => setActiveTab('products')}
               onNavigateToCustomers={() => setActiveTab('customers')}
+            />
+          )}
+
+          {activeTab === 'notifications' && (
+            <ManagerNotificationsTab
+              business={currentBusiness}
+              records={unitRecords}
+              products={unitProducts}
+              customers={unitCustomers}
+              approvals={approvals}
+              onOpenPayModal={(rec) => setPayDueRecordTarget(rec)}
+              onOpenPayCustomerModal={(cust) => setPayDueCustomerTarget(cust)}
+              onViewVoucher={(rec) => setSelectedVoucherRecord(rec)}
+              onNavigateToProducts={() => setActiveTab('products')}
+              onNavigateToSalesDue={() => setActiveTab('sales_due')}
+              onClearAllNotifications={handleClearAllNotifications}
+              onDeleteApprovalNotification={handleDeleteApprovalNotification}
             />
           )}
 

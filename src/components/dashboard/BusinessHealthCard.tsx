@@ -1,6 +1,6 @@
 import React from 'react';
 import { BusinessHealthItem } from '../../types';
-import { getBusinessGrowthData } from '../../utils/businessCalculations';
+import { getBusinessGrowthData, formatTodaySaleTaka } from '../../utils/businessCalculations';
 import { TrendingUp, TrendingDown } from 'lucide-react';
 
 interface BusinessHealthCardProps {
@@ -42,7 +42,7 @@ export const BusinessHealthCard: React.FC<BusinessHealthCardProps> = ({
           <thead>
             <tr className="border-b border-[#E5EAE8] text-[#71807B] text-[10px]">
               <th className="pb-1.5 font-bold uppercase">Business</th>
-              <th className="pb-1.5 font-bold uppercase text-right">Sales</th>
+              <th className="pb-1.5 font-bold uppercase text-right">Today's Sale</th>
               <th className="pb-1.5 font-bold uppercase text-right">Status</th>
               <th className="pb-1.5 font-bold uppercase text-right">Action</th>
             </tr>
@@ -57,8 +57,8 @@ export const BusinessHealthCard: React.FC<BusinessHealthCardProps> = ({
                 <td className="py-2 font-bold text-[#18211F] group-hover:text-[#0E5A4F] text-xs">
                   {biz.name}
                 </td>
-                <td className="py-2 text-right font-medium text-[#18211F] text-xs">
-                  {biz.sales}
+                <td className="py-2 text-right font-medium text-[#18211F] text-xs font-mono">
+                  {formatTodaySaleTaka(biz)}
                 </td>
                 <td className="py-2 text-right">
                   {(() => {

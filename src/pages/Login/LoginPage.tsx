@@ -327,36 +327,6 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onLoginSuccess }) => {
                       gm@alsamura.com
                     </span>
                   </button>
-
-                  <button
-                    id="fill-elenga-manager-demo-btn"
-                    type="button"
-                    onClick={() => handleFillManagerDemo('rafiqul@alsamura.com')}
-                    className="text-xs text-[#E6F4ED] hover:text-white flex items-center justify-between py-1.5 px-3 rounded-lg bg-[#06352F] border border-[#0E5A4F] hover:border-[#22A06B] transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="w-3.5 h-3.5 text-[#22A06B]" />
-                      <span className="font-medium">Elenga Fruits Manager (Rafiqul)</span>
-                    </div>
-                    <span className="text-[10px] text-[#A3B8B0] group-hover:text-white font-mono">
-                      rafiqul@alsamura.com
-                    </span>
-                  </button>
-
-                  <button
-                    id="fill-mourin-manager-demo-btn"
-                    type="button"
-                    onClick={() => handleFillManagerDemo('tariqul@alsamura.com')}
-                    className="text-xs text-[#E6F4ED] hover:text-white flex items-center justify-between py-1.5 px-3 rounded-lg bg-[#06352F] border border-[#0E5A4F] hover:border-[#22A06B] transition-all cursor-pointer group"
-                  >
-                    <div className="flex items-center gap-2">
-                      <Briefcase className="w-3.5 h-3.5 text-[#22A06B]" />
-                      <span className="font-medium">Mourin Fruits Manager (Tariqul)</span>
-                    </div>
-                    <span className="text-[10px] text-[#A3B8B0] group-hover:text-white font-mono">
-                      tariqul@alsamura.com
-                    </span>
-                  </button>
                 </>
               )}
             </div>

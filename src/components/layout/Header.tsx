@@ -25,6 +25,7 @@ interface HeaderProps {
   selectedBusiness: string;
   onSelectBusiness: (business: string) => void;
   businesses?: BusinessHealthItem[];
+  onNavigate?: (path: RoutePath) => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -34,7 +35,8 @@ export const Header: React.FC<HeaderProps> = ({
   onSelectDate,
   selectedBusiness,
   onSelectBusiness,
-  businesses
+  businesses,
+  onNavigate
 }) => {
   const { user, logout } = useAuth();
   const { customLogo, loginLogo } = useLogo();
@@ -277,47 +279,82 @@ export const Header: React.FC<HeaderProps> = ({
               </div>
 
               <div className="max-h-72 overflow-y-auto divide-y divide-[#E5EAE8]">
-                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onNavigate) onNavigate('/approvals');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full text-left p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5"
+                >
                   <div className="w-2 h-2 rounded-full bg-[#D9534F] mt-1.5 shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#18211F]">Cold Storage Alert</p>
                     <p className="text-[#71807B] text-[11px] mt-0.5">Chamber 3 temp optimal at -18°C. Stock level 84% capacity.</p>
-                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">10 mins ago</span>
+                    <span className="text-[10px] text-[#0E5A4F] font-bold mt-1 block">Click to view approvals & notifications →</span>
                   </div>
-                </div>
+                </button>
 
-                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onNavigate) onNavigate('/approvals');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full text-left p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5"
+                >
                   <div className="w-2 h-2 rounded-full bg-[#D9534F] mt-1.5 shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#18211F]">Pending Approval Request</p>
                     <p className="text-[#71807B] text-[11px] mt-0.5">Elenga Fruits manager submitted a ৳25,000 transport expense for review.</p>
-                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">1 hour ago</span>
+                    <span className="text-[10px] text-[#0E5A4F] font-bold mt-1 block">Click to view approvals & notifications →</span>
                   </div>
-                </div>
+                </button>
 
-                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onNavigate) onNavigate('/approvals');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full text-left p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5"
+                >
                   <div className="w-2 h-2 rounded-full bg-[#D9534F] mt-1.5 shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#18211F]">Due Payment Received</p>
                     <p className="text-[#71807B] text-[11px] mt-0.5">Dhaka Maal Mahajan cleared ৳120,000 due payment via Bank Transfer.</p>
-                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">3 hours ago</span>
+                    <span className="text-[10px] text-[#0E5A4F] font-bold mt-1 block">Click to view approvals & notifications →</span>
                   </div>
-                </div>
+                </button>
 
-                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onNavigate) onNavigate('/approvals');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full text-left p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5"
+                >
                   <div className="w-2 h-2 rounded-full bg-gray-300 mt-1.5 shrink-0" />
                   <div className="flex-1">
                     <p className="font-semibold text-[#18211F]">Import Shipment Customs</p>
                     <p className="text-[#71807B] text-[11px] mt-0.5">Shipment #SH-9042 cleared customs inspection at Chattogram port.</p>
-                    <span className="text-[10px] text-[#A0AEC0] mt-1 block">Yesterday</span>
+                    <span className="text-[10px] text-[#0E5A4F] font-bold mt-1 block">Click to view approvals & notifications →</span>
                   </div>
-                </div>
+                </button>
               </div>
 
               <div className="border-t border-[#E5EAE8] pt-2 px-3 text-center">
-                <span className="text-[11px] text-[#0E5A4F] font-semibold hover:underline cursor-pointer">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onNavigate) onNavigate('/approvals');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full py-1 text-[11px] text-[#0E5A4F] font-semibold hover:underline cursor-pointer block"
+                >
                   View All Audit Logs & Notifications
-                </span>
+                </button>
               </div>
             </div>
           )}

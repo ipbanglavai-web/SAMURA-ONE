@@ -66,9 +66,20 @@
   nav,
   header,
   button,
-  .no-print,
-  [role="dialog"] > div:first-child:not([class*="bg-white"]) {
+  .no-print {
     display: none !important;
+  }
+
+  /* Remove fixed backdrop dark overlays during print so modals don't print as dark rectangles */
+  .bg-black\/60,
+  .bg-black\/50,
+  .bg-black\/40,
+  .backdrop-blur-xs,
+  .backdrop-blur-sm,
+  .backdrop-blur {
+    background-color: transparent !important;
+    backdrop-filter: none !important;
+    position: static !important;
   }
 
   /* Reset layout constraints for print */
@@ -78,6 +89,7 @@
     margin: 0 !important;
     padding: 0 !important;
     overflow: visible !important;
+    height: auto !important;
   }
 
   /* High contrast table borders and clean backgrounds */

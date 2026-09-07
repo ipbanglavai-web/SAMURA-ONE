@@ -241,11 +241,6 @@ export const AddManagerModal: React.FC<AddManagerModalProps> = ({
                 <span>General Manager (GM)</span>
               </button>
             </div>
-            <p className="text-[10px] text-[#71807B] mt-1.5">
-              {managerType === 'general_manager'
-                ? '⭐ General Manager can oversee multiple or all businesses. Upon login, a business selection page will let them enter any assigned unit dashboard.'
-                : 'Unit Manager is assigned to a single subsidiary and manages daily unit operations.'}
-            </p>
           </div>
 
           {/* 1. Manager Name */}

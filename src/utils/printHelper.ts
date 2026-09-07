@@ -236,20 +236,20 @@ function triggerPrintOnHtml(title: string, bodyContent: string) {
 </body>
 </html>`;
 
-    // 1. Remove existing iframe if present
+    // 1. Remove existing print iframe if present
     const existingIframe = document.getElementById('al-samura-print-iframe');
     if (existingIframe) {
       existingIframe.remove();
     }
 
-    // 2. Create isolated hidden print iframe
+    // 2. Create isolated hidden print iframe inside memory
     const iframe = document.createElement('iframe');
     iframe.id = 'al-samura-print-iframe';
     iframe.style.position = 'fixed';
-    iframe.style.top = '-10000px';
-    iframe.style.left = '-10000px';
-    iframe.style.width = '1000px';
-    iframe.style.height = '1000px';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0px';
+    iframe.style.height = '0px';
     iframe.style.border = 'none';
     iframe.style.opacity = '0';
     iframe.style.pointerEvents = 'none';
@@ -262,7 +262,6 @@ function triggerPrintOnHtml(title: string, bodyContent: string) {
       frameDoc.write(htmlContent);
       frameDoc.close();
 
-      // Give fonts and styles time to paint, then trigger print safely on the iframe
       setTimeout(() => {
         try {
           if (iframe.contentWindow) {
@@ -270,12 +269,16 @@ function triggerPrintOnHtml(title: string, bodyContent: string) {
             iframe.contentWindow.print();
           }
         } catch (iframeErr) {
-          console.warn('Iframe print failed, opening print window fallback:', iframeErr);
+          console.warn('Iframe print failed:', iframeErr);
           safeBlobPrintFallback(title, htmlContent);
+        } finally {
+          setTimeout(() => {
+            if (iframe && iframe.parentNode) {
+              iframe.parentNode.removeChild(iframe);
+            }
+          }, 3000);
         }
-      }, 300);
-    } else {
-      safeBlobPrintFallback(title, htmlContent);
+      }, 350);
     }
   } catch (err) {
     console.error('Print trigger error:', err);
@@ -292,8 +295,10 @@ function safeBlobPrintFallback(title: string, htmlContent: string) {
     const printTab = window.open(blobUrl, '_blank');
     if (printTab) {
       printTab.onload = () => {
-        printTab.focus();
-        printTab.print();
+        try {
+          printTab.focus();
+          printTab.print();
+        } catch (e) {}
         setTimeout(() => URL.revokeObjectURL(blobUrl), 60000);
       };
     }

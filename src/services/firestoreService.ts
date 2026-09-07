@@ -28,7 +28,9 @@ import {
   BUSINESS_HEALTH_DATA,
   INITIAL_MANAGERS_DATA,
   CRITICAL_ALERTS_DATA,
-  PENDING_APPROVALS_DATA
+  PENDING_APPROVALS_DATA,
+  getYesterdayIso,
+  getDaysAgoIso
 } from '../data/mockData';
 
 const SALES_COLLECTION = 'salesDueRecords';
@@ -126,7 +128,26 @@ export function subscribeToSalesRecords(
     (snapshot) => {
       const records: SaleDueRecord[] = [];
       snapshot.forEach((doc) => {
-        records.push({ id: doc.id, ...doc.data() } as SaleDueRecord);
+        const item = { id: doc.id, ...doc.data() } as SaleDueRecord;
+        // Sanitize legacy mock seed records so today starts with genuine 0 sales
+        if (item.id === 'sd-ef-today-1' || item.id === 'sd-ef-hist-1') {
+          item.date = getYesterdayIso();
+          item.createdAt = getYesterdayIso();
+        } else if (item.id === 'sd-ef-today-2' || item.id === 'sd-ef-hist-2') {
+          item.date = getDaysAgoIso(2);
+          item.createdAt = getDaysAgoIso(2);
+        } else if (item.id === 'sd-ef-today-3' || item.id === 'sd-ef-hist-3') {
+          item.date = getDaysAgoIso(2);
+          item.duePaymentDate = getDaysAgoIso(2);
+          item.createdAt = getDaysAgoIso(2);
+        } else if (item.id === 'sd-ef-today-4' || item.id === 'sd-ef-hist-4') {
+          item.date = getDaysAgoIso(3);
+          item.createdAt = getDaysAgoIso(3);
+        } else if (item.id === 'sd-mf-today-1' || item.id === 'sd-mf-hist-1') {
+          item.date = getYesterdayIso();
+          item.createdAt = getYesterdayIso();
+        }
+        records.push(item);
       });
       callback(records);
     },
@@ -204,6 +225,16 @@ export function subscribeToManagers(
       snapshot.forEach((doc) => {
         list.push({ id: doc.id, ...doc.data() } as BusinessManager);
       });
+      // Ensure General Manager is always included in the directory list
+      const hasGM = list.some(
+        (m) =>
+          m.managerType === 'general_manager' ||
+          m.id === 'mgr-gm' ||
+          m.businessId === 'all'
+      );
+      if (!hasGM && INITIAL_MANAGERS_DATA.length > 0) {
+        list.unshift(INITIAL_MANAGERS_DATA[0]);
+      }
       callback(list);
     },
     (error) => {
@@ -432,5 +463,36 @@ export async function updateApprovalStatusInFirestore(approvalId: string, status
     await updateDoc(ref, { status });
   } catch (err) {
     console.warn('Failed to update approval status in Firestore:', err);
+  }
+}
+
+export async function deleteApprovalFromFirestore(approvalId: string) {
+  try {
+    const ref = doc(db, APPROVALS_COLLECTION, approvalId);
+    await deleteDoc(ref);
+  } catch (err) {
+    console.warn('Failed to delete approval from Firestore:', err);
+  }
+}
+
+export async function clearAllApprovalsForBusinessInFirestore(businessName?: string) {
+  try {
+    const snap = await getDocs(collection(db, APPROVALS_COLLECTION));
+    const batch = writeBatch(db);
+    snap.forEach((d) => {
+      if (!businessName) {
+        batch.delete(d.ref);
+      } else {
+        const data = d.data();
+        if (data.business && data.business.toLowerCase().includes(businessName.toLowerCase())) {
+          batch.delete(d.ref);
+        } else if (!data.business) {
+          batch.delete(d.ref);
+        }
+      }
+    });
+    await batch.commit();
+  } catch (err) {
+    console.warn('Failed to clear approvals from Firestore:', err);
   }
 }

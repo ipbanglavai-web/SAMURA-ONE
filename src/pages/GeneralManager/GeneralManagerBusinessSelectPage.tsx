@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../auth/AuthContext';
 import { useLogo } from '../../context/LogoContext';
 import { BusinessHealthItem } from '../../types';
+import { formatFullTaka, formatTodaySaleTaka, formatTotalSalesTaka } from '../../utils/businessCalculations';
 import {
   Building2,
   Briefcase,
@@ -233,10 +234,13 @@ export const GeneralManagerBusinessSelectPage: React.FC<GeneralManagerBusinessSe
                       <div className="grid grid-cols-2 gap-2.5 py-3 my-3 border-y border-[#E5EAE8] bg-[#F6F8F7]/50 rounded-lg px-3">
                         <div>
                           <span className="block text-[10px] text-[#71807B] uppercase font-semibold">
-                            Today Sales
+                            Today's Sale
                           </span>
-                          <span className="text-sm font-bold text-[#18211F] font-mono">
-                            {biz.sales || '৳ 0.0L'}
+                          <span className="text-sm font-bold text-[#18211F] font-mono block">
+                            {formatTodaySaleTaka(biz)}
+                          </span>
+                          <span className="text-[10px] text-[#71807B] block mt-0.5">
+                            Total: {formatTotalSalesTaka(biz)}
                           </span>
                         </div>
                         <div>

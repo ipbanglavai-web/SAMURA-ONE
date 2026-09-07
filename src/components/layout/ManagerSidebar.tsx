@@ -13,10 +13,11 @@ import {
   TrendingUp,
   LogOut,
   ShieldCheck,
-  Users
+  Users,
+  Bell
 } from 'lucide-react';
 
-export type ManagerTab = 'overview' | 'sales_due' | 'products' | 'customers';
+export type ManagerTab = 'overview' | 'sales_due' | 'products' | 'customers' | 'notifications';
 
 interface ManagerSidebarProps {
   activeTab: ManagerTab;
@@ -27,6 +28,7 @@ interface ManagerSidebarProps {
   salesDueCount: number;
   productCount: number;
   customerCount?: number;
+  notificationCount?: number;
 }
 
 interface ManagerNavItem {
@@ -46,7 +48,8 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
   businessName,
   salesDueCount,
   productCount,
-  customerCount = 0
+  customerCount = 0,
+  notificationCount = 0
 }) => {
   const { user, logout } = useAuth();
   const { customLogo } = useLogo();
@@ -57,6 +60,13 @@ export const ManagerSidebar: React.FC<ManagerSidebarProps> = ({
       name: 'Unit Overview',
       icon: LayoutGrid,
       description: 'Summary & KPIs'
+    },
+    {
+      id: 'notifications',
+      name: 'Notifications',
+      icon: Bell,
+      badge: notificationCount > 0 ? notificationCount : undefined,
+      description: 'Admin Approvals & Dues'
     },
     {
       id: 'sales_due',

@@ -33,7 +33,9 @@ import {
   RECEIVABLE_AGING_DATA,
   PENDING_APPROVALS_DATA,
   INITIAL_MANAGERS_DATA,
-  INITIAL_SALES_DUE_DATA
+  INITIAL_SALES_DUE_DATA,
+  getYesterdayIso,
+  getDaysAgoIso
 } from './data/mockData';
 import {
   seedInitialFirestoreData,
@@ -74,10 +76,33 @@ const MainApp: React.FC = () => {
   // Sales Due Records State (Persisted in Firestore & localStorage)
   const [salesRecords, setSalesRecords] = useState<SaleDueRecord[]>(() => {
     try {
-      const stored = localStorage.getItem('samura_sales_due_records_v2') || localStorage.getItem('samura_sales_due_records');
+      const stored =
+        localStorage.getItem('samura_sales_due_records_v4') ||
+        localStorage.getItem('samura_sales_due_records_v3') ||
+        localStorage.getItem('samura_sales_due_records_v2') ||
+        localStorage.getItem('samura_sales_due_records');
       if (stored !== null) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed)) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map((r: SaleDueRecord) => {
+            if (r.id === 'sd-ef-today-1' || r.id === 'sd-ef-hist-1') {
+              return { ...r, id: 'sd-ef-hist-1', date: getYesterdayIso(), createdAt: getYesterdayIso() };
+            }
+            if (r.id === 'sd-ef-today-2' || r.id === 'sd-ef-hist-2') {
+              return { ...r, id: 'sd-ef-hist-2', date: getDaysAgoIso(2), createdAt: getDaysAgoIso(2) };
+            }
+            if (r.id === 'sd-ef-today-3' || r.id === 'sd-ef-hist-3') {
+              return { ...r, id: 'sd-ef-hist-3', date: getDaysAgoIso(2), duePaymentDate: getDaysAgoIso(2), createdAt: getDaysAgoIso(2) };
+            }
+            if (r.id === 'sd-ef-today-4' || r.id === 'sd-ef-hist-4') {
+              return { ...r, id: 'sd-ef-hist-4', date: getDaysAgoIso(3), createdAt: getDaysAgoIso(3) };
+            }
+            if (r.id === 'sd-mf-today-1' || r.id === 'sd-mf-hist-1') {
+              return { ...r, id: 'sd-mf-hist-1', date: getYesterdayIso(), createdAt: getYesterdayIso() };
+            }
+            return r;
+          });
+        }
       }
     } catch (e) {
       console.error('Failed to load sales records from storage', e);
@@ -107,7 +132,7 @@ const MainApp: React.FC = () => {
   }, [rawBusinesses, salesRecords]);
 
   // Dynamic Derived Financial States
-  const initialDerived = calculateDerivedBusinessData(businesses, salesRecords);
+  const initialDerived = calculateDerivedBusinessData(businesses, salesRecords, selectedDate, selectedBusiness);
   const [kpis, setKpis] = useState(initialDerived.kpis);
   const [chartData, setChartData] = useState(initialDerived.chartData);
   const [agingData, setAgingData] = useState(initialDerived.agingData);
@@ -142,10 +167,23 @@ const MainApp: React.FC = () => {
   // Managers State (Persisted in Firestore & localStorage)
   const [managers, setManagers] = useState<BusinessManager[]>(() => {
     try {
-      const stored = localStorage.getItem('samura_managers_data');
+      const stored =
+        localStorage.getItem('samura_managers_data_v2') ||
+        localStorage.getItem('samura_managers_data');
       if (stored !== null) {
         const parsed = JSON.parse(stored);
-        if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          const hasGM = parsed.some(
+            (m: BusinessManager) =>
+              m.managerType === 'general_manager' ||
+              m.id === 'mgr-gm' ||
+              m.businessId === 'all'
+          );
+          if (!hasGM && INITIAL_MANAGERS_DATA.length > 0) {
+            return [INITIAL_MANAGERS_DATA[0], ...parsed];
+          }
+          return parsed;
+        }
       }
     } catch (e) {
       console.error('Failed to load managers from storage', e);
@@ -198,16 +236,17 @@ const MainApp: React.FC = () => {
   useEffect(() => {
     try {
       localStorage.setItem('samura_businesses_data', JSON.stringify(businesses));
+      localStorage.setItem('samura_sales_due_records_v4', JSON.stringify(salesRecords));
     } catch (e) {
-      console.error('Failed to save businesses to storage', e);
+      console.error('Failed to save data to storage', e);
     }
 
     // Automatically recalculate sales, collections, receivables, chart points and aging
-    const derived = calculateDerivedBusinessData(businesses, salesRecords);
+    const derived = calculateDerivedBusinessData(businesses, salesRecords, selectedDate, selectedBusiness);
     setKpis(derived.kpis);
     setChartData(derived.chartData);
     setAgingData(derived.agingData);
-  }, [businesses, salesRecords]);
+  }, [businesses, salesRecords, selectedDate, selectedBusiness]);
 
   useEffect(() => {
     try {
@@ -536,6 +575,7 @@ const MainApp: React.FC = () => {
           selectedBusiness={selectedBusiness}
           onSelectBusiness={setSelectedBusiness}
           businesses={businesses}
+          onNavigate={handleNavigate}
         />
 
         {/* Dynamic Route View */}

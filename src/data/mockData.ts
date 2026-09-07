@@ -993,12 +993,12 @@ export const getFutureDaysIso = (days: number) => {
 };
 
 export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
-  // Elenga Fruits (bh-1) - Today Records (Default Live Data)
+  // Elenga Fruits (bh-1) - Historical Live Records (Today starts with 0 real sales)
   {
-    id: 'sd-ef-today-1',
+    id: 'sd-ef-hist-1',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-TODAY-01',
-    date: getTodayIso(),
+    invoiceNo: 'INV-EF-2026-0800',
+    date: getYesterdayIso(),
     customerName: 'Haji Mokbul Traders',
     address: 'Kawran Bazar, Dhaka · 01712-445566',
     customerOf: 'Kawran Bazar Wholesale Cluster',
@@ -1014,15 +1014,15 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     payableDue: 187500,
     runningDue: 67500,
     duePaymentDate: getFutureDaysIso(5),
-    notes: 'Morning shipment dispatched. Advance payment received.',
+    notes: 'Consignment dispatched. Advance payment received.',
     status: 'Partial Due',
-    createdAt: getTodayIso()
+    createdAt: getYesterdayIso()
   },
   {
-    id: 'sd-ef-today-2',
+    id: 'sd-ef-hist-2',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-TODAY-02',
-    date: getTodayIso(),
+    invoiceNo: 'INV-EF-2026-0799',
+    date: getDaysAgoIso(2),
     customerName: 'Bismillah Fruit Agency',
     address: 'Badamtoli, Sadarghat · 01819-332211',
     customerOf: 'Badamtoli Fruit Market',
@@ -1040,13 +1040,13 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     duePaymentDate: getFutureDaysIso(7),
     notes: 'Payment cleared via City Bank Instant transfer.',
     status: 'Partial Due',
-    createdAt: getTodayIso()
+    createdAt: getDaysAgoIso(2)
   },
   {
-    id: 'sd-ef-today-3',
+    id: 'sd-ef-hist-3',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-TODAY-03',
-    date: getTodayIso(),
+    invoiceNo: 'INV-EF-2026-0798',
+    date: getDaysAgoIso(2),
     customerName: 'Al-Madina Fruit Corner',
     address: 'Mirpur-10, Dhaka · 01911-889900',
     customerOf: 'Mirpur Retail Syndicate',
@@ -1061,16 +1061,16 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     sacrifice: 0,
     payableDue: 85000,
     runningDue: 0,
-    duePaymentDate: getTodayIso(),
+    duePaymentDate: getDaysAgoIso(2),
     notes: 'Spot cash transaction on loading at counter.',
     status: 'Full Paid',
-    createdAt: getTodayIso()
+    createdAt: getDaysAgoIso(2)
   },
   {
-    id: 'sd-ef-today-4',
+    id: 'sd-ef-hist-4',
     businessId: 'bh-1',
-    invoiceNo: 'INV-EF-TODAY-04',
-    date: getTodayIso(),
+    invoiceNo: 'INV-EF-2026-0797',
+    date: getDaysAgoIso(3),
     customerName: 'Chowdhury Fruit Depot',
     address: 'Tangail Sadar · 01715-667788',
     customerOf: 'District Distribution Agent',
@@ -1088,7 +1088,7 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     duePaymentDate: getFutureDaysIso(4),
     notes: 'VIP Ajwa batch loading with Tangail truck receipt.',
     status: 'Partial Due',
-    createdAt: getTodayIso()
+    createdAt: getDaysAgoIso(3)
   },
   // Yesterday and earlier records
   {
@@ -1139,12 +1139,12 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     status: 'Partial Due',
     createdAt: getDaysAgoIso(3)
   },
-  // Mourin Fruits (bh-2) - Today & Yesterday Records
+  // Mourin Fruits (bh-2) - Historical Records (Today starts with 0 real sales)
   {
-    id: 'sd-mf-today-1',
+    id: 'sd-mf-hist-1',
     businessId: 'bh-2',
-    invoiceNo: 'INV-MF-TODAY-01',
-    date: getTodayIso(),
+    invoiceNo: 'INV-MF-2026-0800',
+    date: getYesterdayIso(),
     customerName: 'Khan Brothers Fruits',
     address: 'Jatrabari Arat, Dhaka · 01815-112233',
     customerOf: 'Jatrabari Wholesale',
@@ -1160,9 +1160,9 @@ export const INITIAL_SALES_DUE_DATA: SaleDueRecord[] = [
     payableDue: 177000,
     runningDue: 77000,
     duePaymentDate: getFutureDaysIso(6),
-    notes: 'Today advance booking delivery at Jatrabari.',
+    notes: 'Advance booking delivery at Jatrabari.',
     status: 'Partial Due',
-    createdAt: getTodayIso()
+    createdAt: getYesterdayIso()
   },
   {
     id: 'sd-mf-1',

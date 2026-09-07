@@ -30,6 +30,7 @@ interface ManagerHeaderProps {
   assignedBusinesses?: BusinessHealthItem[];
   onSwitchBusiness?: (businessId: string, businessName: string) => void;
   onReturnToBusinessSelect?: () => void;
+  onSelectTab?: (tab: ManagerTab) => void;
 }
 
 export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
@@ -41,7 +42,8 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
   isGeneralManager = false,
   assignedBusinesses = [],
   onSwitchBusiness,
-  onReturnToBusinessSelect
+  onReturnToBusinessSelect,
+  onSelectTab
 }) => {
   const { user, logout } = useAuth();
   const { customLogo } = useLogo();
@@ -100,6 +102,11 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
         return {
           title: `${businessName} · Products & Pricing`,
           subtitle: 'Unit item catalog, stock availability & per-unit sales rates'
+        };
+      case 'notifications':
+        return {
+          title: `${businessName} · Notifications & Admin Approvals`,
+          subtitle: 'Category-wise tracking for Admin approval decisions, overdue payments & alerts'
         };
       default:
         return {
@@ -396,29 +403,50 @@ export const ManagerHeader: React.FC<ManagerHeaderProps> = ({
               </div>
 
               <div className="max-h-72 overflow-y-auto divide-y divide-[#E5EAE8]">
-                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onSelectTab) onSelectTab('notifications');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full text-left p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5"
+                >
                   <div className="w-2 h-2 rounded-full bg-[#22A06B] mt-1.5 shrink-0" />
                   <div className="flex-1">
-                    <p className="font-semibold text-[#111827]">Voucher Approved</p>
-                    <p className="text-[#4B5563] text-[11px] mt-0.5">Head Office approved your transport voucher receipt.</p>
-                    <span className="text-[10px] text-[#9CA3AF] mt-1 block">25 mins ago</span>
+                    <p className="font-semibold text-[#111827]">Voucher & Price Approvals</p>
+                    <p className="text-[#4B5563] text-[11px] mt-0.5">Head Office admin decisions, void requests & discounts.</p>
+                    <span className="text-[10px] text-[#0E5A4F] font-bold mt-1 block">Click to open Notifications tab →</span>
                   </div>
-                </div>
+                </button>
 
-                <div className="p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onSelectTab) onSelectTab('notifications');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full text-left p-3 hover:bg-[#F6F8F7] transition-colors cursor-pointer flex gap-2.5"
+                >
                   <div className="w-2 h-2 rounded-full bg-[#22A06B] mt-1.5 shrink-0" />
                   <div className="flex-1">
-                    <p className="font-semibold text-[#111827]">Due Payment Received</p>
-                    <p className="text-[#4B5563] text-[11px] mt-0.5">Customer submitted ৳50,000 partial payment entry.</p>
-                    <span className="text-[10px] text-[#9CA3AF] mt-1 block">2 hours ago</span>
+                    <p className="font-semibold text-[#111827]">Due Payment Received & Overdues</p>
+                    <p className="text-[#4B5563] text-[11px] mt-0.5">View customer running dues & overdue collection alerts.</p>
+                    <span className="text-[10px] text-[#0E5A4F] font-bold mt-1 block">Click to open Notifications tab →</span>
                   </div>
-                </div>
+                </button>
               </div>
 
               <div className="border-t border-[#E5EAE8] pt-2 px-3 text-center">
-                <span className="text-[11px] text-[#0E5A4F] font-bold hover:underline cursor-pointer">
-                  Unit Activity History
-                </span>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (onSelectTab) onSelectTab('notifications');
+                    setNotifDropdownOpen(false);
+                  }}
+                  className="w-full py-1 text-[11px] text-[#0E5A4F] font-bold hover:underline cursor-pointer block"
+                >
+                  View All Notifications Page
+                </button>
               </div>
             </div>
           )}

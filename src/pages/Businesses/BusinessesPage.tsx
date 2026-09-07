@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { BusinessHealthItem, BusinessManager } from '../../types';
 import { AddManagerModal } from '../../components/modals/AddManagerModal';
 import { BusinessUnitDetailsModal } from '../../components/modals/BusinessUnitDetailsModal';
-import { getBusinessGrowthData } from '../../utils/businessCalculations';
+import { getBusinessGrowthData, formatFullTaka, formatTodaySaleTaka } from '../../utils/businessCalculations';
 import {
   Building2,
   Plus,
@@ -323,10 +323,10 @@ export const BusinessesPage: React.FC<BusinessesPageProps> = ({
                   <div className="grid grid-cols-3 gap-2 my-3.5 pt-3 border-t border-[#E5EAE8] text-center">
                     <div className="p-2 rounded-lg bg-[#F6F8F7] border border-[#E5EAE8]/40">
                       <span className="text-[9px] text-[#71807B] uppercase font-bold block truncate">
-                        Today Sales
+                        Today's Sale
                       </span>
                       <span className="text-xs font-bold text-[#18211F] mt-0.5 block truncate">
-                        {biz.sales}
+                        {formatTodaySaleTaka(biz)}
                       </span>
                     </div>
 

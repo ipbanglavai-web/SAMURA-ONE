@@ -74,17 +74,26 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
   // Filtered Managers
   const filteredManagers = managers.filter((m) => {
     const term = searchTerm.toLowerCase();
+    const isGM =
+      m.managerType === 'general_manager' ||
+      m.businessId === 'all' ||
+      m.name.toLowerCase().includes('general manager') ||
+      m.name.toLowerCase().includes('(gm)');
+
     const matchesSearch =
       m.name.toLowerCase().includes(term) ||
       m.businessName.toLowerCase().includes(term) ||
       m.phone.toLowerCase().includes(term) ||
       m.email.toLowerCase().includes(term) ||
-      m.nid.toLowerCase().includes(term);
+      m.nid.toLowerCase().includes(term) ||
+      (isGM && ('general manager'.includes(term) || 'executive'.includes(term) || 'gm'.includes(term)));
 
     const matchesBusiness =
       selectedBusinessFilter === 'all' ||
       m.businessId === selectedBusinessFilter ||
-      m.businessName.toLowerCase() === selectedBusinessFilter.toLowerCase();
+      m.businessName.toLowerCase() === selectedBusinessFilter.toLowerCase() ||
+      isGM ||
+      (m.assignedBusinessIds && m.assignedBusinessIds.includes(selectedBusinessFilter));
 
     return matchesSearch && matchesBusiness;
   });
@@ -157,10 +166,12 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
         <div className="bg-white p-3.5 rounded-xl border border-[#E5EAE8] shadow-2xs">
           <span className="text-[10px] text-[#71807B] uppercase font-bold tracking-wider block">
-            Total Unit Managers
+            Total System Managers
           </span>
           <div className="text-xl font-bold text-[#18211F] mt-1">{managers.length} Officers</div>
-          <span className="text-[10px] text-[#0E5A4F] font-semibold mt-0.5 block">Active Credentials</span>
+          <span className="text-[10px] text-[#0E5A4F] font-semibold mt-0.5 block">
+            {managers.filter(m => m.managerType === 'general_manager' || m.businessId === 'all').length} GM · {managers.filter(m => m.managerType !== 'general_manager' && m.businessId !== 'all').length} Unit Managers
+          </span>
         </div>
 
         <div className="bg-white p-3.5 rounded-xl border border-[#E5EAE8] shadow-2xs">
@@ -168,9 +179,9 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
             Covered Businesses
           </span>
           <div className="text-xl font-bold text-[#22A06B] mt-1">
-            {new Set(managers.map((m) => m.businessId)).size} / {businesses.length} Units
+            {businesses.length} / {businesses.length} Units
           </div>
-          <span className="text-[10px] text-[#22A06B] font-semibold mt-0.5 block">Direct Supervision</span>
+          <span className="text-[10px] text-[#22A06B] font-semibold mt-0.5 block">Full Executive Supervision</span>
         </div>
 
         <div className="bg-white p-3.5 rounded-xl border border-[#E5EAE8] shadow-2xs">
@@ -185,8 +196,8 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
           <span className="text-[10px] text-[#71807B] uppercase font-bold tracking-wider block">
             Role Permission
           </span>
-          <div className="text-xl font-bold text-[#18211F] mt-1">Unit Operations</div>
-          <span className="text-[10px] text-[#71807B] font-semibold mt-0.5 block">Isolated Access</span>
+          <div className="text-xl font-bold text-[#18211F] mt-1">GM & Unit Roles</div>
+          <span className="text-[10px] text-[#71807B] font-semibold mt-0.5 block">Role-Based Hierarchy</span>
         </div>
       </div>
 
@@ -229,16 +240,16 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
               <thead>
-                <tr className="bg-[#F6F8F7] text-[#71807B] font-bold border-b border-[#E5EAE8]">
-                  <th className="py-3 px-4">Manager Name</th>
-                  <th className="py-3 px-4">Contact</th>
-                  <th className="py-3 px-4">NID No.</th>
-                  <th className="py-3 px-4">Assigned Business</th>
-                  <th className="py-3 px-4">Password & Access</th>
-                  <th className="py-3 px-4 text-right">Actions</th>
+                <tr className="bg-[#F6F8F7] text-[#71807B] font-bold text-[10px] uppercase tracking-wider border-b border-[#E5EAE8]">
+                  <th className="py-3 px-4 whitespace-nowrap">Manager Name</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Contact Info</th>
+                  <th className="py-3 px-4 whitespace-nowrap">NID Number</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Assigned Business</th>
+                  <th className="py-3 px-4 whitespace-nowrap">Credentials & Access</th>
+                  <th className="py-3 px-4 whitespace-nowrap text-right">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#E5EAE8]">
+              <tbody className="divide-y divide-[#E5EAE8] align-middle">
                 {filteredManagers.map((mgr) => {
                   const isPasswordShown = showPasswordId === mgr.id;
                   const displayPassword = mgr.password || 'password123';
@@ -249,70 +260,70 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
                     mgr.name.toLowerCase().includes('(gm)');
 
                   return (
-                    <tr key={mgr.id} className="hover:bg-[#F6F8F7]/60 transition-colors">
+                    <tr key={mgr.id} className="hover:bg-[#F6F8F7]/70 transition-colors">
                       {/* Name & Role */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4 whitespace-nowrap">
                         <div className="flex items-center gap-3">
                           <div
-                            className={`w-8 h-8 rounded-full font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs ${
+                            className={`w-9 h-9 rounded-full font-bold flex items-center justify-center text-xs shrink-0 shadow-2xs ${
                               isGM
                                 ? 'bg-[#0E5A4F] text-white border border-[#22A06B]'
                                 : 'bg-[#E6F4ED] text-[#0E5A4F] border border-[#22A06B]/30'
                             }`}
                           >
-                            {mgr.name.charAt(0)}
+                            {mgr.name.charAt(0).toUpperCase()}
                           </div>
                           <div>
                             <div className="flex items-center gap-1.5">
                               <span className="font-bold text-[#18211F] text-xs block">{mgr.name}</span>
                               {isGM && (
-                                <span className="px-1.5 py-0.5 rounded text-[9px] font-bold bg-[#0E5A4F] text-[#E6F4ED]">
+                                <span className="px-1.5 py-0.25 rounded text-[9px] font-extrabold bg-[#0E5A4F] text-[#E6F4ED] border border-[#22A06B]/40">
                                   GM
                                 </span>
                               )}
                             </div>
-                            <span className="text-[10px] text-[#71807B] flex items-center gap-1">
-                              <ShieldCheck className={`w-2.5 h-2.5 ${isGM ? 'text-[#0E5A4F]' : 'text-[#22A06B]'}`} />
-                              {isGM ? 'Executive General Manager' : 'Unit Manager'} • {mgr.createdAt || 'Active'}
+                            <span className="text-[10px] text-[#71807B] flex items-center gap-1 mt-0.5">
+                              <ShieldCheck className={`w-3 h-3 ${isGM ? 'text-[#0E5A4F]' : 'text-[#22A06B]'}`} />
+                              <span>{isGM ? 'Executive General Manager' : 'Unit Operations Manager'}</span>
                             </span>
                           </div>
                         </div>
                       </td>
 
                       {/* Phone & Email */}
-                      <td className="py-3.5 px-4">
-                        <div className="space-y-1">
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <div className="space-y-0.5">
                           <a
                             href={`tel:${mgr.phone}`}
-                            className="flex items-center gap-1.5 text-[#18211F] hover:text-[#0E5A4F] font-medium transition-colors"
+                            className="flex items-center gap-1.5 text-[#18211F] hover:text-[#0E5A4F] font-semibold text-xs transition-colors"
                           >
-                            <Phone className="w-3.5 h-3.5 text-[#0E5A4F]" />
+                            <Phone className="w-3.5 h-3.5 text-[#0E5A4F] shrink-0" />
                             <span>{mgr.phone}</span>
                           </a>
                           <a
                             href={`mailto:${mgr.email}`}
                             className="flex items-center gap-1.5 text-[#71807B] hover:text-[#0E5A4F] text-[11px] transition-colors"
                           >
-                            <Mail className="w-3.5 h-3.5 text-[#71807B]" />
+                            <Mail className="w-3.5 h-3.5 text-[#71807B] shrink-0" />
                             <span className="truncate max-w-[180px]">{mgr.email}</span>
                           </a>
                         </div>
                       </td>
 
                       {/* NID */}
-                      <td className="py-3.5 px-4 font-mono font-semibold text-[#18211F]">
-                        <div className="flex items-center gap-1.5 bg-[#F6F8F7] px-2 py-1 rounded-md border border-[#E5EAE8] w-fit">
-                          <CreditCard className="w-3.5 h-3.5 text-[#71807B]" />
+                      <td className="py-3 px-4 whitespace-nowrap font-mono">
+                        <div className="inline-flex items-center gap-1.5 bg-[#F6F8F7] px-2.5 py-1 rounded-md border border-[#E5EAE8] text-xs font-semibold text-[#18211F]">
+                          <CreditCard className="w-3.5 h-3.5 text-[#71807B] shrink-0" />
                           <span>{mgr.nid}</span>
                         </div>
                       </td>
 
                       {/* Assigned Business */}
-                      <td className="py-3.5 px-4">
+                      <td className="py-3 px-4 whitespace-nowrap">
                         {isGM ? (
-                          <div className="space-y-1">
+                          <div className="space-y-0.5">
                             <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#0E5A4F] text-white border border-[#22A06B]">
-                              <Building2 className="w-3.5 h-3.5 text-[#22A06B]" />
+                              <Building2 className="w-3.5 h-3.5 text-[#22A06B] shrink-0" />
                               <span>
                                 {mgr.assignedBusinessNames && mgr.assignedBusinessNames.length > 0
                                   ? `All Assigned (${mgr.assignedBusinessNames.length} Units)`
@@ -327,23 +338,23 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
                           </div>
                         ) : (
                           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-[11px] font-bold bg-[#E6F4ED] text-[#0E5A4F] border border-[#22A06B]/20">
-                            <Building2 className="w-3.5 h-3.5" />
+                            <Building2 className="w-3.5 h-3.5 shrink-0" />
                             <span>{mgr.businessName}</span>
                           </div>
                         )}
                       </td>
 
                       {/* Password & Security Status */}
-                      <td className="py-3.5 px-4">
-                        <div className="flex items-center gap-2">
-                          <div className="flex items-center gap-1 bg-[#F6F8F7] px-2 py-1 rounded border border-[#E5EAE8] text-[11px] font-mono">
-                            <KeyRound className="w-3 h-3 text-[#71807B]" />
-                            <span>{isPasswordShown ? displayPassword : '••••••••'}</span>
-                          </div>
+                      <td className="py-3 px-4 whitespace-nowrap">
+                        <div className="inline-flex items-center gap-2 bg-[#F6F8F7] px-2.5 py-1 rounded-md border border-[#E5EAE8]">
+                          <KeyRound className="w-3.5 h-3.5 text-[#71807B] shrink-0" />
+                          <span className="font-mono text-xs font-medium text-[#18211F]">
+                            {isPasswordShown ? displayPassword : '••••••••'}
+                          </span>
                           <button
                             type="button"
                             onClick={() => setShowPasswordId(isPasswordShown ? null : mgr.id)}
-                            className="p-1 text-[#71807B] hover:text-[#18211F] rounded transition-colors cursor-pointer"
+                            className="p-0.5 text-[#71807B] hover:text-[#18211F] rounded transition-colors cursor-pointer ml-1"
                             title={isPasswordShown ? 'Hide Password' : 'Show Password'}
                           >
                             {isPasswordShown ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -352,14 +363,14 @@ export const ManagersPage: React.FC<ManagersPageProps> = ({
                       </td>
 
                       {/* Actions */}
-                      <td className="py-3.5 px-4 text-right">
+                      <td className="py-3 px-4 whitespace-nowrap text-right">
                         <button
                           onClick={() => setManagerToDelete(mgr)}
-                          className="p-1.5 text-[#71807B] hover:text-red-600 hover:bg-red-50 rounded-md transition-colors cursor-pointer inline-flex items-center gap-1"
+                          className="px-2.5 py-1 text-red-600 hover:bg-red-50 border border-transparent hover:border-red-200 rounded-md transition-all cursor-pointer inline-flex items-center gap-1.5 text-xs font-semibold"
                           title={`Remove ${mgr.name}`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          <span className="text-[10px] font-semibold text-red-600">Remove</span>
+                          <span>Remove</span>
                         </button>
                       </td>
                     </tr>

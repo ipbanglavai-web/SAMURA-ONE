@@ -8,20 +8,11 @@ interface KpiCardsProps {
 
 export const KpiCards: React.FC<KpiCardsProps> = ({ kpis, onCardClick }) => {
   const getBadge = (kpi: KpiItem) => {
-    switch (kpi.id) {
-      case 'kpi-sales':
-        return <span className="text-[#22A06B] text-[11px] font-bold">+8.4%</span>;
-      case 'kpi-collection':
-        return <span className="text-[#0E5A4F] text-[11px] font-bold">73.8%</span>;
-      case 'kpi-cash-bank':
-        return <span className="text-[#0E5A4F] text-[11px] font-bold">13 A/C</span>;
-      case 'kpi-receivable':
-        return <span className="text-[#D9534F] text-[11px] font-bold">-৳38.5L</span>;
-      case 'kpi-inventory':
-        return <span className="text-[#D9A441] text-[11px] font-bold">Aging Risk</span>;
-      default:
-        return <span className="text-[#71807B] text-[11px] font-bold">{kpi.secondary}</span>;
+    if (kpi.badge) {
+      const colorClass = kpi.badgeColor || (kpi.trend === 'down' ? 'text-[#D9534F]' : kpi.trend === 'up' ? 'text-[#22A06B]' : 'text-[#0E5A4F]');
+      return <span className={`text-[11px] font-bold ${colorClass}`}>{kpi.badge}</span>;
     }
+    return null;
   };
 
   return (
