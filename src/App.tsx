@@ -24,7 +24,6 @@ import { GeneralManagerBusinessSelectPage } from './pages/GeneralManager/General
 import { ApprovalDetailModal } from './components/modals/ApprovalDetailModal';
 import { AlertDetailModal } from './components/modals/AlertDetailModal';
 import { BusinessUnitDetailsModal } from './components/modals/BusinessUnitDetailsModal';
-import { UniversalPrintModal } from './components/modals/UniversalPrintModal';
 import { calculateDerivedBusinessData, computeDynamicBusinesses } from './utils/businessCalculations';
 import {
   KPI_DATA,
@@ -725,7 +724,6 @@ export default function App() {
     <AuthProvider>
       <LogoProvider>
         <MainApp />
-        <UniversalPrintModal />
       </LogoProvider>
     </AuthProvider>
   );

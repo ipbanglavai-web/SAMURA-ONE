@@ -367,60 +367,105 @@ function buildDocumentHtml(
 </html>`;
 }
 
+function printViaInPagePortal(
+  bodyContent: string,
+  orientation: 'portrait' | 'landscape' = 'portrait'
+) {
+  try {
+    let portal = document.getElementById('samura-print-portal');
+    if (!portal) {
+      portal = document.createElement('div');
+      portal.id = 'samura-print-portal';
+      document.body.appendChild(portal);
+    }
+
+    const isLandscape = orientation === 'landscape';
+    portal.innerHTML = `
+      <div class="samura-print-doc-container" style="width:100%;max-width:${isLandscape ? '1100px' : '820px'};margin:0 auto;padding:16px 20px;background:#ffffff;color:#0F172A;font-family:'Inter',sans-serif;">
+        ${getCustomLogoImgTag()}
+        ${bodyContent}
+        <div style="text-align:center;font-size:9px;color:#64748B;border-top:1px solid #E2E8F0;padding-top:8px;margin-top:20px;">
+          Printed at: ${new Date().toLocaleString('en-US')} · AL SAMURA GROUP ERP · System Generated Report
+        </div>
+      </div>
+    `;
+
+    document.body.classList.add('samura-is-printing');
+
+    const cleanup = () => {
+      document.body.classList.remove('samura-is-printing');
+      if (portal) portal.innerHTML = '';
+      window.removeEventListener('afterprint', cleanup);
+    };
+
+    window.addEventListener('afterprint', cleanup);
+
+    window.focus();
+    window.print();
+
+    // Fallback cleanup if afterprint event doesn't fire
+    setTimeout(cleanup, 1500);
+  } catch (err) {
+    console.error('In-page print portal error:', err);
+  }
+}
+
 function triggerPrintOnHtml(
   title: string,
   bodyContent: string,
   orientation: 'portrait' | 'landscape' = 'portrait'
 ) {
   try {
-    const isLandscape = orientation === 'landscape';
     const cleanTitle = title.replace(/_/g, ' ');
+    // 1. Build document HTML with full printable stylesheets (no popup chrome)
+    const fullHtml = buildDocumentHtml(cleanTitle, bodyContent, orientation, false);
 
-    // 1. Build document HTML with full printable stylesheets
-    const fullHtml = buildDocumentHtml(cleanTitle, bodyContent, orientation, true);
-
-    // 2. Generate a valid local Blob URL
-    let blobUrl = '';
-    try {
-      const blob = new Blob([fullHtml], { type: 'text/html;charset=utf-8' });
-      blobUrl = URL.createObjectURL(blob);
-    } catch (e) {
-      console.warn('Blob URL creation error:', e);
+    // 2. Remove any previously created hidden print iframe
+    const existingFrame = document.getElementById('samura-print-iframe');
+    if (existingFrame) {
+      existingFrame.remove();
     }
 
-    // 3. Dispatch an in-app event so the on-screen Print & Document System modal immediately opens!
-    // This provides 100% reliability, zero blank screens, and full inspection & export tools.
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(
-        new CustomEvent('samura:open-print-preview', {
-          detail: {
-            title: cleanTitle,
-            html: fullHtml,
-            orientation,
-            blobUrl
-          }
-        })
-      );
+    // 3. Create a rendered invisible iframe to host the document for direct print
+    // Using 1px width/height and 0.01 opacity ensures the browser engine lays out the DOM
+    const printFrame = document.createElement('iframe');
+    printFrame.id = 'samura-print-iframe';
+    printFrame.setAttribute('aria-hidden', 'true');
+    printFrame.style.position = 'fixed';
+    printFrame.style.right = '0';
+    printFrame.style.bottom = '0';
+    printFrame.style.width = '1px';
+    printFrame.style.height = '1px';
+    printFrame.style.border = 'none';
+    printFrame.style.opacity = '0.01';
+    printFrame.style.pointerEvents = 'none';
+    printFrame.style.zIndex = '-1';
+    document.body.appendChild(printFrame);
+
+    const frameDoc = printFrame.contentWindow?.document || printFrame.contentDocument;
+    if (!frameDoc) {
+      printViaInPagePortal(bodyContent, orientation);
+      return;
     }
 
-    // 4. In addition, attempt to open in a popup or new tab if the environment allows
-    try {
-      const targetUrl = blobUrl || 'about:blank';
-      const printWin = window.open(
-        targetUrl,
-        '_blank',
-        `width=${isLandscape ? '1180' : '900'},height=850,menubar=no,toolbar=no,location=no,status=no,resizable=yes,scrollbars=yes`
-      );
-      if (printWin && !blobUrl) {
-        printWin.document.open();
-        printWin.document.write(fullHtml);
-        printWin.document.close();
+    frameDoc.open();
+    frameDoc.write(fullHtml);
+    frameDoc.close();
+
+    // 4. Trigger the native print system dialog directly - ZERO new tabs or popups!
+    setTimeout(() => {
+      try {
+        if (printFrame && printFrame.contentWindow) {
+          printFrame.contentWindow.focus();
+          printFrame.contentWindow.print();
+        } else {
+          printViaInPagePortal(bodyContent, orientation);
+        }
+      } catch (err) {
+        console.warn('Iframe print blocked, falling back to in-page print:', err);
+        printViaInPagePortal(bodyContent, orientation);
       }
-    } catch (popErr) {
-      // Popups may be blocked by sandboxed iframes or browser popup blockers.
-      // The on-screen UniversalPrintModal is already visible and handling the action!
-      console.log('Popup window blocked, displaying via on-screen print system modal:', popErr);
-    }
+    }, 250);
   } catch (err) {
     console.error('Universal print error:', err);
   }

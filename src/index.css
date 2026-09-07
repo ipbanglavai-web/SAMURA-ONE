@@ -48,6 +48,11 @@
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
+/* Direct Print Portal styling */
+#samura-print-portal {
+  display: none;
+}
+
 /* Enterprise Print Media Styles */
 @media print {
   @page {
@@ -58,6 +63,21 @@
   body {
     background-color: #ffffff !important;
     color: #000000 !important;
+  }
+
+  /* When printing via direct in-page portal, hide root and show only portal */
+  body.samura-is-printing #root {
+    display: none !important;
+  }
+  body.samura-is-printing #samura-print-portal {
+    display: block !important;
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 100% !important;
+    background: #ffffff !important;
+    color: #000000 !important;
+    z-index: 999999 !important;
   }
 
   /* Hide navigation, sidebars, background overlays, action buttons during print */
